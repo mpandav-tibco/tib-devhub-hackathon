@@ -1,0 +1,22 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name | dump }}
+  description: ${{ values.description | dump }}
+  links:
+    - title: TIBCO BusinessWorks
+      url: https://www.tibco.com/products/tibco-businessworks
+    - title: TIBCO Developer Hub
+      url: https://docs.tibco.com/products/tibco-cloud-integration
+    - title: Jenkins CI/CD
+      url: https://www.jenkins.io/
+    - title: Kubernetes
+      url: https://kubernetes.io/
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: ${{ values.name }}
+spec:
+  type: documentation
+  lifecycle: development
+  owner: ${{ values.owner | dump }}
