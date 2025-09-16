@@ -1,0 +1,322 @@
+{
+  "imports": [
+    "github.com/project-flogo/flow",
+    "github.com/project-flogo/contrib/activity/noop",
+    "github.com/tibco/flogo-general/src/app/General/activity/mapper",
+    "github.com/tibco/wi-plugins/contributions/kafka/src/app/Kafka/activity/producer",
+    "github.com/tibco/wi-plugins/contributions/kafka/src/app/Kafka/trigger/consumer",
+    "github.com/tibco/flogo-general/src/app/General/trigger/timer",
+    "github.com/project-flogo/contrib/function/array",
+    "github.com/project-flogo/contrib/function/coerce",
+    "github.com/tibco/wi-plugins/contributions/kafka/src/app/Kafka/connector/kafka"
+  ],
+  "name": "Kafka-XMLFiltering",
+  "description": "",
+  "version": "1.0.0",
+  "type": "flogo:app",
+  "appModel": "1.1.1",
+  "tags": [],
+  "triggers": [
+    {
+      "ref": "#consumer",
+      "name": "tibco-kafka-consumer-trigger",
+      "description": "",
+      "settings": {
+        "kafkaConnection": "conn://39e7f5ce-62b3-4753-89c9-78e235bb604b"
+      },
+      "id": "KafkaConsumer",
+      "handlers": [
+        {
+          "description": "",
+          "settings": {
+            "topic": "xml-input-topic",
+            "customPartition": false,
+            "partitionId": 0,
+            "topicPattern": "",
+            "consumerGroup": "xml-filter-group",
+            "valueType": "String",
+            "subjects": "String",
+            "versions": 1,
+            "commitInterval": 5000,
+            "initialOffset": "Oldest",
+            "seekOffset": 0,
+            "timeStamp": "",
+            "fetchMinBytes": 1,
+            "fetchMaxWait": 500,
+            "heartbeatInterval": 3000,
+            "sessionTimeout": 30000
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:Consumer"
+            },
+            "input": {
+              "topic": "=$.topic",
+              "partition": "=$.partition",
+              "offset": "=$.offset",
+              "key": "=$.key",
+              "stringValue": "=$.stringValue",
+              "headers": "=$.headers"
+            }
+          },
+          "name": "Consumer"
+        }
+      ]
+    },
+    {
+      "ref": "#timer",
+      "name": "tibco-wi-timer",
+      "description": "Simple Timer trigger",
+      "settings": {},
+      "id": "TimerTrigger",
+      "handlers": [
+        {
+          "description": "",
+          "settings": {
+            "Scheduler Options": "Timer",
+            "Start Time": "",
+            "Repeating": true,
+            "Delayed Start": false,
+            "Time Interval": 5,
+            "Interval Unit": "Second",
+            "Cron Expression": "CRON_TZ=Europe/Berlin * * * * *"
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:Producer"
+            }
+          },
+          "name": "Producer"
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:Consumer",
+      "data": {
+        "name": "Consumer",
+        "description": "",
+        "links": [],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfX0=",
+        "metadata": {
+          "input": [
+            {
+              "name": "topic",
+              "type": "string"
+            },
+            {
+              "name": "partition",
+              "type": "integer"
+            },
+            {
+              "name": "offset",
+              "type": "integer"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "stringValue",
+              "type": "string"
+            },
+            {
+              "name": "headers",
+              "type": "object"
+            }
+          ],
+          "output": [],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"KafkaConsumer\",\"properties\":{\"topic\":{\"type\":\"string\",\"required\":false},\"partition\":{\"type\":\"integer\",\"required\":false},\"offset\":{\"type\":\"integer\",\"required\":false},\"key\":{\"type\":\"string\",\"required\":false},\"stringValue\":{\"type\":\"string\",\"required\":false},\"headers\":{\"type\":\"object\"}}}"
+          }
+        },
+        "explicitReply": true
+      }
+    },
+    {
+      "id": "flow:Producer",
+      "data": {
+        "name": "Producer",
+        "description": "",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "Mapper",
+            "type": "label",
+            "label": "StartActivity to Mapper"
+          },
+          {
+            "id": 2,
+            "from": "Mapper",
+            "to": "KafkaProducer",
+            "type": "label",
+            "label": "Mapper to KafkaProducer"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "Mapper",
+            "name": "Mapper",
+            "description": "Mapper Activity",
+            "activity": {
+              "ref": "#mapper",
+              "input": {
+                "input": {
+                  "mapping": [
+                    "<order id=\"A-101\"><customer><name>Alice Wonderland</name><email>alice@example.com</email></customer><items><item sku=\"SKU001\"><name>Wireless Headphones</name><quantity>1</quantity><price>99.99</price></item><item sku=\"SKU002\"><name>USB-C Charger</name><quantity>2</quantity><price>19.50</price></item></items><shippingAddress><street>123 Rabbit Hole Rd</street><city>Wonderland</city><zip>12345</zip></shippingAddress><status>processed</status><timestamp>2025-05-26T10:00:00Z</timestamp></order>",
+                    "<order id=\"C-303\"><customer><name>Charlie Chaplin</name><email>charlie@example.com</email></customer><items><item sku=\"SKU004\"><name>Silent Film Projector</name><quantity>1</quantity><price>500.00</price></item></items><shippingAddress><street>789 Old Cinema St</street><city>Hollywood</city><zip>90210</zip></shippingAddress><deliveryDate>2025-06-01</deliveryDate><notes>Fragile item, handle with care.</notes></order>",
+                    "<order id=\"B-202\"><customer><name>Bob Builder</name><email>bob@example.com</email></customer><items><item sku=\"SKU003\"><name>Power Drill</name><quantity>1</quantity><price>120.00</price></item></items><shippingAddress><street>456 Construction Site</street><city>Toolsville</city><zip>67890</zip></shippingAddress><status>pending</status><timestamp>2025-05-26T10:15:00Z</timestamp></order>"
+                  ]
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"array\",\"items\":{\"type\":\"string\"}}",
+                    "fe_metadata": "\n    [\n        \"\",\n        \"\",\n        \"\"\n    ]\n"
+                  }
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"array\",\"items\":{\"type\":\"string\"}}",
+                    "fe_metadata": "[\n  \"\",\n  \"\",\n  \"\"\n]"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "KafkaProducer",
+            "name": "KafkaProducer",
+            "description": "",
+            "type": "iterator",
+            "settings": {
+              "iterate": "=$activity[Mapper].output",
+              "accumulate": false,
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#producer",
+              "input": {
+                "kafkaConnection": "conn://39e7f5ce-62b3-4753-89c9-78e235bb604b",
+                "ackMode": "All",
+                "ackTimeout": 10000,
+                "partitioner": "Hash",
+                "compressionType": "None",
+                "valueType": "String",
+                "subjects": "String",
+                "versions": 1,
+                "maxRequestSize": 1048576,
+                "maxMessages": 0,
+                "frequency": 100,
+                "topic": "xml-input-topic",
+                "key": "",
+                "stringValue": "=coerce.toString($activity[Mapper].output[($iteration[index])])"
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiTWFwcGVyIjp7IngiOjI4OCwieSI6OTJ9LCJLYWZrYVByb2R1Y2VyIjp7IngiOjU1MCwieSI6OTR9fQ==",
+        "metadata": {
+          "input": [],
+          "output": [],
+          "fe_metadata": {}
+        }
+      }
+    }
+  ],
+  "properties": [
+    {
+      "name": "Kafka.local.Brokers",
+      "type": "string",
+      "value": "localhost:9092"
+    },
+    {
+      "name": "Kafka.local.Connection_Timeout",
+      "type": "float64",
+      "value": 30
+    },
+    {
+      "name": "Kafka.local.Retry_Backoff",
+      "type": "float64",
+      "value": 250
+    },
+    {
+      "name": "Property_1",
+      "type": "string",
+      "value": "[{\"expression\":\"//order[@id='A-101']\"},{\"expression\":\"//order/status[text()='processed']\"}]"
+    }
+  ],
+  "schemas": {
+    "a": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"array\",\n    \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n            \"expression\": {\n                \"type\": \"string\"\n            }\n        },\n        \"required\": [\n            \"expression\"\n        ]\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"array\",\n    \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n            \"expression\": {\n                \"type\": \"string\"\n            }\n        },\n        \"required\": [\n            \"expression\"\n        ]\n    }\n}"
+    }
+  },
+  "connections": {
+    "39e7f5ce-62b3-4753-89c9-78e235bb604b": {
+      "id": "39e7f5ce-62b3-4753-89c9-78e235bb604b",
+      "name": "local",
+      "ref": "#kafka",
+      "isGlobal": false,
+      "settings": {
+        "name": "local",
+        "description": "Apache Kafka client configuration",
+        "brokers": "=$property[\"Kafka.local.Brokers\"]",
+        "authMode": "None",
+        "userName": "",
+        "password": "",
+        "clientID": "",
+        "clientSecret": "",
+        "tokenURL": "",
+        "scope": "",
+        "securityProtocol": "SASL_SSL",
+        "clientCert": "",
+        "clientKey": "",
+        "caCert": "",
+        "connectionTimeout": "=$property[\"Kafka.local.Connection_Timeout\"]",
+        "retryBackoff": "=$property[\"Kafka.local.Retry_Backoff\"]",
+        "retryMax": 3,
+        "refreshFrequency": 40,
+        "useSchmaRegistry": false,
+        "url": "",
+        "userName_schemaRegistry": "",
+        "password_schemaRegistry": ""
+      }
+    }
+  },
+  "contrib": "W3sicmVmIjoiZ2l0aHViLmNvbS90aWJjby93aS1wbHVnaW5zL2NvbnRyaWJ1dGlvbnMva2Fma2Evc3JjL2FwcC9LYWZrYSIsImlkIjoiS2Fma2EiLCJ2ZXJzaW9uIjoiMS4zLjMiLCJ0YWciOiIxLjMuMy1iMDEiLCJuYW1lIjoiQXBhY2hlIEthZmthIiwiczNsb2NhdGlvbiI6IlRpYmNvL0thZmthIiwiaXNVc2VyRXh0ZW5zaW9uIjpmYWxzZX0seyJyZWYiOiJnaXRodWIuY29tL3RpYmNvL2Zsb2dvLWdlbmVyYWwvc3JjL2FwcC9HZW5lcmFsIiwiaWQiOiJHZW5lcmFsIiwidmVyc2lvbiI6IjEuNi43IiwidGFnIjoiMS42LjctYjAzIiwibmFtZSI6IkdlbmVyYWwiLCJzM2xvY2F0aW9uIjoiVGliY28vR2VuZXJhbCIsImlzVXNlckV4dGVuc2lvbiI6ZmFsc2V9XQ==",
+  "metadata": {
+    "endpoints": [],
+    "flogoVersion": "2.25.7"
+  }
+}
