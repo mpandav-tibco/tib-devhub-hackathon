@@ -113,8 +113,7 @@ spec:
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/documentation/bwce-with-devhub-templates
-        catalogInfoPath: '/template-bwce-devhub-guide.yaml'
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/documentation/bwce-with-devhub-templates/template-bwce-devhub-guide.yaml
   output:
     links:
       - title: Open in catalog

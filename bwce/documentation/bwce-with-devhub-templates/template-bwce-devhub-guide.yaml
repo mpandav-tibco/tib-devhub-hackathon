@@ -1,0 +1,279 @@
+apiVersion: scaffolder.backstage.io/v1beta3apiVersion: scaffolder.backstage.io/v1beta3
+
+kind: Templatekind: Template
+
+metadata:metadata:
+
+  name: bwce-devhub-templates-guide  name: bwce-devhub-templates-guide
+
+  title: BWCE with DevHub Templates Guide  title: BWCE with DevHub Templates Guide
+
+  description: Documentation template providing comprehensive know-how for integrating TIBCO BusinessWorks Container Edition with Developer Hub templates, including Jenkins CI/CD, Kubernetes deployment, and governance tools  description: Documentation template providing comprehensive know-how for integrating TIBCO BusinessWorks Container Edition with Developer Hub templates, including Jenkins CI/CD, Kubernetes deployment, and governance tools
+
+  tags:  tags:
+
+    - bwce    - devhub-marketplace
+
+    - devhub    - bwce
+
+    - templates    - devhub
+
+    - documentation    - templates
+
+    - guide    - documentation
+
+    - tutorial    - guide
+
+    - jenkins    - tutorial
+
+    - kubernetes    - jenkins
+
+    - tibco    - kubernetes
+
+    - businessworks    - tibco
+
+    - know-how    - businessworks
+
+spec:    - know-how
+
+  owner: tibco-templates  tibco.developer.hub/marketplace:
+
+  type: documentation    isNew: true
+
+    popularity: 9
+
+  parameters:    isMultiInstall: false
+
+    - title: Documentation Configuration    imageURL: ""
+
+      required:    moreInfo:
+
+        - name      - text: BWCE Documentation
+
+        - description        url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+
+        - owner        icon: docs
+
+      properties:      - text: TIBCO Developer Hub
+
+        name:        url: https://docs.tibco.com/pub/platform-cp/1.10.0/doc/html/Default.htm#Subsystems/platform-devhub/User-Guide/TIBCO-Developer-Hub-Overview.htm
+
+          title: Name        icon: docs
+
+          type: string      - text: Source Repository
+
+          description: Unique name for your documentation instance        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/documentation/bwce-with-devhub-templates
+
+          ui:field: EntityNamePicker        icon: github
+
+          ui:autofocus: truespec:
+
+          default: my-bwce-documentation  owner: tibco-templates
+
+        description:  type: documentation
+
+          title: Description
+
+          type: string  parameters:
+
+          description: A description for your BWCE documentation    - title: Documentation Configuration
+
+          default: BWCE DevHub integration documentation      required:
+
+        owner:        - name
+
+          title: Owner        - description
+
+          type: string        - owner
+
+          description: Owner of the documentation      properties:
+
+          ui:field: OwnerPicker        name:
+
+          ui:options:          title: Documentation Name
+
+            allowedKinds:          type: string
+
+              - Group          description: Name of your BWCE DevHub integration documentation
+
+          ui:field: EntityNamePicker
+
+    - title: Documentation Options          ui:help: 'This will be the title of your documentation project'
+
+      properties:        description:
+
+        documentation_type:          title: Description  
+
+          title: Documentation Type          type: string
+
+          description: Choose the type of documentation to generate          description: Brief description of your BWCE DevHub integration scenario
+
+          type: string          ui:help: 'Describe the specific use case or environment this documentation covers'
+
+          default: comprehensive        owner:
+
+          enum:          title: Owner
+
+            - comprehensive          type: string
+
+            - quickstart          description: Owner of the documentation (team or individual)
+
+            - advanced          ui:field: OwnerPicker
+
+          enumNames:          ui:options:
+
+            - 'Comprehensive Guide (All Sections)'            catalogFilter:
+
+            - 'Quick Start (Essential Steps Only)'              kind: [Group, User]
+
+            - 'Advanced Topics (Deep Dive)'        documentation_type:
+
+        include_jenkins:          title: Documentation Style
+
+          title: Include Jenkins CI/CD Documentation          type: string
+
+          type: boolean          description: Choose the style of documentation to generate
+
+          default: true          default: developer-guide
+
+          ui:help: 'Includes Jenkins pipeline setup and automation guides'          enum:
+
+        include_kubernetes:            - developer-guide
+
+          title: Include Kubernetes Deployment Documentation            - tutorial
+
+          type: boolean            - reference
+
+          default: true            - how-to
+
+          ui:help: 'Includes Kubernetes deployment strategies and service mesh configuration'          enumNames:
+
+        include_governance:            - 'Developer Guide (Comprehensive)'
+
+          title: Include Governance and Security Documentation            - 'Step-by-Step Tutorial'
+
+          type: boolean            - 'Reference Documentation'
+
+          default: true            - 'How-To Guide'
+
+          ui:help: 'Includes template governance, security, and compliance guidelines'
+
+        include_images:    - title: Documentation Content
+
+          title: Include Visual Diagrams and Screenshots      properties:
+
+          type: boolean        include_jenkins:
+
+          default: true          title: Include Jenkins CI/CD Guide
+
+          ui:help: 'Adds visual elements to make the documentation easier to follow'          type: boolean
+
+          description: Include detailed documentation on Jenkins pipeline setup and configuration for BWCE
+
+  steps:          default: true
+
+    - id: fetch          ui:help: 'Covers Jenkins installation, pipeline configuration, and BWCE build automation'
+
+      name: Generate Documentation        include_kubernetes:
+
+      action: fetch:template          title: Include Kubernetes Deployment Guide
+
+      input:          type: boolean
+
+        url: ./skeleton          description: Include comprehensive Kubernetes deployment documentation for BWCE applications
+
+        values:          default: true
+
+          name: ${{ parameters.name }}          ui:help: 'Covers cluster setup, deployment manifests, and service configuration'
+
+          description: ${{ parameters.description }}        include_governance:
+
+          owner: ${{ parameters.owner }}          title: Include Governance and Security
+
+          documentation_type: ${{ parameters.documentation_type }}          type: boolean
+
+          include_jenkins: ${{ parameters.include_jenkins }}          description: Include documentation for SonarQube code quality and Trivy security scanning integration
+
+          include_kubernetes: ${{ parameters.include_kubernetes }}          default: true
+
+          include_governance: ${{ parameters.include_governance }}          ui:help: 'Covers quality gates, security scanning, and compliance workflows'
+
+          include_images: ${{ parameters.include_images }}        include_images:
+
+          title: Include Visual Diagrams
+
+  output:          type: boolean
+
+    text:          description: Include workflow diagrams, architecture images, and step-by-step screenshots
+
+      - title: Generated Documentation          default: true
+
+        content: |          ui:help: 'Adds visual elements to make the documentation easier to follow'
+
+          Your BWCE DevHub Templates documentation has been generated successfully!
+
+            steps:
+
+          ## What was created:    - id: fetch
+
+          - Comprehensive guide for BWCE integration with Developer Hub templates      name: Generate Documentation
+
+          {% if values.include_jenkins %}      action: fetch:template
+
+          - Jenkins CI/CD pipeline documentation and examples      input:
+
+          {% endif %}        url: ./skeleton
+
+          {% if values.include_kubernetes %}        values:
+
+          - Kubernetes deployment strategies and configurations          name: ${{ parameters.name }}
+
+          {% endif %}          description: ${{ parameters.description }}
+
+          {% if values.include_governance %}          owner: ${{ parameters.owner }}
+
+          - Template governance and security guidelines          documentation_type: ${{ parameters.documentation_type }}
+
+          {% endif %}          include_jenkins: ${{ parameters.include_jenkins }}
+
+                    include_kubernetes: ${{ parameters.include_kubernetes }}
+
+          ## Next Steps:          include_governance: ${{ parameters.include_governance }}
+
+          1. Review the generated documentation          include_images: ${{ parameters.include_images }}
+
+          2. Customize sections for your specific use case
+
+          3. Add organization-specific examples and configurations  output:
+
+          4. Share with your development team    text:
+
+                - title: Generated Documentation
+
+          The documentation includes step-by-step guides, code examples, and best practices for:        content: |
+
+          - Creating BWCE templates in Developer Hub          Your BWCE DevHub Templates documentation has been generated successfully!
+
+          - Setting up CI/CD pipelines with Jenkins          
+
+          - Deploying to Kubernetes environments          ## What was created:
+
+          - Implementing governance and security measures          - Comprehensive guide for BWCE integration with Developer Hub templates
+          {% if values.include_jenkins %}
+          - Jenkins CI/CD pipeline documentation and examples
+          {% endif %}
+          {% if values.include_kubernetes %}
+          - Kubernetes deployment guides and manifests
+          {% endif %}
+          {% if values.include_governance %}
+          - SonarQube and Trivy security scanning setup
+          {% endif %}
+          {% if values.include_images %}
+          - Visual workflow diagrams and screenshots
+          {% endif %}
+          
+          ## Next Steps:
+          1. Review the generated documentation files
+          2. Customize the content for your specific environment
+          3. Share with your development team
+          4. Follow the step-by-step guides to implement BWCE DevHub integration
