@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "bwce-s3-operation"
+  description: "TIBCO BusinessWorks Container Edition template for Amazon S3 file operations and cloud storage integration"
+  links:
+    - title: TIBCO Cloud Home
+      url: https://cloud.tibco.com/
+    - title: Documentation
+      url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+    - title: TIBCO BusinessWorks
+      url: https://www.tibco.com/products/tibco-businessworks
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: bwce-s3-operation
+spec:
+  type: service
+  lifecycle: development
+  owner: "group:default/tibco-templates"

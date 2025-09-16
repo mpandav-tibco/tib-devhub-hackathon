@@ -1,0 +1,114 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: mp-entry-template-bwce-cdc-salesforce-ebx
+  title: BWCE CDC Salesforce EBX Integration Template
+  description: A TIBCO BusinessWorks Container Edition template for Change Data Capture integration between Salesforce and EBX using Kafka messaging.
+  backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 7
+    isMultiInstall: false
+    imageURL: ""
+    moreInfo:
+      - text: BWCE Documentation
+        url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+        icon: docs
+      - text: TIBCO BusinessWorks
+        url: https://www.tibco.com/products/tibco-businessworks
+        icon: star
+      - text: Sample Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/templates/bwce-cdc-salesforce-ebx
+        icon: github
+  tags:
+    - devhub-marketplace
+    - bwce-templates
+    - business-works-container-edition
+    - salesforce-integration
+    - ebx-integration
+    - kafka-streaming
+    - cdc
+    - recommended
+spec:
+  owner: group:default/marketplace-entries-group
+  type: template
+  presentation:
+    buttonLabels:
+      createButtonText: Install
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      errorMessage: Please accept the Marketplace Entry
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install BWCE CDC Salesforce EBX Integration Template into your TIBCO Developer Hub
+
+            **ID:** mp-entry-template-bwce-cdc-salesforce-ebx
+
+            **Description:** A TIBCO BusinessWorks Container Edition template for Change Data Capture integration between Salesforce and EBX using Kafka messaging.
+
+            ### What This Template Provides:
+
+            **🔄 CDC Integration Features:**
+            - **Salesforce CDC** - Real-time change capture from Salesforce objects
+            - **EBX Integration** - Seamless data synchronization to EBX Master Data Management
+            - **Kafka Streaming** - Reliable message processing and routing
+            - **Data Transformation** - Comprehensive data mapping and conversion
+
+            **🏗️ Architecture Components:**
+            - **Multi-Application Design** - Modular BWCE applications for different integration points
+            - **Shared Libraries** - Reusable components and configurations
+            - **Error Handling** - Comprehensive exception management and retry logic
+            - **Monitoring & Logging** - Built-in observability features
+
+            **🚀 Deployment & Operations:**
+            - **Container Ready** - Optimized for Kubernetes and containerized environments
+            - **Configuration Management** - Environment-specific settings support
+            - **Scalability** - Horizontal scaling capabilities
+            - **High Availability** - Fault-tolerant design patterns
+
+            **📊 Use Cases:**
+            - Real-time customer data synchronization
+            - Product catalog management
+            - Master data governance workflows
+            - Event-driven enterprise integration
+
+            **🛠️ Template Contents:**
+            - Complete BWCE applications for Salesforce and EBX integration
+            - Kafka connectivity and message processing logic
+            - Data transformation and mapping configurations
+            - Deployment scripts and documentation
+            - Sample data and test configurations
+
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. You are responsible for reviewing the specific license terms that apply to each item that you access or use. Cloud Software Group, Inc. and its affiliates: (1) do not make any representation, promises, or guarantees about these items; and (2) are making these items available to you "AS IS," without any warranties or indemnities.
+            This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: null
+          enum:
+            - null
+            - true
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-cdc-salesforce-ebx/template-cdc-salesforce-ebx.yaml
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Templates
+        url: /create?filters%5Bkind%5D=template&filters%5Buser%5D=all&limit=20
+        icon: kind:template
+      - icon: kind:template
+        title: Create CDC Salesforce EBX Project
+        url: /create/templates/default/bwce-template-cdc-salesforce-ebx
