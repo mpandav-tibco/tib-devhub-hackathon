@@ -1,25 +1,8 @@
-site_name: 'BWCE Java Operations Template'
-site_description: 'TIBCO BusinessWorks Container Edition template with Java integration'
-site_author: 'TIBCO Developer Hub'
+site_name: "BWCE Java Operations"
+site_description: "TIBCO BusinessWorks Container Edition template demonstrating scheduled Java method invocation with custom string functions"
 
 nav:
   - Introduction: index.md
-  - Getting Started: getting-started.md
-  - Template Features: features.md
-  - Java Integration: java-integration.md
-  - Deployment Guide: deployment.md
-  - Troubleshooting: troubleshooting.md
-  - API Reference: api.md
 
 plugins:
   - techdocs-core
-
-theme:
-  name: 'material'
-  palette:
-    primary: 'blue'
-    accent: 'blue'
-  features:
-    - navigation.tabs
-    - navigation.top
-    - search.highlight

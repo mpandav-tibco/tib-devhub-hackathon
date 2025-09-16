@@ -1,41 +1,20 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: bwce-java-operations-template
-  title: BWCE Java Operations Template
-  description: A comprehensive TIBCO BusinessWorks Container Edition template demonstrating scheduled Java method invocation with custom string functions, deployment automation, and governance features.
-  tags:
-    - bwce
-    - java-integration
-    - scheduler
-    - template
-    - tibco
-    - businessworks
-  annotations:
-    github.com/project-slug: mpandav-tibco/devhub-hackthon
-    backstage.io/techdocs-ref: dir:.
+  name: "bwce-java-op"
+  description: "TIBCO BusinessWorks Container Edition template demonstrating scheduled Java method invocation with custom string functions"
   links:
-    - title: BWCE Documentation
+    - title: TIBCO Cloud Home
+      url: https://cloud.tibco.com/
+    - title: Documentation
       url: https://docs.tibco.com/products/tibco-businessworks-container-edition
-      icon: docs
     - title: TIBCO BusinessWorks
       url: https://www.tibco.com/products/tibco-businessworks
-      icon: star
-    - title: Template Source
-      url: https://github.com/mpandav-tibco/devhub-hackthon/tree/main/bwce/templates/bwce-java-op
-      icon: github
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: bwce-java-op
 spec:
-  type: template
-  lifecycle: production
-  owner: group:default/marketplace-entries-group
-  system: tibco-integration-platform
----
-apiVersion: backstage.io/v1alpha1
-kind: Location
-metadata:
-  name: bwce-java-operations-template-location
-  description: Location for BWCE Java Operations Template
-spec:
-  targets:
-    - ./template-java.yaml
-    - ./mp-entry-template-bwce-java-operations.yaml
+  type: service
+  lifecycle: development
+  owner: "group:default/tibco-templates"
