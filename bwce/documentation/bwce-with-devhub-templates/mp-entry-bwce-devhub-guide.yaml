@@ -1,0 +1,47 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mp-bwce-devhub-templates-guide
+  title: BWCE DevHub Templates Guide
+  description: Documentation template providing comprehensive know-how and step-by-step guidance for integrating TIBCO BusinessWorks Container Edition with Developer Hub templates, Jenkins CI/CD pipelines, Kubernetes deployment, and governance tools
+  tags:
+    - bwce
+    - devhub
+    - templates
+    - documentation
+    - jenkins
+    - kubernetes
+    - ci-cd
+    - governance
+    - tibco
+    - businessworks
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - title: TIBCO BusinessWorks
+      url: https://www.tibco.com/products/tibco-businessworks
+      icon: star
+    - title: TIBCO Developer Hub
+      url: https://docs.tibco.com/pub/platform-cp/1.10.0/doc/html/Default.htm#Subsystems/platform-devhub/User-Guide/TIBCO-Developer-Hub-Overview.htm
+      icon: docs
+    - title: Backstage Documentation
+      url: https://backstage.io/docs/
+      icon: docs
+    - title: Jenkins Integration
+      url: https://www.jenkins.io/
+      icon: build
+spec:
+  type: documentation
+  lifecycle: production
+  owner: group:default/tibco-templates
+  system: tibco-developer-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: bwce-devhub-templates-guide-location
+  description: Location for BWCE DevHub Templates Guide
+spec:
+  targets:
+    - ./template-bwce-devhub-guide.yaml

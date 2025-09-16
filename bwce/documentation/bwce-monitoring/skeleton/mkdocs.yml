@@ -1,0 +1,21 @@
+site_name: ${{ values.name }}
+site_description: ${{ values.description }}
+
+nav:
+  - Home: index.md
+  - Setup Guide: index.md
+  {% if values.deployment_type == 'kubernetes' %}
+  - Kubernetes Deployment: k8s-deployment.yaml
+  {% else %}
+  - Docker Deployment: docker-deployment.md
+  {% endif %}
+
+plugins:
+  - techdocs-core
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - pymdownx.superfences
+  - toc:
+      permalink: true

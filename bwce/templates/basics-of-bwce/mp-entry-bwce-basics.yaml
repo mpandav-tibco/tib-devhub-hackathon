@@ -1,0 +1,47 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mp-bwce-basics-guide
+  title: BWCE Basics Learning Guide
+  description: Comprehensive learning guide for TIBCO BusinessWorks Container Edition fundamentals, featuring hands-on tutorials, sample applications, and practical exercises for developers new to BWCE
+  tags:
+    - bwce
+    - learning
+    - tutorial
+    - basics
+    - beginner
+    - tibco
+    - businessworks
+    - documentation
+    - training
+    - hands-on
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - title: TIBCO BusinessWorks CE
+      url: https://www.tibco.com/products/tibco-businessworks
+      icon: star
+    - title: TIBCO Documentation
+      url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+      icon: docs
+    - title: Sample Application
+      url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/docs/basics-of-bwce/src
+      icon: code
+    - title: Learning Resources
+      url: https://community.tibco.com/
+      icon: learning
+spec:
+  type: documentation
+  lifecycle: production
+  owner: group:default/tibco-templates
+  system: tibco-learning-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: bwce-basics-guide-location
+  description: Location for BWCE Basics Learning Guide Template
+spec:
+  targets:
+    - ./template-bwce-basics.yaml

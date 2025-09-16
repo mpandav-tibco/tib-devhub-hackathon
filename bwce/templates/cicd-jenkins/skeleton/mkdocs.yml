@@ -1,0 +1,151 @@
+site_name: ${{ values.name | dump }}
+site_description: ${{ values.description | dump }}
+site_author: ${{ values.owner | dump }}
+
+# Repository information
+repo_url: https://github.com/${{ values.destination.owner }}/${{ values.destination.repo }}
+repo_name: ${{ values.destination.owner }}/${{ values.destination.repo }}
+edit_uri: edit/main/docs/
+
+# Navigation structure
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Prerequisites: prerequisites.md
+    - Quick Start: quick-start.md
+    - Installation: installation.md
+  - CI/CD Pipeline:
+    - Pipeline Overview: pipeline/overview.md
+    {% if values.pipeline_type == "jenkins" %}
+    - Jenkins Setup: pipeline/jenkins-setup.md
+    - Jenkins Configuration: pipeline/jenkins-config.md
+    {% elif values.pipeline_type == "gitlab-ci" %}
+    - GitLab CI Setup: pipeline/gitlab-setup.md
+    - GitLab Configuration: pipeline/gitlab-config.md
+    {% elif values.pipeline_type == "github-actions" %}
+    - GitHub Actions Setup: pipeline/github-actions-setup.md
+    - GitHub Actions Configuration: pipeline/github-actions-config.md
+    {% endif %}
+    - Build Configuration: pipeline/build-config.md
+    {% if values.enable_testing %}
+    - Testing Strategy: pipeline/testing.md
+    {% endif %}
+    {% if values.enable_security_scanning %}
+    - Security Scanning: pipeline/security.md
+    {% endif %}
+  - Deployment:
+    {% if values.deployment_target == "kubernetes" %}
+    - Kubernetes Deployment: deployment/kubernetes.md
+    - Service Configuration: deployment/services.md
+    - Ingress Setup: deployment/ingress.md
+    {% elif values.deployment_target == "openshift" %}
+    - OpenShift Deployment: deployment/openshift.md
+    - Route Configuration: deployment/routes.md
+    {% elif values.deployment_target == "docker-compose" %}
+    - Docker Compose: deployment/docker-compose.md
+    {% elif values.deployment_target == "cloud-foundry" %}
+    - Cloud Foundry: deployment/cloud-foundry.md
+    {% endif %}
+    - Environment Configuration: deployment/environments.md
+    {% if values.blue_green_deployment %}
+    - Blue-Green Deployment: deployment/blue-green.md
+    {% endif %}
+  - Configuration:
+    - Application Config: config/application.md
+    {% if values.include_database_migration %}
+    - Database Migration: config/database.md
+    {% endif %}
+    - Environment Variables: config/environment.md
+    - Secrets Management: config/secrets.md
+  {% if values.include_monitoring %}
+  - Monitoring:
+    - Metrics Collection: monitoring/metrics.md
+    - Grafana Dashboards: monitoring/grafana.md
+    - Alerting Rules: monitoring/alerting.md
+    - Health Checks: monitoring/health-checks.md
+  {% endif %}
+  {% if values.include_logging %}
+  - Logging:
+    - Log Configuration: logging/configuration.md
+    - Centralized Logging: logging/elk-stack.md
+    - Log Analysis: logging/analysis.md
+  {% endif %}
+  - Operations:
+    - Troubleshooting: operations/troubleshooting.md
+    - Backup & Recovery: operations/backup-recovery.md
+    - Performance Tuning: operations/performance.md
+    - Best Practices: operations/best-practices.md
+  - Reference:
+    - API Documentation: reference/api.md
+    - Configuration Reference: reference/configuration.md
+    - Troubleshooting Guide: reference/troubleshooting.md
+    - FAQ: reference/faq.md
+
+# Theme configuration
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - toc.integrate
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+# Plugins
+plugins:
+  - search
+  - git-revision-date-localized:
+      type: date
+  - minify:
+      minify_html: true
+
+# Extra configuration
+extra:
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/${{ values.destination.owner }}/${{ values.destination.repo }}
+    - icon: fontawesome/solid/globe
+      link: https://www.tibco.com/
+  analytics:
+    provider: google
+    property: UA-XXXXXXXX-X
+
+# Copyright
+copyright: Copyright &copy; 2025 TIBCO Software Inc.

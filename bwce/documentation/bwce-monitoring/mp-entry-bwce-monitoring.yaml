@@ -1,0 +1,71 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: template-bwce-monitoring
+  title: BWCE Monitoring Setup Template
+  description: 'Documentation template for TIBCO BusinessWorks Container Edition Monitoring (BWCEMon) - Complete guide for creating, building, deploying, and using BWCEMon with BWCE applications'
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/docs/bwce-monitoring
+  tags:
+    - tibco
+    - bwce
+    - monitoring
+    - documentation
+    - guide
+    - tutorial
+    - kubernetes
+    - docker
+    - observability
+    - deployment
+  links:
+    - url: https://docs.tibco.com/pub/bwce/2.8.2/doc/html/Default.htm#bwce-app-monitoring/
+      title: Official BWCEMon Documentation
+      icon: docs
+    - url: https://edelivery.tibco.com
+      title: TIBCO Software Download
+      icon: download
+spec:
+  type: template
+  lifecycle: production
+  owner: user:guest
+  system: tibco-developer-hub
+  definition: |
+    Documentation template for TIBCO BusinessWorks Container Edition Monitoring (BWCEMon).
+    Provides comprehensive guides for creating, building, deploying, and using BWCEMon with BWCE applications.
+    
+    ## What You'll Learn
+    - **Download & Setup**: How to obtain and prepare BWCEMon software from TIBCO eDelivery
+    - **Docker Image Creation**: Step-by-step Docker image building process
+    - **Database Configuration**: PostgreSQL, MySQL, and H2 database setup options
+    - **Deployment Strategies**: Kubernetes and standalone Docker deployment approaches
+    - **BWCE App Integration**: How to connect BWCEMon to your BWCE applications for monitoring
+    - **Troubleshooting**: Common issues and resolution techniques
+    
+    ## Documentation Includes
+    - **Complete Setup Guide**: From download to production deployment
+    - **Configuration Examples**: Ready-to-use Kubernetes manifests and Docker commands
+    - **Best Practices**: Security, performance, and operational recommendations
+    - **Integration Patterns**: How to integrate BWCEMon with existing BWCE application landscapes
+    
+    ## Perfect For
+    - **BWCE Developers**: Learn monitoring setup for integration applications
+    - **DevOps Teams**: Standardize monitoring deployment across environments
+    - **System Administrators**: Operational guidance for BWCEMon management
+    - **Integration Architects**: Design monitoring strategies for BWCE solutions
+    
+    ## Prerequisites Knowledge
+    - Basic TIBCO BWCE application development
+    - Container concepts (Docker/Kubernetes)
+    - Database administration basics
+    - Kubernetes cluster (for K8s deployment) or Docker runtime (for standalone)
+    - Database instance (PostgreSQL/MySQL) for persistent monitoring data storage
+    
+    ## Template Output
+    - Kubernetes deployment manifests (if K8s selected)
+    - Docker run commands and configuration (if Docker selected)
+    - Database connection configuration
+    - Service and ingress setup for external access
+    - Documentation for setup and usage
+    
+    Perfect for teams looking to implement standardized BWCE application monitoring across their integration landscape.

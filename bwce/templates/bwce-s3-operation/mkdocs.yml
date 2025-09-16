@@ -1,8 +1,0 @@
-site_name: "BWCE S3 Operations"
-site_description: "TIBCO BusinessWorks Container Edition template for Amazon S3 file operations and cloud storage integration"
-
-nav:
-  - Introduction: index.md
-
-plugins:
-  - techdocs-core

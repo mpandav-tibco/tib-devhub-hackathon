@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bwce-monitoring-service
+  labels:
+    app: bwce-monitoring
+spec:
+  {% if values.enable_loadbalancer %}type: LoadBalancer{% else %}type: ClusterIP{% endif %}
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: bwce-monitoring
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bwce-monitoring-deployment
+  labels:
+    app: bwce-monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bwce-monitoring
+  template:
+    metadata:
+      labels:
+        app: bwce-monitoring
+    spec:
+      containers:
+      - name: bwce-monitoring
+        image: {{ values.name }}/bwce-monitoring:{{ values.bwce_mon_version }}
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        env:
+        - name: PERSISTENCE_TYPE
+          value: "{{ values.database_type }}"
+        {% if values.database_type != 'h2' %}
+        - name: DB_URL
+          value: "{{ values.database_type }}://{{ values.db_username }}:YOUR_PASSWORD@{{ values.db_host }}:{{ values.db_port }}/{{ values.db_name }}"
+        {% else %}
+        - name: DB_URL
+          value: "h2:mem:{{ values.db_name }}"
+        {% endif %}
+        - name: JAVA_OPTS
+          value: "-Xmx512m -Xms256m"
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        volumeMounts:
+        - name: bwce-mon-config
+          mountPath: /opt/tibco/bwce-mon/config
+          readOnly: true
+      volumes:
+      - name: bwce-mon-config
+        configMap:
+          name: bwce-monitoring-config
+          
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bwce-monitoring-config
+  labels:
+    app: bwce-monitoring
+data:
+  application.properties: |
+    # BWCE Monitoring Configuration
+    server.port=8080
+    
+    # Database Configuration
+    {% if values.database_type == 'postgres' %}
+    spring.datasource.driver-class-name=org.postgresql.Driver
+    spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+    {% elif values.database_type == 'mysql' %}
+    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+    spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+    {% else %}
+    spring.datasource.driver-class-name=org.h2.Driver
+    spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+    {% endif %}
+    
+    # JPA Configuration
+    spring.jpa.hibernate.ddl-auto=update
+    spring.jpa.show-sql=false
+    
+    # Logging Configuration
+    logging.level.com.tibco=INFO
+    logging.level.org.springframework=WARN
+    
+    # Monitoring Configuration
+    bwce.monitoring.refresh-interval=30000
+    bwce.monitoring.max-history=1000

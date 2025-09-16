@@ -1,0 +1,244 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: template-bwce-cicd
+  title: BWCE CI/CD Pipeline Template
+  description: |
+    Create a comprehensive CI/CD pipeline setup for TIBCO BusinessWorks Container Edition applications.
+    This template provides Jenkins pipeline configuration, Docker containerization, Kubernetes deployment,
+    and monitoring setup for BWCE applications with automated testing and deployment workflows.
+  tags:
+    - tibco
+    - bwce
+    - cicd
+    - jenkins
+    - kubernetes
+    - docker
+    - integration
+    - devops
+spec:
+  owner: group:tibco-integration-team
+  type: documentation
+  
+  parameters:
+    - title: Project Information
+      required:
+        - name
+        - description
+        - owner
+      properties:
+        name:
+          title: Project Name
+          type: string
+          description: Name of the CI/CD project (will be used for repository and deployment names)
+          pattern: '^[a-zA-Z0-9-_]+$'
+          maxLength: 50
+          ui:autofocus: true
+          ui:help: 'Use lowercase letters, numbers, hyphens, and underscores only'
+        description:
+          title: Description
+          type: string
+          description: Brief description of the CI/CD pipeline and its purpose
+          maxLength: 200
+        owner:
+          title: Owner
+          type: string
+          description: Team or individual responsible for this CI/CD setup
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind:
+                - Group
+                - User
+
+    - title: CI/CD Configuration
+      required:
+        - pipeline_type
+        - deployment_target
+        - enable_testing
+      properties:
+        pipeline_type:
+          title: Pipeline Type
+          type: string
+          description: Choose the type of CI/CD pipeline to configure
+          default: jenkins
+          enum:
+            - jenkins
+            - gitlab-ci
+            - github-actions
+          enumNames:
+            - 'Jenkins Pipeline'
+            - 'GitLab CI/CD'
+            - 'GitHub Actions'
+        deployment_target:
+          title: Deployment Target
+          type: string
+          description: Primary deployment target for BWCE applications
+          default: kubernetes
+          enum:
+            - kubernetes
+            - openshift
+            - docker-compose
+            - cloud-foundry
+          enumNames:
+            - 'Kubernetes'
+            - 'Red Hat OpenShift'
+            - 'Docker Compose'
+            - 'Cloud Foundry'
+        enable_testing:
+          title: Enable Automated Testing
+          type: boolean
+          description: Include automated testing stages in the pipeline
+          default: true
+        enable_security_scanning:
+          title: Enable Security Scanning
+          type: boolean
+          description: Include security vulnerability scanning in the pipeline
+          default: true
+
+    - title: Environment Strategy
+      required:
+        - environments
+      properties:
+        environments:
+          title: Target Environments
+          type: array
+          description: Select the environments for deployment pipeline
+          items:
+            type: string
+            enum:
+              - development
+              - testing
+              - uat
+              - staging
+              - production
+            enumNames:
+              - 'Development'
+              - 'Testing'
+              - 'User Acceptance Testing (UAT)'
+              - 'Staging'
+              - 'Production'
+          uniqueItems: true
+          ui:widget: checkboxes
+          default:
+            - development
+            - uat
+            - production
+        blue_green_deployment:
+          title: Blue-Green Deployment
+          type: boolean
+          description: Enable blue-green deployment strategy for zero-downtime deployments
+          default: false
+        auto_promote_to_prod:
+          title: Auto-Promote to Production
+          type: boolean
+          description: Automatically promote successful UAT builds to production
+          default: false
+
+    - title: Integration Configuration
+      properties:
+        include_database_migration:
+          title: Include Database Migration
+          type: boolean
+          description: Add database migration scripts and Flyway configuration
+          default: true
+        include_monitoring:
+          title: Include Monitoring Setup
+          type: boolean
+          description: Add Prometheus metrics, Grafana dashboards, and alerting rules
+          default: true
+        include_logging:
+          title: Include Centralized Logging
+          type: boolean
+          description: Add ELK stack configuration for centralized logging
+          default: true
+        notification_channels:
+          title: Notification Channels
+          type: array
+          description: Configure notification channels for pipeline events
+          items:
+            type: string
+            enum:
+              - email
+              - slack
+              - teams
+              - pagerduty
+            enumNames:
+              - 'Email'
+              - 'Slack'
+              - 'Microsoft Teams'
+              - 'PagerDuty'
+          uniqueItems: true
+          ui:widget: checkboxes
+
+    - title: Repository Configuration
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+              - gitlab.com
+              - bitbucket.org
+
+  steps:
+    - id: fetch
+      name: Fetch Base Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        copyWithoutTemplating:
+          - .github/workflows/*
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          destination: ${{ parameters.repoUrl | parseRepoUrl }}
+          owner: ${{ parameters.owner }}
+          pipeline_type: ${{ parameters.pipeline_type }}
+          deployment_target: ${{ parameters.deployment_target }}
+          enable_testing: ${{ parameters.enable_testing }}
+          enable_security_scanning: ${{ parameters.enable_security_scanning }}
+          environments: ${{ parameters.environments }}
+          blue_green_deployment: ${{ parameters.blue_green_deployment }}
+          auto_promote_to_prod: ${{ parameters.auto_promote_to_prod }}
+          include_database_migration: ${{ parameters.include_database_migration }}
+          include_monitoring: ${{ parameters.include_monitoring }}
+          include_logging: ${{ parameters.include_logging }}
+          notification_channels: ${{ parameters.notification_channels }}
+
+    - id: publish
+      name: Publish to Repository
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: 'BWCE CI/CD Pipeline - ${{ parameters.description }}'
+        repoUrl: ${{ parameters.repoUrl }}
+        defaultBranch: main
+        gitCommitMessage: 'Initial commit: BWCE CI/CD pipeline setup'
+        gitAuthorName: ${{ user.entity.metadata.name }}
+        gitAuthorEmail: ${{ user.entity.spec.profile.email }}
+
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
+      - title: CI/CD Documentation
+        url: ${{ steps.publish.output.remoteUrl }}/blob/main/docs/index.md
+        icon: docs
+      - title: Jenkins Pipeline Guide
+        url: ${{ steps.publish.output.remoteUrl }}/blob/main/docs/jenkins-setup.md
+        icon: techdocs

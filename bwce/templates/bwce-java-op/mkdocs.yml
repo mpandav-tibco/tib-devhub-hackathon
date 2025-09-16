@@ -1,8 +1,0 @@
-site_name: "BWCE Java Operations"
-site_description: "TIBCO BusinessWorks Container Edition template demonstrating scheduled Java method invocation with custom string functions"
-
-nav:
-  - Introduction: index.md
-
-plugins:
-  - techdocs-core

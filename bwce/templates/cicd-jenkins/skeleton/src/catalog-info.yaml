@@ -1,0 +1,53 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name | dump }}
+  description: ${{ values.description | dump }}
+  tags:
+    - bwce
+    - cicd
+    - jenkins
+    - kubernetes
+    {% if values.pipeline_type %}- ${{ values.pipeline_type }}{% endif %}
+    {% if values.deployment_target %}- ${{ values.deployment_target }}{% endif %}
+    {% if values.enable_testing %}- automated-testing{% endif %}
+    {% if values.enable_security_scanning %}- security-scanning{% endif %}
+    {% if values.blue_green_deployment %}- blue-green-deployment{% endif %}
+    {% for env in values.environments %}- {{ env }}{% endfor %}
+  annotations:
+    github.com/project-slug: ${{ values.destination.owner + "/" + values.destination.repo }}
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: ${{ values.name }}
+    {% if values.pipeline_type == "jenkins" %}jenkins.io/job-full-name: ${{ values.name }}-pipeline{% endif %}
+    {% if values.include_monitoring %}prometheus.io/scrape: "true"{% endif %}
+  links:
+    - title: TIBCO BusinessWorks Documentation
+      url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+      icon: docs
+    - title: CI/CD Pipeline Guide
+      url: https://github.com/${{ values.destination.owner }}/${{ values.destination.repo }}/blob/main/docs/index.md
+      icon: techdocs
+    {% if values.pipeline_type == "jenkins" %}
+    - title: Jenkins Pipeline
+      url: https://jenkins.company.com/job/${{ values.name }}-pipeline/
+      icon: jenkins
+    {% endif %}
+    {% if values.deployment_target == "kubernetes" %}
+    - title: Kubernetes Dashboard
+      url: https://k8s-dashboard.company.com/#!/deployment/default/${{ values.name }}
+      icon: kubernetes
+    {% endif %}
+    {% if values.include_monitoring %}
+    - title: Grafana Dashboard
+      url: https://grafana.company.com/d/bwce-app/${{ values.name }}
+      icon: grafana
+    {% endif %}
+spec:
+  type: service
+  lifecycle: production
+  owner: ${{ values.owner | dump }}
+  system: bwce-integration-platform
+  dependsOn:
+    {% if values.include_database_migration %}- component:postgres-database{% endif %}
+    {% if values.include_monitoring %}- resource:prometheus-monitoring{% endif %}
+    {% if values.include_logging %}- resource:elasticsearch-logging{% endif %}
