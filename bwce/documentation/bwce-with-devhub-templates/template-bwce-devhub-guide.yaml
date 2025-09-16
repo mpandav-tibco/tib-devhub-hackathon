@@ -5,6 +5,7 @@ metadata:
   title: BWCE with DevHub Templates Guide
   description: Documentation template providing comprehensive know-how for integrating TIBCO BusinessWorks Container Edition with Developer Hub templates, including Jenkins CI/CD, Kubernetes deployment, and governance tools
   tags:
+    - devhub-marketplace
     - bwce
     - devhub
     - templates
@@ -16,6 +17,21 @@ metadata:
     - tibco
     - businessworks
     - know-how
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 9
+    isMultiInstall: false
+    imageURL: ""
+    moreInfo:
+      - text: BWCE Documentation
+        url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+        icon: docs
+      - text: TIBCO Developer Hub
+        url: https://docs.tibco.com/pub/platform-cp/1.10.0/doc/html/Default.htm#Subsystems/platform-devhub/User-Guide/TIBCO-Developer-Hub-Overview.htm
+        icon: docs
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/documentation/bwce-with-devhub-templates
+        icon: github
 spec:
   owner: tibco-templates
   type: documentation
