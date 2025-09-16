@@ -117,11 +117,13 @@ spec:
         values:
           name: bwce-documentation-${{ '' + new Date().getTime() }}
           description: "BWCE DevHub Templates Integration Guide"
-    - id: registerItem
-      name: Installing Marketplace Entry...
+    
+    - id: register
+      name: Register Documentation in Catalog
       action: catalog:register
       input:
-        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-java-op/template-java.yaml
+        repoContentsUrl: ${{ steps.fetch.output.targetUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
 
   output:
     text:
@@ -137,16 +139,15 @@ spec:
           
           Check the generated files and customize them for your environment.
     links:
-      - title: Open in catalog
-        type: catalog
+      - title: Open in Catalog
         icon: catalog
-        entityRef: ${{ steps.registerItem.output.entityRef }}
-      - title: Documents
+        entityRef: ${{ steps.register.output.entityRef }}
+      - title: View Documentation
         url: /docs?filters%5Buser%5D=all&limit=20
         icon: techdocs
-      - icon: docs
-        title: Open Create Your Own Marketplace Entry Docs
-        url: /docs/default/System/create-marketplace-entry
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace?filters%5Bkind%5D=template&filters%5Btags%5D=devhub-marketplace&limit=20
 
 
         
