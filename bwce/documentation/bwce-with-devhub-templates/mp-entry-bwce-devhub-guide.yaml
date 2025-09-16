@@ -109,16 +109,28 @@ spec:
           type: boolean
           default: false
   steps:
-    - id: register
-      name: Register
-      action: catalog:register
+    - id: fetch
+      name: Generate Documentation
+      action: fetch:template
       input:
-        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/documentation/bwce-with-devhub-templates/template-bwce-devhub-guide.yaml
+        url: ./skeleton
+        values:
+          name: bwce-documentation-${{ '' + new Date().getTime() }}
+          description: "BWCE DevHub Templates Integration Guide"
   output:
+    text:
+      - title: Documentation Generated
+        content: |
+          🎉 **BWCE DevHub Templates documentation has been successfully generated!**
+          
+          Your comprehensive integration guide includes:
+          - Developer Hub template setup and configuration
+          - Jenkins CI/CD pipeline automation 
+          - Kubernetes deployment strategies
+          - Security and governance best practices
+          
+          Check the generated files and customize them for your environment.
     links:
-      - title: Open in catalog
-        icon: catalog
-        entityRef: ${{ steps.register.output.entityRef }}
-      - title: Marketplace
+      - title: Back to Marketplace
         icon: dashboard
         url: /marketplace?filters%5Bkind%5D=template&filters%5Btags%5D=devhub-marketplace&limit=20
