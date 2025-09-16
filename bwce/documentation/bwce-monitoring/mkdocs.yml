@@ -1,0 +1,18 @@
+site_name: BWCE Monitoring Setup Guide
+site_description: Documentation template for TIBCO BusinessWorks Container Edition Monitoring (BWCEMon) - Complete guide for creating, building, deploying, and using BWCEMon with BWCE applications
+
+nav:
+  - Introduction: index.md
+
+plugins:
+  - techdocs-core
+
+docs_dir: docs
+site_dir: site
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - pymdownx.superfences
+  - toc:
+      permalink: true

@@ -55,53 +55,11 @@ spec:
           description: |
             ## Install BWCE DevHub Templates Guide into your TIBCO Developer Hub
 
-            **ID:** mp-entry-bwce-devhub-templates-guide
+            **Description:** Comprehensive documentation providing step-by-step guidance for integrating TIBCO BusinessWorks Container Edition with Developer Hub templates, Jenkins CI/CD pipelines, and Kubernetes deployment.
 
-            **Description:** Documentation template providing comprehensive know-how and step-by-step guidance for integrating TIBCO BusinessWorks Container Edition with Developer Hub templates, Jenkins CI/CD pipelines, Kubernetes deployment, and governance tools.
+            **What You'll Get:** Complete integration guide with Developer Hub template setup, Jenkins pipeline automation, Kubernetes deployment strategies, and governance best practices.
 
-            ### What This Documentation Template Provides:
-
-            **📚 Comprehensive Knowledge Base:**
-            - **Developer Hub Integration** - Step-by-step guide for BWCE template integration
-            - **Jenkins CI/CD Setup** - Complete pipeline configuration and automation
-            - **Kubernetes Deployment** - Container orchestration and deployment strategies
-            - **Template Governance** - Best practices for template management and governance
-
-            **🔧 Technical Deep Dives:**
-            - **Template Creation** - How to create and configure BWCE templates in Developer Hub
-            - **Pipeline Automation** - Jenkins integration with BWCE applications
-            - **Service Discovery** - Kubernetes service mesh and deployment patterns
-            - **Monitoring Integration** - BWCEMon and observability setup
-
-            **🚀 Development Workflows:**
-            - **GitOps Integration** - Version control and automated deployment workflows  
-            - **Multi-Environment Deployment** - Development, UAT, and production strategies
-            - **Security Implementation** - Container security and governance compliance
-            - **Template Publishing** - Marketplace integration and template distribution
-
-            **📖 Learning Resources:**
-            - **19 Detailed Chapters** - Comprehensive coverage of BWCE DevHub integration
-            - **Visual Guides** - Screenshots and diagrams for each major step
-            - **Code Examples** - Sample configurations and implementation patterns
-            - **Best Practices** - Industry-standard approaches and recommendations
-
-            **💡 Use Cases Covered:**
-            - BWCE application development with Developer Hub templates
-            - CI/CD pipeline setup for integration applications
-            - Kubernetes-native BWCE deployment strategies
-            - Template governance and lifecycle management
-            - Service mesh integration and observability
-
-            **🏗️ Documentation Structure:**
-            - Introduction to BWCE and Developer Hub integration
-            - Template creation and configuration guides
-            - Jenkins pipeline setup and automation
-            - Kubernetes deployment and service management
-            - Monitoring, logging, and observability setup
-            - Governance, security, and compliance guidelines
-
-            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. You are responsible for reviewing the specific license terms that apply to each item that you access or use. Cloud Software Group, Inc. and its affiliates: (1) do not make any representation, promises, or guarantees about these items; and (2) are making these items available to you "AS IS," without any warranties or indemnities.
-            This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
 
             **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
         accept:
