@@ -1,0 +1,110 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: mp-entry-template-bwce-java-operations
+  title: BWCE Java Operations Template
+  description: A TIBCO BusinessWorks Container Edition template demonstrating scheduled Java method invocation with custom string functions, deployment automation, and governance features.
+  backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 8
+    isMultiInstall: false
+    imageURL: ""
+    moreInfo:
+      - text: BWCE Documentation
+        url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+        icon: docs
+      - text: TIBCO BusinessWorks
+        url: https://www.tibco.com/products/tibco-businessworks
+        icon: star
+      - text: Sample Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/templates/bwce-java-op
+        icon: github
+  tags:
+    - devhub-marketplace
+    - bwce-templates
+    - business-works-container-edition
+    - java-integration
+    - scheduler
+    - recommended
+spec:
+  owner: group:default/marketplace-entries-group
+  type: template
+  presentation:
+    buttonLabels:
+      createButtonText: Install
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      errorMessage: Please accept the Marketplace Entry
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install BWCE Java Operations Template into your TIBCO Developer Hub
+
+            **ID:** mp-entry-template-bwce-java-operations
+
+            **Description:** A TIBCO BusinessWorks Container Edition template demonstrating scheduled Java method invocation with custom string functions, deployment automation, and governance features.
+
+            ### What This Template Provides:
+
+            **🔧 Core Features:**
+            - **Timer-based Scheduler** - Automated execution at specified intervals
+            - **Java Method Invocation** - Custom Java string functions integration
+            - **BWCE Process Design** - Complete BusinessWorks process implementation
+            - **Error Handling** - Comprehensive exception management and logging
+
+            **🚀 Deployment & CI/CD:**
+            - **Multi-target Deployment** - Support for Kubernetes and TIBCO Platform
+            - **Jenkins Integration** - Automated build and deployment pipelines
+            - **Container Ready** - Optimized for containerized environments
+
+            **🛡️ Governance & Security:**
+            - **Code Quality Scanning** - Optional SonarQube integration
+            - **Security Scanning** - Trivy container security analysis
+            - **Best Practices** - Following TIBCO development guidelines
+
+            **📦 Template Contents:**
+            - Complete BWCE application with Java invocation
+            - Custom StringFunctions Java class
+            - Deployment configurations for K8S and TIBCO Platform
+            - Documentation and examples
+            - Jenkins pipeline configuration
+
+            **💡 Use Cases:**
+            - Scheduled data processing with custom Java logic
+            - Integration scenarios requiring custom Java functions
+            - Learning BWCE Java invocation capabilities
+            - CI/CD pipeline demonstrations
+
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. You are responsible for reviewing the specific license terms that apply to each item that you access or use. Cloud Software Group, Inc. and its affiliates: (1) do not make any representation, promises, or guarantees about these items; and (2) are making these items available to you "AS IS," without any warranties or indemnities.
+            This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: null
+          enum:
+            - null
+            - true
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-java-op/template-java.yaml
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Templates
+        url: /create?filters%5Bkind%5D=template&filters%5Buser%5D=all&limit=20
+        icon: kind:template
+      - icon: kind:template
+        title: Create BWCE Java Operations Project
+        url: /create/templates/default/bwce-template-sch-java

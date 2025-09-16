@@ -1,0 +1,86 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: mp-entry-bwce-monitoring-guide
+  title: BWCE Monitoring Setup Guide
+  description: Documentation template for TIBCO BusinessWorks Container Edition Monitoring (BWCEMon) - Complete guide for creating, building, deploying, and using BWCEMon with BWCE applications
+  backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 8
+    isMultiInstall: false
+    imageURL: ""
+    moreInfo:
+      - text: Official BWCEMon Documentation
+        url: https://docs.tibco.com/pub/bwce/2.8.2/doc/html/Default.htm#bwce-app-monitoring/
+        icon: docs
+      - text: TIBCO Software Download
+        url: https://edelivery.tibco.com
+        icon: download
+      - text: BWCE Documentation
+        url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+        icon: docs
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/documentation/bwce-monitoring
+        icon: github
+  tags:
+    - devhub-marketplace
+    - tibco
+    - bwce
+    - monitoring
+    - documentation
+    - bwcemon
+    - kubernetes
+    - docker
+    - observability
+    - deployment
+    - recommended
+spec:
+  owner: tibco-templates
+  type: service
+  presentation:
+    buttonLabels:
+      createButtonText: Install
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install BWCE Monitoring Setup Guide into your TIBCO Developer Hub
+
+            **Description:** Complete documentation for TIBCO BusinessWorks Container Edition Monitoring (BWCEMon) setup, deployment, and integration with BWCE applications.
+
+            **What You'll Get:** Comprehensive guides for BWCEMon download, Docker image creation, database configuration, Kubernetes deployment, and BWCE application integration.
+
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: false
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/documentation/bwce-monitoring/catalog-info.yaml
+
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Documents
+        url: /docs?filters%5Buser%5D=all&limit=20
+        icon: techdocs
+      - icon: docs
+        title: Open BWCE Monitoring Guide
+        url: /docs/default/System/bwce-monitoring-setup-guide
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace?filters%5Bkind%5D=template&filters%5Btags%5D=devhub-marketplace&limit=20
