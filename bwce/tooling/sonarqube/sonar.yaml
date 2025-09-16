@@ -1,0 +1,73 @@
+# create namespace for deployment
+# kubectl create namespace sonarqube
+
+## Install Postgre DB using other script that we will use
+
+# Sonar installation through Helm
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarqube
+  namespace: sonarqube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarqube
+  template:
+    metadata:
+      labels:
+        app: sonarqube
+    spec:
+      containers:
+        - name: sonarqube
+          image: mpandav/tib-sonarqube-community-lts
+          ports:
+            - containerPort: 9000
+          env:
+            - name: SONAR_JDBC_URL
+              value: jdbc:postgresql://postgresql-service.database.svc.cluster.local:5432/sonar
+            - name: SONAR_JDBC_USERNAME
+              value: sonar
+            - name: SONAR_JDBC_PASSWORD
+              value: sonar # Replace with your password
+          resources: # Add this section for resource limits
+            limits:
+              cpu: "1" # Example: Limit CPU to 1 core
+              memory: 2G # Example: Limit memory to 512 MB
+            requests:
+              cpu: "0.5" # Example: Request 0.5 cores
+              memory: 256Mi # Example: Request 256 MB 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarqube-service
+  namespace: sonarqube
+spec:
+  selector:
+    app: sonarqube
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sonarqube-ingress
+  namespace: sonarqube
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: sonarqube.localhost.dataplanes.pro # Replace with your domain
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sonarqube-service
+                port:
+                  number: 9000

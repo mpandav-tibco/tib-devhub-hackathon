@@ -1,0 +1,164 @@
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: ecommerce-team
+  description: The team responsible for the e-commerce platform
+spec:
+  type: team
+  profile:
+    displayName: E-Commerce Team
+    email: ecommerce-team@example.com
+    picture: https://example.com/ecommerce-team-logo.png
+  parent: group:default/engineering
+  children: [engineering]
+  members: []
+  tags: e-commerce-team
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: engineering
+  description: The engineering organization
+spec:
+  type: organization
+  profile:
+    displayName: Engineering
+    email: engineering@example.com
+    picture: https://example.com/engineering-logo.png
+  parent: E-Commerce
+  children:
+    - group:default/ecommerce-team
+  members: [jdoe]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: inventory-team
+  description: The team responsible for managing inventory
+spec:
+  type: team
+  profile:
+    displayName: Inventory Team
+    email: inventory-team@example.com
+  parent: group:default/engineering
+  children:
+    - component:default/inventory-service
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: order-team
+  description: The team responsible for order processing
+spec:
+  type: team
+  profile:
+    displayName: Order Team
+    email: order-team@example.com
+  parent: group:default/engineering
+  children:
+    - component:default/checkout-api
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: shipping-team
+  description: The team responsible for shipping integration
+spec:
+  type: team
+  profile:
+    displayName: Shipping Team
+    email: shipping-team@example.com
+  parent: group:default/engineering
+  children:
+    - component:default/shipping-service
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: user-team
+  description: The team responsible for user management
+spec:
+  type: team
+  profile:
+    displayName: User Team
+    email: user-team@example.com
+  parent: group:default/engineering
+  children:
+    - component:default/user-service
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: catalog-team
+  description: The team responsible for the product catalog
+spec:
+  type: team
+  profile:
+    displayName: Catalog Team
+    email: catalog-team@example.com
+  parent: group:default/engineering
+  children:
+    - component:default/catalog-api
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: checkout-team
+  description: The team responsible for the checkout process
+spec:
+  type: team
+  profile:
+    displayName: Checkout Team
+    email: checkout-team@example.com
+  parent: group:default/engineering
+  children:
+    - component:default/checkout-api
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: database-team
+  description: The team responsible for database administration
+spec:
+  type: team
+  profile:
+    displayName: Database Team
+    email: database-team@example.com
+  parent: group:default/engineering
+  children:
+    - component:default/catalog-database
+    - component:default/cart-database
+    - component:default/user-database
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: payments-team
+  description: The team responsible for payment processing
+spec:
+  type: team
+  profile:
+    displayName: Payments Team
+    email: payments-team@example.com
+  parent: group:default/engineering
+  children:
+    - component:default/payment-gateway
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: jdoe
+spec:
+  profile:
+    displayName: Jenny Doe
+    email: jenny-doe@example.com
+    picture: https://example.com/staff/jenny-with-party-hat.jpeg
+  memberOf: [engineering]

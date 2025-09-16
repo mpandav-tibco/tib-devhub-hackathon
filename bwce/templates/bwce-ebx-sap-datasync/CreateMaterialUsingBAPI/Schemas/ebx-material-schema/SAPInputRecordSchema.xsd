@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:tibex="http://www.tibco.com/bpel/2007/extensions"
+	xmlns:tns="http://www.example.com/namespaces/tns/1686747150555"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.example.com/namespaces/tns/1686747150555"
+	xmlns:pref="http://example.com/material" xmlns:pref1="http://example.com/plant">
+
+
+	<xsd:import schemaLocation="Get-Material-ResponseSchema-output.xsd"
+		namespace="http://example.com/material">
+	</xsd:import>
+	<xsd:import schemaLocation="Get-Plant-ResponseSchema-output.xsd" namespace="http://example.com/plant"></xsd:import>
+	<xsd:element name="SAPInputRecord">
+		<xsd:complexType>
+
+			<xsd:all>
+				<xsd:element ref="pref1:plant"></xsd:element>
+				<xsd:element ref="pref:material"></xsd:element>
+			</xsd:all>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

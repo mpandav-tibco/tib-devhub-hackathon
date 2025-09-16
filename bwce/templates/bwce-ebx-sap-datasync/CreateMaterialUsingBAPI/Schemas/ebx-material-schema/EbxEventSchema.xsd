@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid Technologies Online Tools 1.0 (https://www.liquid-technologies.com) -->
+<xs:schema xmlns:ebxd="urn:ebx-schemas:deployment_1.0" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="schema1.xsd" namespace="urn:ebx-schemas:deployment_1.0" />
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="Material">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="mandant" type="xs:string" minOccurs="0"/>
+              <xs:element name="matnr" type="xs:string" minOccurs="0"/>
+              <xs:element name="material-desc" type="xs:string" minOccurs="0"/>
+              <xs:element name="SalesText" type="xs:string" minOccurs="0"/>
+              <xs:element name="industrySector" type="xs:string" minOccurs="0"/>
+              <xs:element name="mat-type" type="xs:string" minOccurs="0"/>
+              <xs:element name="matl_group" type="xs:string" minOccurs="0"/>
+              <xs:element name="sourceMaterialId" type="xs:string" minOccurs="0"/>
+              <xs:element name="matOwner" type="xs:string" minOccurs="0"/>
+              <xs:element name="phasedOut" type="xs:string" minOccurs="0"/>
+              <xs:element name="phaseOutDate" type="xs:string" minOccurs="0"/>
+              <xs:element name="recordStatus" type="xs:string" minOccurs="0"/>
+              <xs:element name="recordCreated" type="xs:string" minOccurs="0"/>           
+                   <xs:element name="general-data" minOccurs="0">
+                      <xs:complexType>
+                        <xs:all>
+                          <xs:element name="base_uom" type="xs:string" minOccurs="0"/>
+                          <xs:element name="old_mat_no" type="xs:string" minOccurs="0"/>
+                          <xs:element name="division" type="xs:string" minOccurs="0"/>
+                          <xs:element name="lab_design" type="xs:string" minOccurs="0"/>
+                          <xs:element name="prod_memo" type="xs:string" minOccurs="0"/>
+                          <xs:element name="prod_hier" type="xs:string" minOccurs="0"/>
+                          <xs:element name="x_plant_matl_status" type="xs:string" minOccurs="0"/>
+                          <xs:element name="valid_from" type="xs:string" minOccurs="0"/>
+                          <xs:element name="genItemCatGroup" type="xs:string" minOccurs="0"/>
+                          <xs:element name="assign-effect-vals" type="xs:string" minOccurs="0"/>
+                        </xs:all>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="dimensions" minOccurs="0">
+                      <xs:complexType>
+                        <xs:all>
+                          <xs:element name="gross_wt" type="xs:string" minOccurs="0"/>
+                          <xs:element name="unit_of_wt" type="xs:string" minOccurs="0"/>
+                          <xs:element name="net_weight" type="xs:string" minOccurs="0"/>
+                          <xs:element name="volume" type="xs:string" minOccurs="0"/>
+                          <xs:element name="volumeunit" type="xs:string" minOccurs="0"/>
+                          <xs:element name="size_dim" type="xs:string" minOccurs="0"/>
+                          <xs:element name="ean_upc" type="xs:string" minOccurs="0"/>
+                          <xs:element name="ean_cat" type="xs:string" minOccurs="0"/>
+                        </xs:all>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="packaging-material-data" minOccurs="0">
+                      <xs:complexType>
+                        <xs:all>
+                          <xs:element name="matl-grp-pack-matls" type="xs:string" minOccurs="0"/>
+                        </xs:all>
+                      </xs:complexType>
+                    </xs:element>
+              <xs:element name="sourceSystem" type="xs:string" minOccurs="0"/>
+              <xs:element name="sourceSystemId" type="xs:string" minOccurs="0"/>
+              <xs:element name="validFrom" type="xs:string" minOccurs="0"/>
+              <xs:element name="validTo" type="xs:string" minOccurs="0"/>
+            </xs:all>
+            <xs:attribute ref="ebxd:uuid" use="required" />
+            <xs:attribute ref="ebxd:creator" use="required" />
+            <xs:attribute ref="ebxd:lastUser" use="required" />
+            <xs:attribute ref="ebxd:lastTime" use="required" />
+            <xs:attribute ref="ebxd:creationTime" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:all>
+      <xs:attribute ref="ebxd:uuid" use="required" />
+      <xs:attribute ref="ebxd:creator" use="required" />
+      <xs:attribute ref="ebxd:lastUser" use="required" />
+      <xs:attribute ref="ebxd:lastTime" use="required" />
+      <xs:attribute ref="ebxd:creationTime" use="required" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
