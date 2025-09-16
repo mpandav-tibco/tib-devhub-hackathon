@@ -1,0 +1,11 @@
+site_name: BWCE DevHub Templates Guide
+site_description: Documentation template providing comprehensive know-how and step-by-step guidance for integrating TIBCO BusinessWorks Container Edition with Developer Hub templates, Jenkins CI/CD pipelines, Kubernetes deployment, and governance tools
+
+nav:
+  - Introduction: index.md
+
+plugins:
+  - techdocs-core
+
+docs_dir: docs
+site_dir: site
