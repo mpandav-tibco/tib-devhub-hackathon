@@ -40,8 +40,8 @@ metadata:
     - know-how
     - recommended
 spec:
-  owner: group:default/marketplace-entries-group
-  type: template
+  owner: tibco-templates
+  type: service
   presentation:
     buttonLabels:
       createButtonText: Install
@@ -49,7 +49,6 @@ spec:
     - title: Accept the Marketplace Entry
       required:
         - accept
-      errorMessage: Please accept the Marketplace Entry
       properties:
         description:
           type: "null"
@@ -108,25 +107,19 @@ spec:
         accept:
           title: I Agree
           type: boolean
-          default: null
-          enum:
-            - null
-            - true
+          default: false
   steps:
-    - id: registerItem
-      name: Installing Marketplace Entry...
+    - id: register
+      name: Register
       action: catalog:register
       input:
-        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/documentation/bwce-with-devhub-templates/template-bwce-devhub-guide.yaml
+        repoContentsUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/documentation/bwce-with-devhub-templates
+        catalogInfoPath: '/template-bwce-devhub-guide.yaml'
   output:
     links:
       - title: Open in catalog
-        type: catalog
         icon: catalog
-        entityRef: ${{ steps.registerItem.output.entityRef }}
-      - title: Templates
-        url: /create?filters%5Bkind%5D=template&filters%5Buser%5D=all&limit=20
-        icon: kind:template
-      - icon: kind:template
-        title: Create BWCE DevHub Integration Documentation
-        url: /create/templates/default/bwce-devhub-templates-guide
+        entityRef: ${{ steps.register.output.entityRef }}
+      - title: Marketplace
+        icon: dashboard
+        url: /marketplace?filters%5Bkind%5D=template&filters%5Btags%5D=devhub-marketplace&limit=20
