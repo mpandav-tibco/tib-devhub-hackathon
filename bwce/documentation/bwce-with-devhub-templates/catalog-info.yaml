@@ -15,7 +15,7 @@ metadata:
     - businessworks
   annotations:
     github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
-    backstage.io/techdocs-ref: dir:./bwce/documentation/bwce-with-devhub-templates
+    backstage.io/techdocs-ref: dir:.
   links:
     - title: TIBCO BusinessWorks
       url: https://www.tibco.com/products/tibco-businessworks
