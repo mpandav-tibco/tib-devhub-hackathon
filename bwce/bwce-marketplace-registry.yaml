@@ -1,0 +1,82 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: bwce-marketplace-registry
+  title: BWCE Marketplace Registry
+  description: |
+    Comprehensive registry for all TIBCO BusinessWorks Container Edition marketplace entries.
+    This single file registers all BWCE templates, documentation, and tooling assets in the Developer Hub marketplace.
+    
+    Categories included:
+    - Documentation & Guides (2 entries)
+    - Learning & Tutorials (1 entry)  
+    - Application Templates (3 entries)
+    - Integration Templates (2 entries)
+    - DevOps & Tooling (2 entries)
+    
+    Total: 10 BWCE marketplace entries
+  annotations:
+    backstage.io/managed-by-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/bwce-marketplace-registry.yaml
+    backstage.io/managed-by-origin: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/bwce-marketplace-registry.yaml
+    marketplace.tibco.com/category: "BWCE Registry"
+    marketplace.tibco.com/total-entries: "10"
+    marketplace.tibco.com/last-updated: "2025-09-16"
+  tags:
+    - bwce
+    - marketplace
+    - tibco
+    - registry
+    - bulk-registration
+    - businessworks
+    - container-edition
+spec:
+  targets:
+    # =======================================================
+    # BWCE DOCUMENTATION & GUIDES (2 entries)
+    # =======================================================
+    
+    # BWCE DevHub Integration Guide - Comprehensive integration documentation
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/documentation/bwce-with-devhub-templates/mp-entry-bwce-devhub-guide.yaml
+    
+    # BWCE Monitoring Setup Guide - BWCEMon deployment and configuration
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/documentation/bwce-monitoring/mp-entry-bwce-monitoring.yaml
+    
+    # =======================================================
+    # BWCE LEARNING & TUTORIALS (1 entry)
+    # =======================================================
+    
+    # BWCE Basics Learning Guide - Fundamentals and hands-on tutorials
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/basics-of-bwce/mp-entry-bwce-basics.yaml
+    
+    # =======================================================
+    # BWCE APPLICATION TEMPLATES (3 entries)
+    # =======================================================
+    
+    # Order Processing with Kafka - E-commerce order management template
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-order-kafka/mp-entry-template-bwce-order-kafka.yaml
+    
+    # S3 Operations Template - AWS S3 integration and file processing
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-s3-operation/mp-entry-template-bwce-s3-operation.yaml
+    
+    # Java Operations Template - Custom Java integration and operations
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-java-op/mp-entry-template-bwce-java-operations.yaml
+    
+    # =======================================================
+    # BWCE INTEGRATION TEMPLATES (2 entries)
+    # =======================================================
+    
+    # EBX-SAP Data Sync - Enterprise data synchronization template
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-ebx-sap-datasync/mp-entry-template-bwce-ebx-sap-datasync.yaml
+    
+    # CDC Salesforce-EBX - Change data capture and synchronization
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-cdc-salesforce-ebx/mp-entry-template-bwce-cdc-salesforce-ebx.yaml
+    
+    # =======================================================
+    # BWCE DEVOPS & TOOLING (2 entries) 
+    # =======================================================
+    
+    # CI/CD Jenkins Pipeline - Complete DevOps pipeline template
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/cicd-jenkins/mp-entry-bwce-cicd.yaml
+    
+    # SonarQube BWCE Plugin - Code quality and analysis tooling
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/tooling/sonarqube/mp-entry-sonarqube-bwce-plugin.yaml
