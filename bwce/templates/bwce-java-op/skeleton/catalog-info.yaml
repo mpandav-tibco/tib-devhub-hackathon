@@ -1,31 +1,41 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${{values.name | dump}}
-  description: ${{values.description | dump}}
-  tag:
-    - platform
-  tibcoPlatformApps:
-    - appType: BWCE
-      appName: BWCE-App
-      dataPlaneName: dpName
-      dpId: dpId
-      capabilityInstanceId: caInId
-      appId: appId
-  links:
-    - title: TIBCO Cloud Home
-      url: https://cloud.tibco.com/
-    - title: Documentation
-      url: https://eu.integration.cloud.tibco.com/docs/index.html
-    - title: TIBCO Cloud Integration
-      url: https://eu.integration.cloud.tibco.com/applications
+  name: ${{ values.name | dump }}
+  title: ${{ values.title | dump }}
+  description: ${{ values.description | dump }}
+  tags:
+    - bwce
+    - java-integration
+    - scheduler
+    - template
+    - tibco
+    - businessworks
   annotations:
-    github.com/project-slug: ${{values.destination.owner + "/" + values.destination.repo}}
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
     backstage.io/techdocs-ref: dir:.
-    backstage.io/kubernetes-id: ${{values.destination.repo}}
-    jenkins.io/job-full-name: bwce/build_bwce_ear
+  links:
+    - title: BWCE Documentation
+      url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+      icon: docs
+    - title: TIBCO BusinessWorks
+      url: https://www.tibco.com/products/tibco-businessworks
+      icon: star
+    - title: Template Source
+      url: https://github.com/mpandav-tibco/devhub-hackthon/tree/main/bwce/templates/bwce-java-op
+      icon: github
 spec:
   type: service
   lifecycle: development
-  owner: ${{values.owner | dump}}
-  system: ${{values.system | dump}}
+  owner: ${{ values.owner | dump }}
+  system: tibco-integration-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: bwce-java-operations-template-location
+  description: Location for BWCE Java Operations Template
+spec:
+  targets:
+    - ./template-java.yaml
+    - ./mp-entry-template-bwce-java-operations.yaml
