@@ -1,47 +1,132 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
-  name: mp-bwce-devhub-templates-guide
+  name: mp-entry-bwce-devhub-templates-guide
   title: BWCE DevHub Templates Guide
   description: Documentation template providing comprehensive know-how and step-by-step guidance for integrating TIBCO BusinessWorks Container Edition with Developer Hub templates, Jenkins CI/CD pipelines, Kubernetes deployment, and governance tools
+  backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 9
+    isMultiInstall: false
+    imageURL: ""
+    moreInfo:
+      - text: BWCE Documentation
+        url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+        icon: docs
+      - text: TIBCO Developer Hub
+        url: https://docs.tibco.com/pub/platform-cp/1.10.0/doc/html/Default.htm#Subsystems/platform-devhub/User-Guide/TIBCO-Developer-Hub-Overview.htm
+        icon: docs
+      - text: Backstage Documentation
+        url: https://backstage.io/docs/
+        icon: docs
+      - text: Jenkins Integration
+        url: https://www.jenkins.io/
+        icon: build
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/documentation/bwce-with-devhub-templates
+        icon: github
   tags:
-    - bwce
-    - devhub
-    - templates
+    - devhub-marketplace
+    - bwce-templates
     - documentation
+    - devhub
     - jenkins
     - kubernetes
     - ci-cd
     - governance
     - tibco
     - businessworks
-  annotations:
-    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
-    backstage.io/techdocs-ref: dir:.
-  links:
-    - title: TIBCO BusinessWorks
-      url: https://www.tibco.com/products/tibco-businessworks
-      icon: star
-    - title: TIBCO Developer Hub
-      url: https://docs.tibco.com/pub/platform-cp/1.10.0/doc/html/Default.htm#Subsystems/platform-devhub/User-Guide/TIBCO-Developer-Hub-Overview.htm
-      icon: docs
-    - title: Backstage Documentation
-      url: https://backstage.io/docs/
-      icon: docs
-    - title: Jenkins Integration
-      url: https://www.jenkins.io/
-      icon: build
+    - know-how
+    - recommended
 spec:
-  type: documentation
-  lifecycle: production
-  owner: group:default/tibco-templates
-  system: tibco-developer-platform
----
-apiVersion: backstage.io/v1alpha1
-kind: Location
-metadata:
-  name: bwce-devhub-templates-guide-location
-  description: Location for BWCE DevHub Templates Guide
-spec:
-  targets:
-    - ./template-bwce-devhub-guide.yaml
+  owner: group:default/marketplace-entries-group
+  type: template
+  presentation:
+    buttonLabels:
+      createButtonText: Install
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      errorMessage: Please accept the Marketplace Entry
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install BWCE DevHub Templates Guide into your TIBCO Developer Hub
+
+            **ID:** mp-entry-bwce-devhub-templates-guide
+
+            **Description:** Documentation template providing comprehensive know-how and step-by-step guidance for integrating TIBCO BusinessWorks Container Edition with Developer Hub templates, Jenkins CI/CD pipelines, Kubernetes deployment, and governance tools.
+
+            ### What This Documentation Template Provides:
+
+            **📚 Comprehensive Knowledge Base:**
+            - **Developer Hub Integration** - Step-by-step guide for BWCE template integration
+            - **Jenkins CI/CD Setup** - Complete pipeline configuration and automation
+            - **Kubernetes Deployment** - Container orchestration and deployment strategies
+            - **Template Governance** - Best practices for template management and governance
+
+            **🔧 Technical Deep Dives:**
+            - **Template Creation** - How to create and configure BWCE templates in Developer Hub
+            - **Pipeline Automation** - Jenkins integration with BWCE applications
+            - **Service Discovery** - Kubernetes service mesh and deployment patterns
+            - **Monitoring Integration** - BWCEMon and observability setup
+
+            **🚀 Development Workflows:**
+            - **GitOps Integration** - Version control and automated deployment workflows  
+            - **Multi-Environment Deployment** - Development, UAT, and production strategies
+            - **Security Implementation** - Container security and governance compliance
+            - **Template Publishing** - Marketplace integration and template distribution
+
+            **📖 Learning Resources:**
+            - **19 Detailed Chapters** - Comprehensive coverage of BWCE DevHub integration
+            - **Visual Guides** - Screenshots and diagrams for each major step
+            - **Code Examples** - Sample configurations and implementation patterns
+            - **Best Practices** - Industry-standard approaches and recommendations
+
+            **💡 Use Cases Covered:**
+            - BWCE application development with Developer Hub templates
+            - CI/CD pipeline setup for integration applications
+            - Kubernetes-native BWCE deployment strategies
+            - Template governance and lifecycle management
+            - Service mesh integration and observability
+
+            **🏗️ Documentation Structure:**
+            - Introduction to BWCE and Developer Hub integration
+            - Template creation and configuration guides
+            - Jenkins pipeline setup and automation
+            - Kubernetes deployment and service management
+            - Monitoring, logging, and observability setup
+            - Governance, security, and compliance guidelines
+
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. You are responsible for reviewing the specific license terms that apply to each item that you access or use. Cloud Software Group, Inc. and its affiliates: (1) do not make any representation, promises, or guarantees about these items; and (2) are making these items available to you "AS IS," without any warranties or indemnities.
+            This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: null
+          enum:
+            - null
+            - true
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/documentation/bwce-with-devhub-templates/template-bwce-devhub-guide.yaml
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Templates
+        url: /create?filters%5Bkind%5D=template&filters%5Buser%5D=all&limit=20
+        icon: kind:template
+      - icon: kind:template
+        title: Create BWCE DevHub Integration Documentation
+        url: /create/templates/default/bwce-devhub-templates-guide
