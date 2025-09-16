@@ -1,0 +1,116 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: sonarqube-bwce-plugin
+  title: SonarQube BWCE Plugin Setup
+  description: Set up SonarQube server with TIBCO BusinessWorks Container Edition plugin for code quality analysis
+  tags:
+    - bwce
+    - sonarqube
+    - code-quality
+    - tibco
+    - businessworks
+    - docker
+spec:
+  owner: tibco-templates
+  type: service
+
+  parameters:
+    - title: SonarQube Server Configuration
+      required:
+        - name
+        - description
+        - owner
+      properties:
+        name:
+          title: Project Name
+          type: string
+          description: Name of your SonarQube BWCE project
+          ui:field: EntityNamePicker
+          ui:autofocus: true
+          default: sonarqube-bwce-server
+        description:
+          title: Description
+          type: string
+          description: Description of your SonarQube BWCE setup
+          default: SonarQube server with TIBCO BusinessWorks Container Edition plugin
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
+        sonarqube_version:
+          title: SonarQube Version
+          type: string
+          description: SonarQube server version to use
+          default: "9.9.8"
+          enum:
+            - "9.9.8"
+            - "10.0.0"
+        plugin_version:
+          title: TIBCO Plugin Version
+          type: string
+          description: Version of the TIBCO SonarQube plugin
+          default: "1.3.11"
+        deployment_type:
+          title: Deployment Type
+          type: string
+          description: How you want to deploy SonarQube
+          default: docker-compose
+          enum:
+            - docker-compose
+            - kubernetes
+            - standalone
+
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+
+  steps:
+    - id: fetch
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          sonarqube_version: ${{ parameters.sonarqube_version }}
+          plugin_version: ${{ parameters.plugin_version }}
+          deployment_type: ${{ parameters.deployment_type }}
+          destination: ${{ parameters.repoUrl | parseRepoUrl }}
+
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: This is ${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

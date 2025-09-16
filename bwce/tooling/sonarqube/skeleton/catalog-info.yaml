@@ -1,0 +1,27 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name | dump }}
+  description: ${{ values.description | dump }}
+  tags:
+    - sonarqube
+    - bwce
+    - code-quality
+    - tibco
+  annotations:
+    github.com/project-slug: ${{ values.destination.owner + "/" + values.destination.repo }}
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: ${{ values.name }}
+  links:
+    - title: SonarQube Dashboard
+      url: http://localhost:9000
+      icon: dashboard
+    - title: SonarQube Documentation
+      url: https://docs.sonarqube.org/
+      icon: docs
+spec:
+  type: service
+  lifecycle: development
+  owner: ${{ values.owner | dump }}
+  dependsOn:
+    - resource:database

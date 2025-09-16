@@ -1,0 +1,10 @@
+site_name: ${{ values.name }}
+site_description: ${{ values.description }}
+
+nav:
+  - Introduction: index.md
+  - Configuration: config.md
+  - Usage: usage.md
+
+plugins:
+  - techdocs-core
