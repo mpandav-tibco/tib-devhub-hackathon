@@ -18,7 +18,7 @@ metadata:
         url: https://www.tibco.com/products/tibco-businessworks
         icon: star
       - text: Sample Repository
-        url: https://github.com/mpandav-tibco/devhub-hackthon/tree/main/bwce/templates/bwce-java-op
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/templates/bwce-java-op
         icon: github
   tags:
     - devhub-marketplace
@@ -80,7 +80,7 @@ spec:
             - CI/CD pipeline demonstrations
 
             Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. You are responsible for reviewing the specific license terms that apply to each item that you access or use. Cloud Software Group, Inc. and its affiliates: (1) do not make any representation, promises, or guarantees about these items; and (2) are making these items available to you "AS IS," without any warranties or indemnities.
-            This item is subject to the following [license](https://github.com/mpandav-tibco/devhub-hackthon/blob/main/LICENSE).
+            This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
 
             **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
         accept:
@@ -95,7 +95,7 @@ spec:
       name: Installing Marketplace Entry...
       action: catalog:register
       input:
-        catalogInfoUrl: https://github.com/mpandav-tibco/devhub-hackthon/blob/main/bwce/templates/bwce-java-op/template-java.yaml
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-java-op/template-java.yaml
   output:
     links:
       - title: Open in catalog
