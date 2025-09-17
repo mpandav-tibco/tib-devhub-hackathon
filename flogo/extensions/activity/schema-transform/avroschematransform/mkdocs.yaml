@@ -2,9 +2,6 @@ site_name: Avro Schema Transform Activity
 site_description: Transform Avro schemas to JSON Schema and XSD formats with intelligent processing
 
 nav:
-
-plugins:
-  - techdocs-core
   - Introduction: index.md
 
 plugins:
