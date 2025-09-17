@@ -61,24 +61,17 @@ spec:
           type: boolean
           default: false
   steps:
-    - id: registerItem
-      name: Installing Marketplace Entry...
+    - id: registerTemplate
+      name: Installing Template...
       action: catalog:register
       input:
-        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/catalog-info-flogo-graphql-apis.yaml
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/graphql-apis/template.yaml
 
   output:
     links:
-      - title: Open in catalog
-        type: catalog
-        icon: catalog
-        entityRef: ${{ steps.registerItem.output.entityRef }}
-      - title: Documents
-        url: /docs?filters%5Buser%5D=all&limit=20
-        icon: techdocs
-      - icon: docs
-        title: Open Flogo GraphQL APIs Guide
-        url: /docs/default/System/flogo-graphql-apis-template
+      - title: Use Template
+        icon: scaffolder
+        url: /create/templates/default/flogo-template-graphql-apis
       - title: Back to Marketplace
         icon: dashboard
         url: /marketplace?filters%5Bkind%5D=template&filters%5Btags%5D=devhub-marketplace&limit=20
