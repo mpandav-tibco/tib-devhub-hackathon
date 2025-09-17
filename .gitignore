@@ -71,6 +71,8 @@ dist/
 tmp/
 out-tsc/
 build/
+bin/
+**/bin/
 
 # Environment files
 .env
