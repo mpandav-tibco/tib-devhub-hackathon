@@ -1,0 +1,192 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: flogo-activity-templateengine
+  title: Template Engine Activity
+  description: Comprehensive template processing with multi-engine support, 29 built-in functions, and 10 OOTB templates for dynamic content generation
+  tags:
+    - flogo
+    - activity
+    - template
+    - go-templates
+    - handlebars
+    - mustache
+    - content-generation
+    - ai-workflow
+    - email
+    - reporting
+spec:
+  owner: flogo-team
+  type: flogo-activity
+  parameters:
+    - title: Activity Information
+      required:
+        - activity_name
+        - namespace
+      properties:
+        activity_name:
+          title: Activity Name
+          type: string
+          description: Name for your Template Engine activity instance
+          pattern: '^[a-zA-Z][a-zA-Z0-9_-]*$'
+          default: templateengine
+        namespace:
+          title: Namespace
+          type: string
+          description: Namespace for the activity (e.g., com.company.project)
+          pattern: '^[a-zA-Z][a-zA-Z0-9_.]*$'
+          default: com.example
+
+    - title: Engine Configuration
+      properties:
+        template_engine:
+          title: Template Engine
+          type: string
+          description: Template engine to use for processing
+          enum:
+            - go
+            - handlebars-basic
+            - mustache-basic
+          enumNames:
+            - Go Templates (Full Support - Recommended)
+            - Handlebars Basic (Syntax Compatible)
+            - Mustache Basic (Syntax Compatible)
+          default: go
+        template_cache_size:
+          title: Template Cache Size
+          type: integer
+          description: Maximum number of cached templates for performance
+          minimum: 0
+          maximum: 1000
+          default: 100
+        enable_safe_mode:
+          title: Enable Safe Mode
+          type: boolean
+          description: Restrict to 10 essential functions for production security
+          default: true
+        custom_template_path:
+          title: Custom Template Path
+          type: string
+          description: Custom path for template files (leave empty for auto-detection)
+          default: ""
+
+    - title: Default Template Settings
+      properties:
+        default_output_format:
+          title: Default Output Format
+          type: string
+          description: Default format for template output
+          enum:
+            - text
+            - html
+            - json
+            - xml
+            - markdown
+          enumNames:
+            - Plain Text
+            - HTML Document
+            - JSON with Metadata
+            - XML Structure
+            - Markdown Format
+          default: text
+        enable_formatting:
+          title: Enable Auto Formatting
+          type: boolean
+          description: Enable automatic formatting based on output format
+          default: true
+        escape_html:
+          title: Escape HTML by Default
+          type: boolean
+          description: Automatically escape HTML characters for security
+          default: true
+        strict_mode:
+          title: Strict Mode
+          type: boolean
+          description: Fail if template references undefined variables
+          default: true
+
+    - title: Feature Options
+      properties:
+        include_ootb_templates:
+          title: Include OOTB Templates
+          type: boolean
+          description: Include 10 predefined templates (email, reports, contracts, notifications)
+          default: true
+        enable_tracing:
+          title: Enable OpenTelemetry Tracing
+          type: boolean
+          description: Include OpenTelemetry tracing for performance monitoring
+          default: false
+        enable_advanced_functions:
+          title: Enable Advanced Functions
+          type: boolean
+          description: Include all 29 template functions (only if safe mode is disabled)
+          default: false
+        include_ai_features:
+          title: AI Workflow Integration
+          type: boolean
+          description: Include AI workflow ready features and examples
+          default: true
+
+    - title: Repository Information
+      required:
+        - repo_name
+      properties:
+        repo_name:
+          title: Repository Name
+          type: string
+          description: Name of the repository to create
+          pattern: '^[a-zA-Z][a-zA-Z0-9_-]*$'
+        description:
+          title: Description
+          type: string
+          description: A brief description of your Template Engine activity
+          default: Template Engine activity for dynamic content generation with multi-engine support
+
+  steps:
+    - id: fetch-base
+      name: Fetch Base Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          activity_name: ${{ parameters.activity_name }}
+          namespace: ${{ parameters.namespace }}
+          template_engine: ${{ parameters.template_engine }}
+          template_cache_size: ${{ parameters.template_cache_size }}
+          enable_safe_mode: ${{ parameters.enable_safe_mode }}
+          custom_template_path: ${{ parameters.custom_template_path }}
+          default_output_format: ${{ parameters.default_output_format }}
+          enable_formatting: ${{ parameters.enable_formatting }}
+          escape_html: ${{ parameters.escape_html }}
+          strict_mode: ${{ parameters.strict_mode }}
+          include_ootb_templates: ${{ parameters.include_ootb_templates }}
+          enable_tracing: ${{ parameters.enable_tracing }}
+          enable_advanced_functions: ${{ parameters.enable_advanced_functions }}
+          include_ai_features: ${{ parameters.include_ai_features }}
+          repo_name: ${{ parameters.repo_name }}
+          description: ${{ parameters.description }}
+
+    - id: publish
+      name: Publish to Repository
+      action: publish:github
+      input:
+        repoUrl: github.com?repo=${{ parameters.repo_name }}
+        description: ${{ parameters.description }}
+        defaultBranch: main
+        gitCommitMessage: 'Initial commit: Template Engine Activity'
+
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in Catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

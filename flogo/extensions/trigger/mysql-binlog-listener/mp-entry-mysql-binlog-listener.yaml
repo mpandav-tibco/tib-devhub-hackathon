@@ -1,0 +1,315 @@
+apiVersion: v1
+kind: MarketplaceEntry
+metadata:
+  name: mp-entry-mysql-binlog-listener
+  title: MySQL Binlog Listener Trigger
+  description: Real-time MySQL/MariaDB binlog monitoring for event-driven architectures and change data capture
+spec:
+  category: Database Integration
+  subcategory: Change Data Capture
+  type: flogo-trigger
+  
+  overview:
+    title: MySQL Binlog Listener Trigger
+    description: |
+      Advanced Flogo trigger for real-time MySQL and MariaDB binary log monitoring, providing comprehensive 
+      change data capture (CDC) capabilities with SSL/TLS security, schema enhancement, health monitoring, 
+      and distributed tracing. Designed for event-driven architectures requiring sub-second data change detection.
+    
+    keyFeatures:
+      - Real-time binlog streaming with sub-second latency and zero data loss
+      - Complete SSL/TLS support with multiple security modes and certificate authentication
+      - Enhanced schema information with column names, types, and metadata
+      - Multi-table and selective event type filtering (INSERT, UPDATE, DELETE)
+      - Automatic MySQL/MariaDB version detection and syntax adaptation
+      - Built-in connection retry logic with health monitoring and graceful recovery
+      - OpenTelemetry integration with rich MySQL-specific tracing metadata
+      - Memory tracking and performance monitoring with detailed metrics
+      - Position control for fault-tolerant processing and resume capability
+      - Thread-safe schema caching with automatic fallback mechanisms
+    
+    useCases:
+      - Real-time data synchronization between systems and databases
+      - Event-driven microservices architecture with database change triggers
+      - Change data capture for analytics and data warehousing pipelines
+      - Audit logging and compliance monitoring with complete change tracking
+      - Cache invalidation and real-time search index updates
+      - Real-time dashboards and reporting with live data updates
+      - Data replication and backup systems with high availability
+      - Fraud detection and security monitoring based on data changes
+
+  technical:
+    language: Go
+    framework: Flogo
+    dependencies:
+      - github.com/project-flogo/core (v1.6.13+)
+      - github.com/go-mysql-org/go-mysql (v1.12.0+)
+      - github.com/go-sql-driver/mysql (v1.7.1+)
+    
+    compatibility:
+      - MySQL 8.0.22+ (with SHOW BINARY LOG STATUS)
+      - MySQL 5.7 and earlier (with SHOW MASTER STATUS)
+      - MariaDB (all versions with legacy syntax)
+      - Automatic version detection and syntax adaptation
+    
+    configuration:
+      trigger_settings:
+        - name: host
+          type: string
+          required: true
+          description: MySQL/MariaDB server host
+          default: localhost
+        - name: port
+          type: integer
+          required: true
+          description: MySQL/MariaDB server port
+          default: 3306
+        - name: user
+          type: string
+          required: true
+          description: Database user with REPLICATION privileges
+          default: root
+        - name: password
+          type: string
+          required: true
+          description: Database password
+        - name: databaseName
+          type: string
+          required: true
+          description: Target database name to monitor
+        - name: sslMode
+          type: string
+          required: false
+          description: SSL mode (disable, require, verify-ca, verify-full)
+          default: disable
+        - name: sslCert
+          type: string
+          required: false
+          description: SSL client certificate file path
+        - name: sslKey
+          type: string
+          required: false
+          description: SSL client private key file path
+        - name: sslCA
+          type: string
+          required: false
+          description: SSL CA certificate file path
+        - name: connectionTimeout
+          type: string
+          required: false
+          description: Connection timeout duration
+          default: "30s"
+        - name: enableHeartbeat
+          type: boolean
+          required: false
+          description: Enable heartbeat for connection monitoring
+          default: true
+      
+      handler_settings:
+        - name: serverID
+          type: integer
+          required: true
+          description: Unique MySQL server ID (1001-4999 recommended)
+          default: 1001
+        - name: binlogFile
+          type: string
+          required: false
+          description: Starting binlog file (uses current if empty)
+        - name: binlogPos
+          type: integer
+          required: false
+          description: Starting binlog position
+          default: 4
+        - name: tables
+          type: array
+          required: false
+          description: Tables to monitor (empty = all tables)
+          default: "[]"
+        - name: eventTypes
+          type: string
+          required: false
+          description: Event types to capture (ALL, INSERT, UPDATE, DELETE)
+          default: "ALL"
+        - name: includeSchema
+          type: boolean
+          required: false
+          description: Include schema information (recommended)
+          default: false
+      
+      outputs:
+        - name: eventID
+          type: string
+          description: Unique event identifier
+        - name: eventType
+          type: string
+          description: Database event type (INSERT, UPDATE, DELETE)
+        - name: database
+          type: string
+          description: Database name
+        - name: table
+          type: string
+          description: Table name
+        - name: timestamp
+          type: string
+          description: Event timestamp in RFC3339 format
+        - name: data
+          type: object
+          description: Event data with row information
+        - name: schema
+          type: object
+          description: Schema information (when includeSchema=true)
+        - name: binlogFile
+          type: string
+          description: Binlog file name where event occurred
+        - name: binlogPos
+          type: integer
+          description: Binlog position of the event
+        - name: correlationID
+          type: string
+          description: Correlation ID for tracking related events
+
+  examples:
+    - title: Basic Binlog Monitoring
+      description: Monitor all changes in a specific database
+      code: |
+        {
+          "trigger": {
+            "host": "localhost",
+            "port": 3306,
+            "user": "repl_user",
+            "password": "secure_password",
+            "databaseName": "ecommerce_db",
+            "sslMode": "disable"
+          },
+          "handler": {
+            "serverID": 1001,
+            "eventTypes": "ALL",
+            "includeSchema": true
+          }
+        }
+    
+    - title: Secure SSL/TLS Connection
+      description: Connect with full SSL certificate verification
+      code: |
+        {
+          "trigger": {
+            "host": "mysql.example.com",
+            "port": 3306,
+            "user": "repl_user",
+            "password": "secure_password",
+            "databaseName": "production_db",
+            "sslMode": "verify-full",
+            "sslCA": "/path/to/ca-cert.pem",
+            "sslCert": "/path/to/client-cert.pem",
+            "sslKey": "/path/to/client-key.pem"
+          }
+        }
+    
+    - title: Selective Table and Event Monitoring
+      description: Monitor specific tables for INSERT operations only
+      code: |
+        {
+          "handler": {
+            "serverID": 1002,
+            "tables": ["orders", "payments", "customers"],
+            "eventTypes": "INSERT",
+            "includeSchema": true,
+            "binlogFile": "mysql-bin.000001",
+            "binlogPos": 154
+          }
+        }
+    
+    - title: High Availability Configuration
+      description: Production setup with health monitoring and retry logic
+      code: |
+        {
+          "trigger": {
+            "host": "mysql-primary.internal",
+            "connectionTimeout": "10s",
+            "readTimeout": "30s",
+            "maxRetryAttempts": "5",
+            "retryDelay": "10s",
+            "healthCheckInterval": "30s",
+            "enableHeartbeat": true,
+            "heartbeatInterval": "15s"
+          }
+        }
+
+  documentation:
+    gettingStarted: |
+      1. Enable binary logging in MySQL/MariaDB with ROW format
+      2. Create a replication user with REPLICATION SLAVE, REPLICATION CLIENT, and SELECT privileges
+      3. Configure the trigger with database connection details
+      4. Set up SSL/TLS certificates if using secure connections
+      5. Configure handler settings for server ID, tables, and event types
+      6. Enable schema information for enhanced column names and types
+      7. The trigger will stream binlog events to your Flogo flows in real-time
+    
+    mysqlSetup: |
+      Required MySQL Configuration (my.cnf):
+      [mysqld]
+      log-bin=mysql-bin
+      server-id=1
+      binlog-format=ROW
+      
+      User Privileges:
+      CREATE USER 'repl_user'@'%' IDENTIFIED BY 'password';
+      GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'repl_user'@'%';
+      GRANT SELECT ON target_database.* TO 'repl_user'@'%';
+      FLUSH PRIVILEGES;
+    
+    schemaFeatures: |
+      Schema Enhancement Benefits:
+      - Column Names: Actual database column names instead of col_0, col_1 indices
+      - Type Information: Full MySQL column type metadata (varchar, int, timestamp, etc.)
+      - Schema Metadata: Column constraints, keys, defaults, and position information
+      - Smart Caching: Automatic schema caching for optimal performance
+      - Fallback Support: Graceful degradation to column indices if schema fetch fails
+    
+    sslConfiguration: |
+      SSL/TLS Modes:
+      - disable: No SSL/TLS encryption (default)
+      - require: Require SSL/TLS encryption with server's certificate
+      - verify-ca: Verify server certificate against provided CA
+      - verify-full: Full certificate and hostname verification
+      
+      Certificate Requirements:
+      - verify-ca/verify-full: Require sslCA certificate file
+      - Client authentication: Optional sslCert and sslKey for mutual TLS
+    
+    bestPractices:
+      - Use unique server IDs (1001-4999) to avoid conflicts with other MySQL instances
+      - Enable schema information (includeSchema=true) for better data processing
+      - Configure appropriate SSL/TLS security for production environments
+      - Monitor health check logs for connection stability
+      - Use specific table filtering to reduce processing overhead
+      - Set reasonable retry delays and connection timeouts
+      - Ensure sufficient REPLICATION privileges for the monitoring user
+    
+    troubleshooting:
+      - "Connection refused": Check MySQL server status and network connectivity
+      - "Access denied": Verify user has REPLICATION SLAVE and CLIENT privileges
+      - "SSL connection failed": Check certificate paths and SSL configuration
+      - "Binlog position error": Verify binlog file exists and position is valid
+      - "Schema fetch failed": Check SELECT privileges on target database
+      - "Version detection failed": Ensure user has REPLICATION CLIENT privileges
+      - "Memory issues": Monitor connection counts and adjust limits accordingly
+
+  support:
+    documentation: "./docs/index.md"
+    examples: "./docs/examples/"
+    issues: "https://github.com/your-org/tib-devhub-hackathon/issues"
+    
+  metadata:
+    version: "1.1.0"
+    maturity: stable
+    maintainer: Flogo Team
+    tags:
+      - mysql-binlog
+      - change-data-capture
+      - real-time-monitoring
+      - event-driven
+      - ssl-tls
+      - schema-enhancement
+      - health-monitoring
+      - mariadb-support

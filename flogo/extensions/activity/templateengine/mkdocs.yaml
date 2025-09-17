@@ -1,0 +1,20 @@
+site_name: Template Engine Activity
+site_description: Comprehensive template processing with multi-engine support and built-in functions
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    primary: blue
+    accent: blue
+
+docs_dir: docs
+site_dir: site
+
+markdown_extensions:
+  - codehilite
+  - admonition
+  - toc:
+      permalink: true

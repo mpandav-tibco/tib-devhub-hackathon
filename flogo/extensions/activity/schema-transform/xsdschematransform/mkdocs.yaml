@@ -1,0 +1,20 @@
+site_name: XSD Schema Transform Activity
+site_description: Transform XSD schemas to JSON Schema and Avro formats with comprehensive configuration
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    primary: blue
+    accent: blue
+
+docs_dir: docs
+site_dir: site
+
+markdown_extensions:
+  - codehilite
+  - admonition
+  - toc:
+      permalink: true

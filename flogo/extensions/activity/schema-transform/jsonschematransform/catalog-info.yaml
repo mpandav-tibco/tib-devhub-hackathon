@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flogo-activity-jsonschematransform
+  title: JSON Schema Transform Flogo Activity
+  description: Transform JSON Schema to XSD and Avro schema formats with comprehensive feature support
+  tags:
+    - flogo
+    - activity
+    - json-schema
+    - schema-transform
+    - xsd
+    - avro-schema
+    - data-modeling
+  annotations:
+    backstage.io/source-location: url:https://github.com/TIBCOSoftware/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/jsonschematransform/
+spec:
+  type: library
+  lifecycle: production
+  owner: tibco-flogo

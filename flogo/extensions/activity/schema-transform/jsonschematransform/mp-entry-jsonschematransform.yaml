@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: MarketplaceEntry
+metadata:
+  name: flogo-activity-jsonschematransform
+  title: JSON Schema Transform Activity
+  description: Transform JSON Schema to XSD and Avro schema formats with comprehensive feature support and constraint mapping
+  tags:
+    - flogo
+    - activity
+    - json-schema
+    - schema-transform
+    - xsd
+    - avro-schema
+    - data-modeling
+    - interoperability
+spec:
+  type: flogo-activity
+  category: Data Processing
+  author: TIBCO Flogo Team
+  version: "1.0.0"
+  license: Apache-2.0
+  
+  summary: |
+    Advanced JSON Schema transformation engine enabling bidirectional schema conversion to XSD and Avro formats. 
+    Supports comprehensive JSON Schema features including unions, constraints, and format types with intelligent mapping.
+
+  features:
+    - Multi-format output support (XSD, Avro, or both simultaneously)
+    - Comprehensive JSON Schema feature support (all standard types and constraints)
+    - Advanced schema constructs (anyOf, oneOf, allOf unions and conditional schemas)
+    - String format type conversion (date, date-time, email, uri to appropriate targets)
+    - Enumeration constraint preservation across formats
+    - Validation constraint mapping (pattern, length, numeric bounds)
+    - Flexible namespace and element naming configuration
+    - High-performance processing optimized for enterprise scale
+    - Zero external dependencies using Go standard library
+    - Intelligent format-specific input processing
+
+  useCases:
+    - API schema migration from JSON to XML-based systems
+    - Data serialization format standardization across platforms
+    - Schema registry integration and multi-format support
+    - Enterprise data integration with heterogeneous systems
+    - Microservices interoperability schema conversion
+    - Legacy system integration with modern JSON APIs
+    - Data pipeline schema transformation and validation
+    - Cross-platform data exchange format compatibility
+
+  inputs:
+    jsonSchemaString:
+      description: JSON Schema document to transform
+      type: string
+      required: true
+    outputFormat:
+      description: Output format (xsd, avro, or both)
+      type: string
+      required: false
+      default: "both"
+    rootElementName:
+      description: Root element name for XSD generation
+      type: string
+      required: false
+      default: "RootElement"
+    targetNamespace:
+      description: Target namespace for XSD generation
+      type: string
+      required: false
+    avroRecordName:
+      description: Root record name for Avro generation
+      type: string
+      required: false
+      default: "RootRecord"
+    avroNamespace:
+      description: Namespace for Avro generation
+      type: string
+      required: false
+      default: "com.example"
+
+  outputs:
+    xsdString:
+      description: Generated XSD schema string
+      type: string
+    avroSchema:
+      description: Generated Avro schema string
+      type: string
+    error:
+      description: Boolean indicating if an error occurred
+      type: boolean
+    errorMessage:
+      description: Error details if transformation failed
+      type: string
+
+  documentation:
+    readme: README.md
+    examples: examples/
+    
+  repository:
+    type: git
+    url: https://github.com/TIBCOSoftware/tib-devhub-hackathon
+    directory: flogo/extensions/activity/schema-transform/jsonschematransform
+
+  template:
+    scaffoldUrl: ./template.yaml
+    
+  compatibility:
+    flogoVersion: ">=1.0.0"
+    goVersion: ">=1.16"
+    formats: ["JSON Schema", "XSD", "Avro Schema"]

@@ -1,0 +1,124 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: flogo-activity-jsonschematransform
+  title: JSON Schema Transform Flogo Activity
+  description: Create a Flogo activity for transforming JSON Schema to XSD and Avro schema formats
+  tags:
+    - flogo
+    - activity
+    - json-schema
+    - schema-transform
+    - xsd
+    - avro-schema
+    - data-modeling
+spec:
+  owner: tibco-flogo
+  type: library
+  parameters:
+    - title: Repository Information
+      required:
+        - name
+        - description
+        - owner
+      properties:
+        name:
+          title: Component Name
+          type: string
+          description: Name of the JSON schema transform activity component
+          pattern: '^[a-zA-Z0-9\-_]+$'
+          default: "my-flogo-jsonschematransform-activity"
+        description:
+          title: Description
+          type: string
+          description: Description of your JSON schema transform activity implementation
+          default: "Flogo activity for transforming JSON Schema to XSD and Avro formats"
+        owner:
+          title: Repository Owner
+          type: string
+          description: GitHub username or organization
+          pattern: '^[a-zA-Z0-9\-_]+$'
+
+    - title: Activity Configuration
+      properties:
+        packageName:
+          title: Go Package Name
+          type: string
+          description: Go package name for the activity
+          default: "jsonschematransform"
+        activityName:
+          title: Activity Name
+          type: string
+          description: Display name for the activity
+          default: "JSON Schema Transform"
+        version:
+          title: Activity Version
+          type: string
+          description: Version of the activity
+          default: "1.0.0"
+        defaultOutputFormat:
+          title: Default Output Format
+          type: string
+          description: Default schema output format
+          enum:
+            - xsd
+            - avro
+            - both
+          default: both
+        defaultRootElementName:
+          title: Default Root Element Name
+          type: string
+          description: Default root element name for XSD generation
+          default: "RootElement"
+        defaultAvroNamespace:
+          title: Default Avro Namespace
+          type: string
+          description: Default namespace for Avro schema generation
+          default: "com.example"
+        supportConstraints:
+          title: Support Schema Constraints
+          type: boolean
+          description: Enable constraint mapping support
+          default: true
+
+  steps:
+    - id: fetch-base
+      name: Fetch Base Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          packageName: ${{ parameters.packageName }}
+          activityName: ${{ parameters.activityName }}
+          version: ${{ parameters.version }}
+          defaultOutputFormat: ${{ parameters.defaultOutputFormat }}
+          defaultRootElementName: ${{ parameters.defaultRootElementName }}
+          defaultAvroNamespace: ${{ parameters.defaultAvroNamespace }}
+          supportConstraints: ${{ parameters.supportConstraints }}
+
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: ${{ parameters.description }}
+        repoUrl: github.com?owner=${{ parameters.owner }}&repo=${{ parameters.name }}
+        defaultBranch: main
+
+    - id: register
+      name: Register Component
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

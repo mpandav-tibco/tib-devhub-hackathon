@@ -1,0 +1,20 @@
+site_name: PostgreSQL Listener Trigger
+site_description: Real-time PostgreSQL NOTIFY/LISTEN event monitoring
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    primary: blue
+    accent: blue
+
+docs_dir: docs
+site_dir: site
+
+markdown_extensions:
+  - codehilite
+  - admonition
+  - toc:
+      permalink: true

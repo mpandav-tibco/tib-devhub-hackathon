@@ -1,0 +1,264 @@
+apiVersion: v1
+kind: MarketplaceEntry
+metadata:
+  name: mp-entry-sse-connector
+  title: Server-Sent Events (SSE) Connector
+  description: Real-time data streaming connector with unified trigger and activity for server-sent events communication
+spec:
+  category: Real-time Communication
+  subcategory: Event Streaming
+  type: flogo-connector
+  
+  overview:
+    title: Server-Sent Events (SSE) Connector
+    description: |
+      Comprehensive Flogo connector for real-time data streaming using the Server-Sent Events (SSE) protocol. 
+      Provides unified trigger and activity components for server-side SSE capabilities with advanced features 
+      like event buffering, topic-based delivery, automatic reconnection, and CORS support for web integration.
+    
+    keyFeatures:
+      - Unified trigger and activity pair with shared registry for seamless integration
+      - Real-time event streaming to web clients over standard HTTP connections
+      - Advanced event management with buffering, replay, and TTL configuration
+      - Topic-based event delivery for targeted client communication
+      - Automatic client reconnection with last-event-ID support
+      - CORS configuration for cross-origin web application support
+      - Configurable connection limits and graceful connection management
+      - Thread-safe concurrent connection handling
+      - Standard EventSource API compatibility for web clients
+      - Performance optimization with keep-alive and timeout configuration
+    
+    useCases:
+      - Real-time dashboards and analytics with live data updates
+      - Live notifications and alerts for web and mobile applications
+      - Financial and trading systems with real-time market data
+      - Gaming and interactive applications with live score updates
+      - Enterprise integration with workflow and process notifications
+      - Content and media streaming with live event broadcasting
+      - IoT monitoring with sensor data streams and device status
+      - Social media feeds with real-time posts and interactions
+
+  technical:
+    language: Go
+    framework: Flogo
+    dependencies:
+      - github.com/project-flogo/core
+      - net/http (Go standard library)
+      - sync (Go standard library)
+    
+    components:
+      trigger:
+        - name: SSE Trigger
+          description: Creates SSE server accepting client connections and managing event streaming
+          features:
+            - HTTP server with configurable port and path
+            - Connection management with limits and timeouts
+            - Event store for buffering and replay capabilities
+            - CORS support for web application integration
+            - Keep-alive heartbeat for connection maintenance
+      activity:
+        - name: SSE Send Activity
+          description: Sends events to connected SSE clients through the server
+          features:
+            - Event broadcasting to all clients or specific targets
+            - Topic-based event delivery for filtered communication
+            - Multiple data formats (JSON, string, auto-format)
+            - Event type categorization and custom metadata
+    
+    configuration:
+      trigger_settings:
+        - name: port
+          type: integer
+          required: true
+          description: Port for SSE server binding
+          default: 9998
+        - name: path
+          type: string
+          required: false
+          description: HTTP path for SSE endpoint
+          default: "/events"
+        - name: maxConnections
+          type: integer
+          required: false
+          description: Maximum concurrent client connections
+          default: 1000
+        - name: enableCORS
+          type: boolean
+          required: false
+          description: Enable Cross-Origin Resource Sharing
+          default: true
+        - name: eventStoreSize
+          type: integer
+          required: false
+          description: Maximum events to store for replay
+          default: 1000
+        - name: eventTTL
+          type: integer
+          required: false
+          description: Event time-to-live in seconds
+          default: 3600
+        - name: keepAliveInterval
+          type: integer
+          required: false
+          description: Keep-alive interval in seconds
+          default: 30
+      
+      activity_inputs:
+        - name: serverName
+          type: string
+          required: true
+          description: Name of the SSE server to target
+        - name: eventType
+          type: string
+          required: false
+          description: Event type for categorization
+          default: "message"
+        - name: eventData
+          type: object
+          required: true
+          description: Event data to send to clients
+        - name: targetTopic
+          type: string
+          required: false
+          description: Topic for targeted event delivery
+        - name: targetConnection
+          type: string
+          required: false
+          description: Specific connection ID to target
+        - name: dataFormat
+          type: string
+          required: false
+          description: Data format (json, string, auto)
+          default: "auto"
+      
+      activity_outputs:
+        - name: success
+          type: boolean
+          description: Whether event was successfully sent
+        - name: clientCount
+          type: integer
+          description: Number of clients that received the event
+        - name: error
+          type: string
+          description: Error message if sending failed
+
+  examples:
+    - title: Real-time Dashboard Setup
+      description: Create SSE server for live dashboard updates
+      code: |
+        {
+          "trigger": {
+            "port": 9998,
+            "path": "/dashboard-events",
+            "maxConnections": 500,
+            "enableCORS": true,
+            "eventStoreSize": 100
+          }
+        }
+    
+    - title: Broadcast System Metrics
+      description: Send real-time system metrics to all connected clients
+      code: |
+        {
+          "serverName": "dashboard-server",
+          "eventType": "metrics",
+          "eventData": {
+            "cpu": 45.2,
+            "memory": 78.5,
+            "timestamp": "2024-01-27T10:30:00Z"
+          },
+          "dataFormat": "json"
+        }
+    
+    - title: Topic-Based Notifications
+      description: Send targeted notifications to specific topic subscribers
+      code: |
+        {
+          "serverName": "notification-server",
+          "eventType": "alert",
+          "eventData": {
+            "level": "warning",
+            "message": "High CPU usage detected",
+            "source": "server-01"
+          },
+          "targetTopic": "system-alerts",
+          "dataFormat": "json"
+        }
+    
+    - title: Client-Side Integration
+      description: JavaScript client code for connecting to SSE server
+      code: |
+        const eventSource = new EventSource('http://localhost:9998/events');
+        
+        eventSource.onmessage = function(event) {
+          const data = JSON.parse(event.data);
+          console.log('Received:', data);
+        };
+        
+        eventSource.addEventListener('metrics', function(event) {
+          const metrics = JSON.parse(event.data);
+          updateDashboard(metrics);
+        });
+
+  documentation:
+    gettingStarted: |
+      1. Add the SSE Trigger to your flow with desired port and path configuration
+      2. Configure event store settings for buffering and replay capabilities
+      3. Enable CORS if serving web clients from different domains
+      4. Use SSE Send Activity in flows to broadcast events to connected clients
+      5. Clients connect using standard EventSource API with your server URL
+      6. Events are automatically distributed to connected clients in real-time
+    
+    architecture: |
+      The SSE Connector uses a unified architecture with:
+      - Shared registry for trigger and activity communication
+      - Thread-safe connection management for concurrent clients
+      - Event store for automatic buffering and replay on reconnection
+      - Topic-based routing for targeted event delivery
+      - Standard HTTP/SSE protocol for maximum compatibility
+    
+    webIntegration: |
+      Web Client Integration:
+      - Use EventSource API: new EventSource('http://server:port/path')
+      - Listen for events: onmessage, onerror, addEventListener
+      - Automatic reconnection with last-event-ID support
+      - CORS configuration for cross-domain requests
+      - Compatible with all modern browsers and mobile web views
+    
+    bestPractices:
+      - Configure appropriate connection limits based on expected load
+      - Use topic-based delivery for efficient targeted messaging
+      - Set reasonable event TTL to balance memory usage and replay capability
+      - Enable CORS only for trusted origins in production
+      - Monitor connection metrics for performance optimization
+      - Implement client-side error handling and reconnection logic
+      - Use keep-alive intervals appropriate for your network environment
+    
+    troubleshooting:
+      - "Connection refused": Check port availability and firewall settings
+      - "CORS errors": Verify CORS settings and allowed origins configuration
+      - "Missing events": Check event store size and TTL configuration
+      - "High memory usage": Adjust event store size and TTL settings
+      - "Connection timeouts": Review keep-alive and timeout settings
+      - "Client disconnections": Monitor network stability and connection limits
+
+  support:
+    documentation: "./docs/index.md"
+    triggerDocs: "./trigger/README.md"
+    activityDocs: "./activity/README.md"
+    examples: "./docs/examples/"
+    issues: "https://github.com/your-org/tib-devhub-hackathon/issues"
+    
+  metadata:
+    version: "1.0.0"
+    maturity: stable
+    maintainer: Flogo Team
+    tags:
+      - server-sent-events
+      - real-time-streaming
+      - web-integration
+      - dashboard
+      - notifications
+      - live-updates
+      - event-broadcasting
+      - websocket-alternative

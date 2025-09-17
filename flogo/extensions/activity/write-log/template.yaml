@@ -1,0 +1,188 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: flogo-activity-write-log
+  title: Write Log Activity
+  description: Structured logging with OpenTelemetry integration, ECS compliance, field filtering, and sensitive data masking for enterprise observability
+  tags:
+    - flogo
+    - activity
+    - logging
+    - observability
+    - opentelemetry
+    - ecs
+    - enterprise
+    - security
+    - tracing
+    - monitoring
+spec:
+  owner: flogo-team
+  type: flogo-activity
+  parameters:
+    - title: Activity Information
+      required:
+        - activity_name
+        - namespace
+      properties:
+        activity_name:
+          title: Activity Name
+          type: string
+          description: Name for your Write Log activity instance
+          pattern: '^[a-zA-Z][a-zA-Z0-9_-]*$'
+          default: writelog
+        namespace:
+          title: Namespace
+          type: string
+          description: Namespace for the activity (e.g., com.company.project)
+          pattern: '^[a-zA-Z][a-zA-Z0-9_.]*$'
+          default: com.example
+
+    - title: Logging Configuration
+      properties:
+        default_log_level:
+          title: Default Log Level
+          type: string
+          description: Default log level for the activity
+          enum:
+            - TRACE
+            - DEBUG
+            - INFO
+            - WARN
+            - ERROR
+            - FATAL
+          default: INFO
+        default_output_format:
+          title: Default Output Format
+          type: string
+          description: Default format for log output
+          enum:
+            - JSON
+            - KEY_VALUE
+            - LOGFMT
+          enumNames:
+            - JSON (Structured)
+            - Key-Value Pairs
+            - LogFmt Format
+          default: JSON
+        include_flow_info:
+          title: Include ECS Standard Fields
+          type: boolean
+          description: Automatically add ECS compliance fields and metadata
+          default: true
+        add_flow_details:
+          title: Add Flow Details
+          type: boolean
+          description: Append flow instance ID, flow name, and activity name to logs
+          default: false
+
+    - title: Enterprise Features
+      properties:
+        enable_ecs_compliance:
+          title: Enable ECS Compliance
+          type: boolean
+          description: Full ECS v8.11 compliance for enterprise log aggregation
+          default: true
+        enable_opentelemetry:
+          title: Enable OpenTelemetry Integration
+          type: boolean
+          description: Automatic trace correlation with trace.id and span.id
+          default: true
+        enable_data_masking:
+          title: Enable Sensitive Data Masking
+          type: boolean
+          description: Field-level masking for sensitive information
+          default: true
+        enable_field_filtering:
+          title: Enable Field Filtering
+          type: boolean
+          description: Include/exclude filters with nested field support
+          default: true
+
+    - title: Security & Performance
+      properties:
+        default_mask_char:
+          title: Default Mask Character
+          type: string
+          description: Default character used for masking sensitive data
+          maxLength: 5
+          default: "*****"
+        default_mask_length:
+          title: Default Mask Length
+          type: integer
+          description: Number of characters to show before masking
+          minimum: 0
+          maximum: 10
+          default: 0
+        enable_strict_validation:
+          title: Enable Strict Validation
+          type: boolean
+          description: Strict validation of log object structure
+          default: false
+        performance_optimization:
+          title: Performance Optimization
+          type: boolean
+          description: Enable performance optimizations for high-volume logging
+          default: true
+
+    - title: Repository Information
+      required:
+        - repo_name
+      properties:
+        repo_name:
+          title: Repository Name
+          type: string
+          description: Name of the repository to create
+          pattern: '^[a-zA-Z][a-zA-Z0-9_-]*$'
+        description:
+          title: Description
+          type: string
+          description: A brief description of your Write Log activity
+          default: Enterprise logging activity with OpenTelemetry integration and ECS compliance
+
+  steps:
+    - id: fetch-base
+      name: Fetch Base Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          activity_name: ${{ parameters.activity_name }}
+          namespace: ${{ parameters.namespace }}
+          default_log_level: ${{ parameters.default_log_level }}
+          default_output_format: ${{ parameters.default_output_format }}
+          include_flow_info: ${{ parameters.include_flow_info }}
+          add_flow_details: ${{ parameters.add_flow_details }}
+          enable_ecs_compliance: ${{ parameters.enable_ecs_compliance }}
+          enable_opentelemetry: ${{ parameters.enable_opentelemetry }}
+          enable_data_masking: ${{ parameters.enable_data_masking }}
+          enable_field_filtering: ${{ parameters.enable_field_filtering }}
+          default_mask_char: ${{ parameters.default_mask_char }}
+          default_mask_length: ${{ parameters.default_mask_length }}
+          enable_strict_validation: ${{ parameters.enable_strict_validation }}
+          performance_optimization: ${{ parameters.performance_optimization }}
+          repo_name: ${{ parameters.repo_name }}
+          description: ${{ parameters.description }}
+
+    - id: publish
+      name: Publish to Repository
+      action: publish:github
+      input:
+        repoUrl: github.com?repo=${{ parameters.repo_name }}
+        description: ${{ parameters.description }}
+        defaultBranch: main
+        gitCommitMessage: 'Initial commit: Write Log Activity'
+
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in Catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

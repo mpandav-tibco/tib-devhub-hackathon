@@ -1,0 +1,37 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flogo-trigger-mysql-binlog-listener
+  title: MySQL Binlog Listener Trigger
+  description: Real-time MySQL/MariaDB binlog monitoring for event-driven architectures and change data capture
+  annotations:
+    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/mysql-binlog-listener
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - flogo
+    - trigger
+    - mysql
+    - mariadb
+    - binlog
+    - cdc
+    - change-data-capture
+    - real-time
+    - event-driven
+    - database
+    - ssl-tls
+    - monitoring
+  links:
+    - url: ./docs/index.md
+      title: Documentation
+      icon: docs
+spec:
+  type: flogo-trigger
+  lifecycle: production
+  owner: flogo-team
+  system: flogo-extensions
+  dependsOn:
+    - resource:flogo-core
+    - resource:mysql-driver
+    - resource:go-mysql
+  providesApis:
+    - flogo-trigger-api

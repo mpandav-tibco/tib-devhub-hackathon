@@ -1,0 +1,32 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flogo-activity-xmlfilter
+  title: XML Filter Activity
+  description: Filter XML content using multiple XPath expressions with configurable AND/OR logic for content routing and validation
+  annotations:
+    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/activity/xmlfilter
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - flogo
+    - activity
+    - xml
+    - xpath
+    - filtering
+    - content-routing
+    - data-validation
+    - integration
+  links:
+    - url: ./docs/index.md
+      title: Documentation
+      icon: docs
+spec:
+  type: flogo-activity
+  lifecycle: production
+  owner: flogo-team
+  system: flogo-extensions
+  dependsOn:
+    - resource:flogo-core
+    - resource:xmlquery
+  providesApis:
+    - flogo-activity-api

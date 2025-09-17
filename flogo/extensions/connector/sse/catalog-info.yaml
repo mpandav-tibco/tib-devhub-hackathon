@@ -1,0 +1,35 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flogo-connector-sse
+  title: Server-Sent Events (SSE) Connector
+  description: Real-time data streaming connector with unified trigger and activity for server-sent events communication
+  annotations:
+    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/connector/sse
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - flogo
+    - connector
+    - sse
+    - server-sent-events
+    - real-time
+    - streaming
+    - websockets-alternative
+    - dashboard
+    - notifications
+    - web-integration
+  links:
+    - url: ./docs/index.md
+      title: Documentation
+      icon: docs
+spec:
+  type: flogo-connector
+  lifecycle: production
+  owner: flogo-team
+  system: flogo-extensions
+  dependsOn:
+    - resource:flogo-core
+    - resource:http-server
+  providesApis:
+    - flogo-connector-api
+    - sse-server-api

@@ -1,0 +1,33 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flogo-trigger-postgreslistener
+  title: PostgreSQL Listener Trigger
+  description: Real-time PostgreSQL NOTIFY/LISTEN event monitoring with SSL/TLS support and comprehensive connection management
+  annotations:
+    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/postgreslistener
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - flogo
+    - trigger
+    - postgresql
+    - notify-listen
+    - real-time
+    - event-driven
+    - database
+    - ssl-tls
+    - monitoring
+  links:
+    - url: ./docs/index.md
+      title: Documentation
+      icon: docs
+spec:
+  type: flogo-trigger
+  lifecycle: production
+  owner: flogo-team
+  system: flogo-extensions
+  dependsOn:
+    - resource:flogo-core
+    - resource:postgresql-driver
+  providesApis:
+    - flogo-trigger-api

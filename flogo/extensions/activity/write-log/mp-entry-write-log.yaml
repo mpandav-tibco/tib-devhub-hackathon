@@ -1,0 +1,221 @@
+apiVersion: v1
+kind: MarketplaceEntry
+metadata:
+  name: mp-entry-write-log
+  title: Write Log Activity
+  description: Enterprise logging with OpenTelemetry integration, ECS compliance, and advanced data masking capabilities
+spec:
+  category: Observability
+  subcategory: Logging & Monitoring
+  type: flogo-activity
+  
+  overview:
+    title: Write Log Activity
+    description: |
+      Enterprise-grade structured logging activity with comprehensive OpenTelemetry/OpenTracing integration, 
+      ECS (Elastic Common Schema) v8.11 compliance, advanced field filtering, and sensitive data masking capabilities. 
+      Designed for production environments requiring robust observability and security features.
+    
+    keyFeatures:
+      - ECS (Elastic Common Schema) v8.11 compliance for standardized enterprise logging
+      - OpenTelemetry/OpenTracing integration with automatic trace correlation
+      - Advanced sensitive data masking with field-level and pattern-based protection
+      - Comprehensive field filtering with include/exclude operations and nested field support
+      - Multiple output formats: JSON, KEY_VALUE, LOGFMT for different aggregation systems
+      - Automatic agent, service, host, and process metadata enrichment
+      - Performance optimization with memory-efficient processing
+      - Configurable log levels with runtime override capabilities
+      - Non-blocking error handling ensuring logging reliability
+    
+    useCases:
+      - Enterprise application observability and monitoring
+      - Distributed tracing correlation across microservices
+      - Compliance logging with sensitive data protection (PCI DSS, GDPR, HIPAA)
+      - Log aggregation for ELK Stack, Splunk, and other SIEM systems
+      - Performance monitoring and troubleshooting in production environments
+      - Security event logging with automatic metadata enrichment
+      - AI/ML pipeline monitoring with structured data logging
+
+  technical:
+    language: Go
+    framework: Flogo
+    dependencies:
+      - github.com/project-flogo/core (v1.6.13+)
+      - github.com/stretchr/testify (v1.10.0+)
+    
+    configuration:
+      settings:
+        - name: logLevel
+          type: string
+          required: true
+          description: Default log level (TRACE, DEBUG, INFO, WARN, ERROR, FATAL)
+          default: INFO
+        - name: includeFlowInfo
+          type: boolean
+          required: false
+          description: Include ECS Standard Fields and metadata
+          default: true
+        - name: outputFormat
+          type: string
+          required: true
+          description: Default output format (JSON, KEY_VALUE, LOGFMT)
+          default: JSON
+        - name: addFlowDetails
+          type: boolean
+          required: false
+          description: Append flow instance ID, name, and activity name
+          default: false
+      
+      inputs:
+        - name: logObject
+          type: object
+          required: false
+          description: Primary log data object with configurable JSON schema
+          default: "{\"$schema\":\"...\",\"type\":\"object\",\"properties\":{\"field1\":{\"type\":\"string\"},\"field2\":{\"type\":\"number\"}}}"
+        - name: logLevel
+          type: string
+          required: false
+          description: Override default log level for this instance
+        - name: sensitiveFields
+          type: object
+          required: false
+          description: Field masking configuration with fieldNamesToHide, maskWith, maskLength
+          default: "{\"$schema\":\"...\",\"type\":\"object\",\"properties\":{\"fieldNamesToHide\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"maskWith\":{\"type\":\"string\",\"default\":\"*****\"},\"maskLength\":{\"type\":\"number\",\"default\":0}}}"
+        - name: fieldFilters
+          type: object
+          required: false
+          description: Field filtering with include/exclude arrays supporting dot notation
+          default: "{\"$schema\":\"...\",\"type\":\"object\",\"properties\":{\"include\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"exclude\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}}"
+      
+      outputs:
+        - name: none
+          type: void
+          description: This activity performs logging operations directly without return values
+
+  examples:
+    - title: Basic Enterprise Logging
+      description: Standard structured logging with ECS compliance and flow details
+      code: |
+        {
+          "logObject": {
+            "event": "user_login",
+            "user_id": "12345",
+            "session_id": "abc-def-ghi",
+            "ip_address": "192.168.1.100"
+          },
+          "logLevel": "INFO",
+          "outputFormat": "JSON"
+        }
+    
+    - title: Sensitive Data Masking
+      description: Log financial transaction with credit card and email masking
+      code: |
+        {
+          "logObject": {
+            "transaction_id": "txn_12345",
+            "user_email": "user@example.com",
+            "credit_card": "1234-5678-9012-3456",
+            "amount": 99.99
+          },
+          "sensitiveFields": {
+            "fieldNamesToHide": ["user_email", "credit_card"],
+            "maskWith": "****",
+            "maskLength": 4
+          }
+        }
+    
+    - title: Field Filtering with Include/Exclude
+      description: Log API request with filtered fields excluding internal debug data
+      code: |
+        {
+          "logObject": {
+            "request_id": "req_789",
+            "method": "POST",
+            "endpoint": "/api/users",
+            "response_time": 156,
+            "status_code": 200,
+            "internal_debug": "sensitive_info"
+          },
+          "fieldFilters": {
+            "include": ["request_id", "method", "endpoint", "response_time", "status_code"]
+          }
+        }
+    
+    - title: Error Logging with Trace Correlation
+      description: Log application error with automatic trace correlation for distributed debugging
+      code: |
+        {
+          "logObject": {
+            "message": "Database connection failed",
+            "error_code": "DB_CONN_001",
+            "database": "user_db",
+            "retry_count": 3,
+            "last_error": "Connection timeout after 30s"
+          },
+          "logLevel": "ERROR",
+          "outputFormat": "LOGFMT"
+        }
+
+  documentation:
+    gettingStarted: |
+      1. Configure the activity with desired log level and output format
+      2. Enable ECS compliance for enterprise log aggregation compatibility
+      3. Define your log object schema or use flexible object structure
+      4. Configure sensitive data masking for fields containing PII or confidential data
+      5. Set up field filtering to control what data is included in logs
+      6. Enable OpenTelemetry integration for distributed tracing correlation
+      7. The activity will automatically enrich logs with ECS metadata and trace context
+    
+    outputFormats: |
+      JSON Format: Structured logs with full ECS metadata, trace correlation, and nested objects
+      KEY_VALUE Format: Space-separated key=value pairs for traditional log parsing
+      LOGFMT Format: Logfmt-style structured logging for streamlined processing
+      
+      All formats support automatic timestamp generation, log level indication, and flow details
+    
+    securityFeatures: |
+      Sensitive Data Masking:
+      - Field-level masking by name (exact match)
+      - Wildcard pattern support (*_card, email_*)
+      - Configurable mask character and length
+      - Nested field masking with dot notation
+      
+      Field Filtering:
+      - Include filters: Specify exactly which fields to log
+      - Exclude filters: Remove specific fields from output
+      - Nested object filtering with dot notation
+      - Combination filtering for precise control
+    
+    bestPractices:
+      - Enable ECS compliance in enterprise environments for standardized log aggregation
+      - Use field masking for PII, credentials, and financial data
+      - Configure appropriate log levels for different environments
+      - Enable OpenTelemetry integration for comprehensive observability
+      - Use field filtering to reduce log volume and improve performance
+      - Set reasonable mask length for debugging while maintaining security
+    
+    troubleshooting:
+      - "SERIALIZATION_ERROR": Check log object structure and nested field validity
+      - "FORMATTING_ERROR": Verify output format configuration and field types
+      - "MASKING_ERROR": Validate sensitive field names and mask configuration
+      - Missing trace context: Ensure OpenTelemetry is properly configured in your Flogo application
+      - Performance issues: Enable performance optimization and review field filtering settings
+
+  support:
+    documentation: "./docs/index.md"
+    examples: "./docs/examples/"
+    issues: "https://github.com/your-org/tib-devhub-hackathon/issues"
+    
+  metadata:
+    version: "1.0.0"
+    maturity: stable
+    maintainer: Flogo Team
+    tags:
+      - enterprise-logging
+      - observability
+      - opentelemetry
+      - ecs-compliance
+      - data-masking
+      - field-filtering
+      - structured-logging
+      - monitoring

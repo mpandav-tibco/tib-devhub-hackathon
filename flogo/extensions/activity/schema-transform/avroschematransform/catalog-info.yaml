@@ -1,0 +1,31 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flogo-activity-avroschematransform
+  title: Avro Schema Transform Activity
+  description: Transform Avro schemas to JSON Schema and/or XSD formats with intelligent processing
+  annotations:
+    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/activity/schema-transform/avroschematransform
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - flogo
+    - activity
+    - schema
+    - avro
+    - json-schema
+    - xsd
+    - transformation
+    - data-format
+  links:
+    - url: ./docs/index.md
+      title: Documentation
+      icon: docs
+spec:
+  type: flogo-activity
+  lifecycle: production
+  owner: flogo-team
+  system: flogo-extensions
+  dependsOn:
+    - resource:flogo-core
+  providesApis:
+    - flogo-activity-api

@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flogo-activity-awssignaturev4
+  title: AWS Signature V4 Generator Flogo Activity
+  description: Generate AWS Signature Version 4 authentication headers for secure AWS API requests
+  tags:
+    - flogo
+    - activity
+    - aws
+    - signature-v4
+    - authentication
+    - security
+  annotations:
+    backstage.io/source-location: url:https://github.com/TIBCOSoftware/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/
+spec:
+  type: library
+  lifecycle: production
+  owner: tibco-flogo

@@ -1,0 +1,149 @@
+apiVersion: v1
+kind: MarketplaceEntry
+metadata:
+  name: mp-entry-avroschematransform
+  title: Avro Schema Transform Activity
+  description: Transform Avro schemas to JSON Schema and/or XSD formats with intelligent processing
+spec:
+  category: Data Transformation
+  subcategory: Schema Conversion
+  type: flogo-activity
+  
+  overview:
+    title: Avro Schema Transform Activity
+    description: |
+      Transform Avro schemas to JSON Schema and/or XSD formats with comprehensive type mapping and intelligent processing.
+      Supports flexible output generation, union type handling, and namespace management for enterprise data integration scenarios.
+    
+    keyFeatures:
+      - Multi-format output: Generate JSON Schema, XSD, or both simultaneously
+      - Intelligent union type processing with null-safety handling
+      - Comprehensive Avro type support including primitives, records, arrays, maps, enums, and fixed types
+      - Flexible namespace and element naming for XSD generation
+      - Advanced error handling with detailed error codes and messages
+      - Optional input validation with configurable processing modes
+    
+    useCases:
+      - Data contract transformation between Avro and JSON Schema/XML systems
+      - API documentation generation from Avro schemas
+      - Legacy system integration requiring XSD schemas
+      - Multi-format schema validation and compliance checking
+      - Enterprise data modeling and schema migration projects
+
+  technical:
+    language: Go
+    framework: Flogo
+    dependencies:
+      - github.com/project-flogo/core
+      - github.com/stretchr/testify (testing)
+    
+    configuration:
+      settings:
+        - name: outputFormat
+          type: string
+          required: false
+          description: Output format - 'json', 'xsd', or 'both'
+          default: both
+      
+      inputs:
+        - name: avroSchemaString
+          type: string
+          required: true
+          description: The Avro schema JSON string to transform
+        - name: outputFormat
+          type: string
+          required: false
+          description: Override default output format
+          default: both
+        - name: rootElementName
+          type: string
+          required: false
+          description: Root element name for XSD generation
+          default: root
+        - name: targetNamespace
+          type: string
+          required: false
+          description: Target namespace for XSD generation
+          default: ""
+      
+      outputs:
+        - name: jsonSchema
+          type: string
+          description: Generated JSON Schema (empty if outputFormat is 'xsd')
+        - name: xsdString
+          type: string
+          description: Generated XSD string (empty if outputFormat is 'json')
+        - name: error
+          type: boolean
+          description: Indicates if an error occurred during transformation
+        - name: errorMessage
+          type: string
+          description: Error details if transformation failed
+
+  examples:
+    - title: Basic Avro to JSON Schema Conversion
+      description: Transform a simple Avro record schema to JSON Schema format
+      code: |
+        {
+          "avroSchemaString": "{\"type\":\"record\",\"name\":\"User\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"name\",\"type\":\"string\"}]}",
+          "outputFormat": "json",
+          "rootElementName": "User"
+        }
+    
+    - title: Dual Format Generation
+      description: Generate both JSON Schema and XSD from complex Avro schema with unions
+      code: |
+        {
+          "avroSchemaString": "{\"type\":\"record\",\"name\":\"Employee\",\"namespace\":\"com.company\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"email\",\"type\":[\"null\",\"string\"],\"default\":null}]}",
+          "outputFormat": "both",
+          "rootElementName": "Employee",
+          "targetNamespace": "http://company.com/schemas"
+        }
+    
+    - title: XSD Generation for Legacy Systems
+      description: Convert Avro schema to XSD for XML-based legacy system integration
+      code: |
+        {
+          "avroSchemaString": "{\"type\":\"record\",\"name\":\"Order\",\"fields\":[{\"name\":\"orderId\",\"type\":\"string\"},{\"name\":\"items\",\"type\":{\"type\":\"array\",\"items\":\"string\"}}]}",
+          "outputFormat": "xsd",
+          "rootElementName": "Order",
+          "targetNamespace": "http://orders.example.com"
+        }
+
+  documentation:
+    gettingStarted: |
+      1. Configure the activity with desired output format (json, xsd, or both)
+      2. Provide a valid Avro schema JSON string as input
+      3. Optionally specify root element name and target namespace for XSD generation
+      4. The activity will intelligently process the schema and generate the requested format(s)
+      5. Check the error output to handle any transformation issues
+    
+    bestPractices:
+      - Validate Avro schema structure before transformation
+      - Use meaningful root element names for XSD generation
+      - Handle union types carefully, especially null unions
+      - Consider namespace implications for XSD in enterprise environments
+      - Test with complex nested structures to ensure proper conversion
+    
+    troubleshooting:
+      - "SCHEMA_PARSE_ERROR": Verify the Avro schema JSON is valid and well-formed
+      - "JSON_CONVERSION_ERROR": Check for unsupported Avro constructs in JSON Schema context
+      - "XSD_CONVERSION_ERROR": Ensure namespace and element names are valid for XML Schema
+      - Empty outputs: Verify the outputFormat parameter matches the expected output type
+
+  support:
+    documentation: "./docs/index.md"
+    examples: "./docs/examples/"
+    issues: "https://github.com/your-org/tib-devhub-hackathon/issues"
+    
+  metadata:
+    version: "1.0.0"
+    maturity: stable
+    maintainer: Flogo Team
+    tags:
+      - avro
+      - json-schema
+      - xsd
+      - schema-transformation
+      - data-conversion
+      - enterprise-integration

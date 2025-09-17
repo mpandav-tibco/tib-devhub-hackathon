@@ -1,0 +1,20 @@
+site_name: MySQL Binlog Listener Trigger
+site_description: Real-time MySQL/MariaDB binlog monitoring for change data capture
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+  palette:
+    primary: blue
+    accent: blue
+
+docs_dir: docs
+site_dir: site
+
+markdown_extensions:
+  - codehilite
+  - admonition
+  - toc:
+      permalink: true
