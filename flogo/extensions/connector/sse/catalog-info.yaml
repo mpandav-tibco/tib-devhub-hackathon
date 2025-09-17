@@ -1,35 +1,46 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
   name: flogo-connector-sse
-  title: Server-Sent Events (SSE) Connector
-  description: Real-time data streaming connector with unified trigger and activity for server-sent events communication
+  title: Server-Sent Events Connector
+  description: Real-time streaming communication using Server-Sent Events protocol
   annotations:
-    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/connector/sse
     backstage.io/techdocs-ref: dir:.
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/connector/sse
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 8
+    isMultiInstall: true
+    imageURL: ""
+    moreInfo:
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/connector/sse
+        icon: github
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/connector/sse/docs/index.md
+        icon: docs
   tags:
+    - devhub-marketplace
     - flogo
     - connector
-    - sse
-    - server-sent-events
-    - real-time
-    - streaming
-    - websockets-alternative
-    - dashboard
-    - notifications
-    - web-integration
-  links:
-    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/connector/sse/docs/index.md
-      title: Documentation
-      icon: docs
 spec:
-  type: flogo-connector
-  lifecycle: production
-  owner: flogo-team
-  system: flogo-extensions
-  dependsOn:
-    - resource:flogo-core
-    - resource:http-server
-  providesApis:
-    - flogo-connector-api
-    - sse-server-api
+  owner: tibco-flogo-team
+  type: template
+  presentation:
+    buttonLabels:
+      createButtonText: Install Server-Sent Events Connector
+  parameters:
+    - title: Accept the Marketplace Entry
+      properties:
+        accept:
+          title: Accept Terms
+          description: |
+            ## Server-Sent Events Connector
+            
+            Real-time streaming communication using Server-Sent Events protocol
+            
+            By installing this extension, you agree to use it according to TIBCO's terms.
+          type: boolean
+          default: false
+      required:
+        - accept

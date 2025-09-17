@@ -1,33 +1,46 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
   name: flogo-trigger-postgreslistener
   title: PostgreSQL Listener Trigger
-  description: Real-time PostgreSQL NOTIFY/LISTEN event monitoring with SSL/TLS support and comprehensive connection management
+  description: Real-time PostgreSQL NOTIFY/LISTEN event monitoring with SSL/TLS support
   annotations:
-    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/postgreslistener
     backstage.io/techdocs-ref: dir:.
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/postgreslistener
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 7
+    isMultiInstall: true
+    imageURL: ""
+    moreInfo:
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/postgreslistener
+        icon: github
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/postgreslistener/docs/index.md
+        icon: docs
   tags:
+    - devhub-marketplace
     - flogo
     - trigger
-    - postgresql
-    - notify-listen
-    - real-time
-    - event-driven
-    - database
-    - ssl-tls
-    - monitoring
-  links:
-    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/postgreslistener/docs/index.md
-      title: Documentation
-      icon: docs
 spec:
-  type: flogo-trigger
-  lifecycle: production
-  owner: flogo-team
-  system: flogo-extensions
-  dependsOn:
-    - resource:flogo-core
-    - resource:postgresql-driver
-  providesApis:
-    - flogo-trigger-api
+  owner: tibco-flogo-team
+  type: template
+  presentation:
+    buttonLabels:
+      createButtonText: Install PostgreSQL Listener Trigger
+  parameters:
+    - title: Accept the Marketplace Entry
+      properties:
+        accept:
+          title: Accept Terms
+          description: |
+            ## PostgreSQL Listener Trigger
+            
+            Real-time PostgreSQL NOTIFY/LISTEN event monitoring with SSL/TLS support
+            
+            By installing this extension, you agree to use it according to TIBCO's terms.
+          type: boolean
+          default: false
+      required:
+        - accept

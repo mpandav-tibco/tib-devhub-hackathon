@@ -1,20 +1,46 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
   name: flogo-activity-xsdschematransform
-  title: XSD Schema Transform Flogo Activity
-  description: Transform XSD schemas to JSON Schema and Avro Schema formats with comprehensive configuration options
+  title: XSD Schema Transform Activity
+  description: Transform and validate XSD schemas with intelligent processing capabilities
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/schema-transform/xsdschematransform
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 7
+    isMultiInstall: true
+    imageURL: ""
+    moreInfo:
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/schema-transform/xsdschematransform
+        icon: github
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/xsdschematransform/docs/index.md
+        icon: docs
   tags:
+    - devhub-marketplace
     - flogo
     - activity
-    - xsd
-    - schema-transform
-    - json-schema
-    - avro-schema
-    - xml
-  annotations:
-    backstage.io/source-location: url:https://github.com/TIBCOSoftware/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/xsdschematransform/
 spec:
-  type: library
-  lifecycle: production
-  owner: tibco-flogo
+  owner: tibco-flogo-team
+  type: template
+  presentation:
+    buttonLabels:
+      createButtonText: Install XSD Schema Transform Activity
+  parameters:
+    - title: Accept the Marketplace Entry
+      properties:
+        accept:
+          title: Accept Terms
+          description: |
+            ## XSD Schema Transform Activity
+            
+            Transform and validate XSD schemas with intelligent processing capabilities
+            
+            By installing this extension, you agree to use it according to TIBCO's terms.
+          type: boolean
+          default: false
+      required:
+        - accept

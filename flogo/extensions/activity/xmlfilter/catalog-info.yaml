@@ -1,32 +1,46 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
   name: flogo-activity-xmlfilter
   title: XML Filter Activity
-  description: Filter XML content using multiple XPath expressions with configurable AND/OR logic for content routing and validation
+  description: Advanced XML parsing, filtering, and manipulation with XPath support
   annotations:
-    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/xmlfilter
     backstage.io/techdocs-ref: dir:.
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/xmlfilter
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 6
+    isMultiInstall: true
+    imageURL: ""
+    moreInfo:
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/xmlfilter
+        icon: github
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/docs/index.md
+        icon: docs
   tags:
+    - devhub-marketplace
     - flogo
     - activity
-    - xml
-    - xpath
-    - filtering
-    - content-routing
-    - data-validation
-    - integration
-  links:
-    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/docs/index.md
-      title: Documentation
-      icon: docs
 spec:
-  type: flogo-activity
-  lifecycle: production
-  owner: flogo-team
-  system: flogo-extensions
-  dependsOn:
-    - resource:flogo-core
-    - resource:xmlquery
-  providesApis:
-    - flogo-activity-api
+  owner: tibco-flogo-team
+  type: template
+  presentation:
+    buttonLabels:
+      createButtonText: Install XML Filter Activity
+  parameters:
+    - title: Accept the Marketplace Entry
+      properties:
+        accept:
+          title: Accept Terms
+          description: |
+            ## XML Filter Activity
+            
+            Advanced XML parsing, filtering, and manipulation with XPath support
+            
+            By installing this extension, you agree to use it according to TIBCO's terms.
+          type: boolean
+          default: false
+      required:
+        - accept
