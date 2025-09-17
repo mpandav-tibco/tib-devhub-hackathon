@@ -19,17 +19,10 @@ metadata:
     backstage.io/managed-by-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/flogo-marketplace-registry.yaml
     backstage.io/managed-by-origin: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/flogo-marketplace-registry.yaml
     marketplace.tibco.com/category: "Flogo Registry"
-    marketplace.tibco.com/total-entries: "7"
-    marketplace.tibco.com/last-updated: "2025-09-17"
   tags:
     - flogo
-    - marketplace
     - tibco
-    - registry
-    - bulk-registration
-    - enterprise
-    - lightweight
-spec:
+  spec:
   targets:
     # =======================================================
     # API DEVELOPMENT (2 entries)

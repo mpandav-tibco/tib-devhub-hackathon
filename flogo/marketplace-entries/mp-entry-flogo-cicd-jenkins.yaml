@@ -29,11 +29,8 @@ metadata:
     - cicd
     - jenkins
     - aws-lambda
-    - faas
     - automation
     - tibco
-    - devops
-    - recommended
 spec:
   owner: group:default/marketplace-entries-group
   type: template

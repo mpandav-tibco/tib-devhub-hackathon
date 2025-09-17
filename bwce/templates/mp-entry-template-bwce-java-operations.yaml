@@ -22,11 +22,8 @@ metadata:
         icon: github
   tags:
     - devhub-marketplace
-    - bwce-templates
-    - business-works-container-edition
+    - bwce
     - java-integration
-    - scheduler
-    - recommended
 spec:
   owner: group:default/marketplace-entries-group
   type: template

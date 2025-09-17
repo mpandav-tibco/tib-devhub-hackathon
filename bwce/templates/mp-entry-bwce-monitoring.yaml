@@ -28,13 +28,8 @@ metadata:
     - tibco
     - bwce
     - monitoring
-    - documentation
-    - bwcemon
+     - bwcemon
     - kubernetes
-    - docker
-    - observability
-    - deployment
-    - recommended
 spec:
   owner: tibco-templates
   type: service

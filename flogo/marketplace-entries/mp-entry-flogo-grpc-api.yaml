@@ -27,13 +27,7 @@ metadata:
     - devhub-marketplace
     - flogo
     - grpc
-    - iot
-    - telemetry
-    - real-time
-    - anomaly-detection
     - tibco
-    - microservices
-    - recommended
 spec:
   owner: group:default/marketplace-entries-group
   type: template

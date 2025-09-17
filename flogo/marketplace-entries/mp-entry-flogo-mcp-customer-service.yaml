@@ -17,9 +17,6 @@ metadata:
       - text: Model Context Protocol
         url: https://modelcontextprotocol.io/
         icon: ai
-      - text: Claude AI Integration
-        url: https://www.anthropic.com/claude
-        icon: ai
       - text: Source Repository
         url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/sample-templates/mcp-customer-service
         icon: github
@@ -28,12 +25,7 @@ metadata:
     - flogo
     - ai
     - mcp
-    - customer-service
-    - automation
-    - enterprise
     - tibco
-    - machine-learning
-    - featured
 spec:
   owner: group:default/marketplace-entries-group
   type: template

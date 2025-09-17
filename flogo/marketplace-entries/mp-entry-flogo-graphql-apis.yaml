@@ -27,12 +27,7 @@ metadata:
     - devhub-marketplace
     - flogo
     - graphql
-    - apis
-    - microservices
     - tibco
-    - lightweight
-    - data-integration
-    - recommended
 spec:
   owner: group:default/marketplace-entries-group
   type: template

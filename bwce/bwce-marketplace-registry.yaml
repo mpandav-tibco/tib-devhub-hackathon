@@ -19,16 +19,10 @@ metadata:
     backstage.io/managed-by-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/bwce-marketplace-registry.yaml
     backstage.io/managed-by-origin: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/bwce-marketplace-registry.yaml
     marketplace.tibco.com/category: "BWCE Registry"
-    marketplace.tibco.com/total-entries: "10"
-    marketplace.tibco.com/last-updated: "2025-09-16"
   tags:
     - bwce
-    - marketplace
     - tibco
     - registry
-    - bulk-registration
-    - businessworks
-    - container-edition
 spec:
   targets:
     # =======================================================

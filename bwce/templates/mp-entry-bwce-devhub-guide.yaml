@@ -28,17 +28,10 @@ metadata:
         icon: github
   tags:
     - devhub-marketplace
-    - bwce-templates
-    - documentation
-    - devhub
     - jenkins
     - kubernetes
-    - ci-cd
-    - governance
     - tibco
-    - businessworks
-    - know-how
-    - recommended
+    - maven
 spec:
   owner: tibco-templates
   type: service

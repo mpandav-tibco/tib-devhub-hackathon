@@ -28,12 +28,8 @@ metadata:
     - flogo
     - terraform
     - cicd
-    - infrastructure
     - automation
     - tibco
-    - lightweight
-    - devops
-    - recommended
 spec:
   owner: group:default/marketplace-entries-group
   type: template

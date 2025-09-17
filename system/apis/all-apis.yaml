@@ -1,0 +1,9 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: collection-of-apis
+  description: A collection of all Backstage example APIs
+spec:
+  targets:
+    - ./system/apis/soap-wsdl/api-soap-wsdl.yaml
+    - ./system/apis/product-catalgue/openapi-product-catalogue.yaml

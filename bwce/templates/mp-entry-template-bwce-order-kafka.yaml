@@ -22,12 +22,9 @@ metadata:
         icon: github
   tags:
     - devhub-marketplace
-    - bwce-templates
-    - business-works-container-edition
+    - bwce
     - order-processing
-    - kafka-streaming
-    - e-commerce
-    - recommended
+    - kafka
 spec:
   owner: group:default/marketplace-entries-group
   type: template

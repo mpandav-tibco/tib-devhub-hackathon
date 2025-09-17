@@ -1,46 +1,20 @@
-# ${{ values.name }}
+# SonarQube BWCE Plugin Template
 
-${{ values.description }}
-
-## Quick Start
-
-### Using Docker Compose
-
-```bash
-# Start SonarQube server
-docker-compose up -d
-
-# Access SonarQube at http://localhost:9000
-# Default credentials: admin/admin
-```
-
-### Configuration
-
-- **SonarQube Version**: ${{ values.sonarqube_version }}
-- **TIBCO Plugin Version**: ${{ values.plugin_version }}
-- **Deployment Type**: ${{ values.deployment_type }}
-
-### Scanning BWCE Projects
-
-1. Install SonarScanner CLI
-2. Create `sonar-project.properties`:
-   ```properties
-   sonar.projectKey=${{ values.name }}
-   sonar.projectName=${{ values.name }}
-   sonar.projectVersion=1.0
-   sonar.sources=.
-   sonar.host.url=http://localhost:9000
-   ```
-3. Run scanner: `sonar-scanner`
+Template for setting up SonarQube server with TIBCO BusinessWorks Container Edition plugin for code quality analysis.
 
 ## Features
+- SonarQube v9.9.8 with TIBCO plugin v1.3.11
+- Docker and Kubernetes deployment options
+- Pre-configured quality profiles for BWCE projects
+- CI/CD integration examples
 
-- Pre-configured TIBCO BusinessWorks quality profiles
-- Static code analysis for BW5/6/CE projects
-- Quality gates and metrics
-- PostgreSQL database included
+## Quick Start
+1. Use the template in TIBCO Developer Hub
+2. Configure deployment parameters
+3. Deploy using Docker Compose or Kubernetes
+4. Scan your BWCE projects
 
 ## Resources
-
+- [Docker Hub Image](https://hub.docker.com/repository/docker/mpandav/tib-sonarqube-community-lts/general)
 - [SonarQube Documentation](https://docs.sonarqube.org/)
-- [TIBCO BusinessWorks](https://www.tibco.com/products/tibco-businessworks)
+- Sonarqube plugin for TIBCO BW is available here; https://github.com/TIBCOSoftware/sonar-bw

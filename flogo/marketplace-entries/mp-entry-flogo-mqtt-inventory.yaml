@@ -17,9 +17,6 @@ metadata:
       - text: MQTT Protocol Guide
         url: https://mqtt.org/
         icon: messaging
-      - text: PostgreSQL Documentation
-        url: https://www.postgresql.org/docs/
-        icon: database
       - text: Source Repository
         url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/sample-templates/mqtt-realtime-inventory-managment
         icon: github
@@ -27,13 +24,8 @@ metadata:
     - devhub-marketplace
     - flogo
     - mqtt
-    - iot
-    - inventory-management
-    - real-time
     - retail
-    - postgresql
     - tibco
-    - recommended
 spec:
   owner: group:default/marketplace-entries-group
   type: template

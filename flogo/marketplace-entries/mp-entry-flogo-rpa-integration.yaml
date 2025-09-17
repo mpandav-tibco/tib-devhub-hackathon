@@ -17,22 +17,14 @@ metadata:
       - text: UiPath Integration
         url: https://www.uipath.com/
         icon: star
-      - text: TIBCO Flogo Enterprise
-        url: https://www.tibco.com/products/tibco-flogo
-        icon: star
       - text: Source Repository
         url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/sample-templates/rpa-integration
         icon: github
   tags:
     - devhub-marketplace
     - flogo
-    - rpa
-    - automation
-    - uipath
     - tibco
-    - lightweight
     - process-automation
-    - recommended
 spec:
   owner: group:default/marketplace-entries-group
   type: template

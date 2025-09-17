@@ -29,16 +29,7 @@ metadata:
   tags:
     - devhub-marketplace
     - bwce
-    - learning
-    - tutorial
-    - basics
-    - beginner
     - tibco
-    - businessworks
-    - documentation
-    - training
-    - hands-on
-    - recommended
 spec:
   owner: tibco-templates
   type: service

@@ -10,8 +10,6 @@ metadata:
     - ebx
     - sap
     - bapi
-    - datasync
-    - recommended
 spec:
   owner: group:default/tibco-templates
   type: library

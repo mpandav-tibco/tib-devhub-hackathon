@@ -22,13 +22,9 @@ metadata:
         icon: github
   tags:
     - devhub-marketplace
-    - bwce-templates
-    - business-works-container-edition
+    - bwce
     - salesforce-integration
     - ebx-integration
-    - kafka-streaming
-    - cdc
-    - recommended
 spec:
   owner: group:default/marketplace-entries-group
   type: template

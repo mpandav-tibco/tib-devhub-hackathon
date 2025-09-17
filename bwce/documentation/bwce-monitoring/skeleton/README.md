@@ -1,82 +1,91 @@
-# ${{ values.name }}
+# BWCE Monitoring Documentation Template
 
-${{ values.description }}
+This is a Backstage documentation template that provides comprehensive guidance for setting up TIBCO BusinessWorks Container Edition Monitoring (BWCEMon) with BWCE applications.
 
-## Overview
+## Template Purpose
 
-This project provides a complete setup for TIBCO BusinessWorks Container Edition Monitoring (BWCEMon) application using {% if values.deployment_type == 'kubernetes' %}Kubernetes deployment{% else %}Docker containers{% endif %} with {{ values.database_type | upper }} database integration.
+This documentation template helps teams create complete documentation for BWCEMon deployment and integration with BWCE applications. It covers the entire lifecycle from software download to production monitoring.
 
-## Quick Start
+## What This Template Provides
 
-### Prerequisites
+### Complete BWCEMon Documentation
+1. **Download and Setup**: Step-by-step guide to obtain BWCEMon from TIBCO eDelivery
+2. **Docker Image Creation**: Instructions for building BWCEMon container images
+3. **Database Configuration**: Setup guides for PostgreSQL, MySQL, and H2 databases
+4. **Deployment Options**: Both Kubernetes and standalone Docker deployment approaches
+5. **BWCE Integration**: How to connect and monitor BWCE applications
+6. **Troubleshooting**: Common issues and resolution techniques
 
-1. **BWCEMon Software**: Download `bwce-mon-{{ values.bwce_mon_version }}.zip` from [TIBCO eDelivery](https://edelivery.tibco.com)
-2. **Database**: {% if values.database_type == 'postgres' %}PostgreSQL server{% elif values.database_type == 'mysql' %}MySQL server{% else %}H2 in-memory (no setup required){% endif %}
-{% if values.deployment_type == 'kubernetes' %}3. **Kubernetes**: Access to Kubernetes cluster{% else %}3. **Docker**: Docker runtime environment{% endif %}
+### Generated Documentation Structure
+- **Comprehensive Setup Guide**: Complete documentation in `docs/index.md`
+- **Deployment Configurations**: Kubernetes manifests and Docker commands
+- **Database Setup Scripts**: SQL scripts for database preparation
+- **Integration Examples**: Sample configurations for BWCE app monitoring
 
-### Setup Instructions
+## Template Features
 
-1. **Build BWCEMon Image**:
-   ```bash
-   unzip bwce-mon-{{ values.bwce_mon_version }}.zip
-   cd bwce_mon
-   docker build -t {{ values.name }}/bwce-monitoring:{{ values.bwce_mon_version }} .
-   ```
+- **Multi-Environment Support**: Documentation adapts for Kubernetes or Docker deployments
+- **Database Flexibility**: Covers PostgreSQL, MySQL, and H2 in-memory options
+- **Version Agnostic**: Supports multiple BWCEMon versions (2.8.2, 2.9.0, 2.10.0)
+- **Conditional Content**: Documentation changes based on selected deployment type and database
 
-{% if values.deployment_type == 'kubernetes' %}
-2. **Deploy to Kubernetes**:
-   ```bash
-   # Update database credentials in k8s-deployment.yaml
-   kubectl apply -f k8s-deployment.yaml
-   
-   # Check deployment
-   kubectl get pods -l app=bwce-monitoring
-   ```
+### 1. Download the BWCEMon from official TIBCO download site 
+- Login to [TIBCO Software Download](https://edelivery.tibco.com)
+- Look for BusinessWorks Container Edition -> latest version
+- Under runtime select the Container -> and download bwce-mon-x.x.x.zip
 
-3. **Access BWCEMon**:
-   {% if values.enable_loadbalancer %}
-   - External LoadBalancer: `kubectl get service bwce-monitoring-service`
-   - Access via external IP: `http://<EXTERNAL-IP>`
-   {% else %}
-   - Port-forward: `kubectl port-forward service/bwce-monitoring-service 8080:80`
-   - Access locally: `http://localhost:8080`
-   {% endif %}
-{% else %}
-2. **Deploy with Docker**:
-   ```bash
-   # Run container with database connection
-   docker run -d \
-     --name {{ values.name }}-monitoring \
-     -p 8080:8080 \
-     {% if values.database_type != 'h2' %}
-     -e PERSISTENCE_TYPE="{{ values.database_type }}" \
-     -e DB_URL="{{ values.database_type }}://{{ values.db_username }}:PASSWORD@{{ values.db_host }}:{{ values.db_port }}/{{ values.db_name }}" \
-     {% else %}
-     -e PERSISTENCE_TYPE="h2" \
-     {% endif %}
-     {{ values.name }}/bwce-monitoring:{{ values.bwce_mon_version }}
-   ```
-
-3. **Access BWCEMon**:
-   - Local access: `http://localhost:8080`
-{% endif %}
+    ![image](https://github.com/mpandav/tibco-cloud-usability/assets/38240734/4c7b3e97-f727-4988-91a2-bc0d088901b2)
 
 
-## Features
 
-- ✅ **Real-time Monitoring**: Live BWCE application metrics
-- ✅ **Database Persistence**: {% if values.database_type != 'h2' %}Persistent storage with {{ values.database_type | upper }}{% else %}In-memory storage with H2{% endif %}
-- ✅ **{% if values.deployment_type == 'kubernetes' %}Kubernetes Native{% else %}Docker Containerized{% endif %}**: Optimized for {{ values.deployment_type }} deployment
-{% if values.deployment_type == 'kubernetes' and values.enable_loadbalancer %}- ✅ **External Access**: LoadBalancer service for external connectivity{% endif %}
-- ✅ **Health Monitoring**: Liveness and readiness probes
-- ✅ **Resource Management**: CPU and memory limits configured
+### 2. Build BWCEMon Docker Image
+Once you download the bwce-mon-x.x.x.zip file, we need to cretae the docker image for deployment. You can find the steps documented [here in official TIBCO BWCE document](https://docs.tibco.com/pub/bwce/2.8.2/doc/html/Default.htm#bwce-app-monitoring/setting-up-bwce-appl.htm?TocPath=Application%2520Monitoring%2520and%2520Troubleshooting%257CApplication%2520Monitoring%2520Overview%257CApplication%2520Monitoring%2520on%2520Docker%257CSetting%2520Up%2520%2520%2520%2520TIBCO%2520BusinessWorks%2520Container%2520Edition%2520Application%2520Monitoring%2520on%2520Docker%257C_____0 ).  
 
-## Documentation
+Follow below steps to build the BWCEMon docker image:
+- Extract the bwce_mon-x.x.x.zip 
+- Navigate to the bwce_mon directory and build the docker image:
 
-- 📖 **Setup Guide**: See `docs/index.md` for detailed instructions
-{% if values.deployment_type == 'kubernetes' %}- 🚀 **Kubernetes Config**: Review `k8s-deployment.yaml` for deployment details{% else %}- 🐳 **Docker Guide**: Check `docker-deployment.md` for container setup{% endif %}
-- 📊 **BWCEMon Docs**: [Official TIBCO Documentation](https://docs.tibco.com/pub/bwce/{{ values.bwce_mon_version }}/doc/html/Default.htm#bwce-app-monitoring/)
+        docker build -t mpandav/bwce-monitoring:282
 
----
+    ![image](https://github.com/mpandav/tibco-cloud-usability/assets/38240734/06d048c1-f0fc-42af-aa4f-9ec07230f191)
 
-*Generated by TIBCO Developer Hub template for BWCE Monitoring*
+- If you want you can store your image to docker registry. In my case, I will be hosting it on [here at dockerhub ](https://hub.docker.com/repository/docker/mpandav/bwce-monitoring/general).
+
+### 3. Deploy the BWCE Monitoring Application
+Once you build your docker image, you have a choice of deploying it either as a standalone docker container or in K8S cluster. Let's see how we can deploy our BWCEMon Container in one or another. 
+
+Before deploying the BWCEMon we need to satisfy few prequisites:
+- A Database instance to store the application monitoring information. You can find supported DB types and versions here.
+- Make sure that your DB instance is up & running and rechable from BWCEMon host.
+
+### 1. Deploy as a K8S Service:
+
+To deploy BWCEMon in K8S environment as a service, pls use deployment.yml configuration provided here. 
+
+        kubectl apply -f bwce-mon-deployment.yml
+
+- BWCE Monitoring Application is now ready and available on configured port.
+
+    ![image](https://github.com/mpandav/tibco-cloud-usability/assets/38240734/972e67d2-f308-4dda-ac22-3d5e192a57df)
+
+- BWCEMon Replication Controller
+
+    ![image](https://github.com/mpandav/tibco-cloud-usability/assets/38240734/6c68852a-f1a6-4ae1-a5db-df3121f3bc65) 
+
+- BWCEMon POD configurtion
+    
+    ![image](https://github.com/mpandav/tibco-cloud-usability/assets/38240734/2200d98d-5894-4ba3-ae8c-bd09bd4b60ab)
+
+
+
+### 2. Deploy as a Standalone Container:
+
+To deploy a BWCEMon in standalone container run below docker command. In my case, I will be using postgresql server as a data store for monitoring data.
+
+    docker run -p 8080:8080 -e PERSISTENCE_TYPE="postgres" -e DB_URL="postgresql://postgres:Tibco321@xx.xxx.xx.xxx:5432/postgres" --name bwce-monitoring-282 mpandav/bwce-monitoring:282
+![image](https://github.com/mpandav/tibco-cloud-usability/assets/38240734/1cdb7026-9d8b-406f-a264-09492fc4eac2)
+
+Your BWCEMon app is now ready and accessible on http://localhost:8080 as shown below,
+
+![image](https://github.com/mpandav/tibco-cloud-usability/assets/38240734/cc3a6c75-80d3-4e23-9fe6-b0d2aa31745a)
+

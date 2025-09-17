@@ -13,9 +13,6 @@ metadata:
     - cicd
     - jenkins
     - kubernetes
-    - docker
-    - integration
-    - devops
 spec:
   owner: group:tibco-integration-team
   type: documentation

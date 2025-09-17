@@ -7,7 +7,6 @@ metadata:
   tags:
     - tibco
     - bwce
-    - order-processing
     - kafka
     - e-commerce
     - recommended

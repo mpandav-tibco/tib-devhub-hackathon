@@ -16,25 +16,13 @@ metadata:
     marketplace.tibco.com/use-case: "Continuous Integration and Deployment"
     marketplace.tibco.com/maturity: "Production Ready"
     marketplace.tibco.com/version: "1.0.0"
-    marketplace.tibco.com/last-updated: "2025-09-16"
     marketplace.tibco.com/documentation-url: "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/cicd-jenkins/README.md"
-    marketplace.tibco.com/support-level: "Community"
-    marketplace.tibco.com/estimated-time: "2-4 hours"
   tags:
     - tibco
     - bwce
-    - businessworks
     - cicd
     - jenkins
-    - kubernetes
-    - docker
-    - devops
-    - integration
-    - pipeline
     - automation
-    - testing
-    - deployment
-    - monitoring
   links:
     - title: TIBCO BusinessWorks Documentation
       url: https://docs.tibco.com/products/tibco-businessworks-container-edition
