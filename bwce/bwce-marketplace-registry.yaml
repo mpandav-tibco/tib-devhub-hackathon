@@ -79,4 +79,4 @@ spec:
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-bwce-cicd.yaml
     
     # SonarQube BWCE Plugin - Code quality and analysis tooling
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-sonarqube-bwce-plugin.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/tooling/sonarqube/mp-entry-sonarqube-bwce-plugin.yaml
