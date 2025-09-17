@@ -14,7 +14,7 @@ metadata:
     - recommended
 spec:
   owner: TIBCO
-  type: service
+  type: template
 
   parameters:
     - title: Fill in some steps
