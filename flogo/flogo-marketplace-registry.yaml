@@ -36,34 +36,34 @@ spec:
     # =======================================================
     
     # GraphQL APIs Template - Flexible data querying from multiple sources
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/graphql-apis/mp-entry-flogo-graphql-apis.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-graphql-apis.yaml
     
     # gRPC IoT Telemetry - High-performance real-time data processing
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/grpc-api/mp-entry-flogo-grpc-api.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-grpc-api.yaml
     
     # =======================================================
     # IOT & REAL-TIME PROCESSING (2 entries)
     # =======================================================
     
     # MQTT Real-time Inventory Management - Retail inventory automation
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/mqtt-realtime-inventory-managment/mp-entry-flogo-mqtt-inventory.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-mqtt-inventory.yaml
     
     # RPA Integration - Robotic Process Automation workflows  
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/rpa-integration/mp-entry-flogo-rpa-integration.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-rpa-integration.yaml
     
     # =======================================================
     # DEVOPS & AUTOMATION (2 entries)
     # =======================================================
     
     # CI/CD Jenkins Pipeline - Automated AWS Lambda deployment
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/cicd-jenkis/mp-entry-flogo-cicd-jenkins.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-cicd-jenkins.yaml
     
     # CI/CD Terraform Pipeline - Infrastructure as Code automation
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/cicd-terraform/mp-entry-flogo-cicd-terraform.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-cicd-terraform.yaml
     
     # =======================================================
     # AI & MACHINE LEARNING (1 entry)
     # =======================================================
     
     # AI-Powered Customer Service with MCP - Revolutionary AI integration
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/mcp-customer-service/mp-entry-flogo-mcp-customer-service.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-mcp-customer-service.yaml

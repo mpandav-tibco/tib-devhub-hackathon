@@ -1,0 +1,85 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: mp-entry-flogo-mcp-customer-service
+  title: Flogo AI-Powered Customer Service with MCP
+  description: Transform enterprise business logic into AI-accessible tools using Flogo's Model Context Protocol for intelligent customer service automation
+  backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 10
+    isMultiInstall: false
+    imageURL: ""
+    moreInfo:
+      - text: Flogo Documentation
+        url: https://docs.tibco.com/products/tibco-flogo-enterprise
+        icon: docs
+      - text: Model Context Protocol
+        url: https://modelcontextprotocol.io/
+        icon: ai
+      - text: Claude AI Integration
+        url: https://www.anthropic.com/claude
+        icon: ai
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/sample-templates/mcp-customer-service
+        icon: github
+  tags:
+    - devhub-marketplace
+    - flogo
+    - ai
+    - mcp
+    - customer-service
+    - automation
+    - enterprise
+    - tibco
+    - machine-learning
+    - featured
+spec:
+  owner: tibco-templates
+  type: service
+  presentation:
+    buttonLabels:
+      createButtonText: Install
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install Flogo AI-Powered Customer Service with MCP into your TIBCO Developer Hub
+
+            **Description:** Revolutionary AI-powered customer service system using Flogo's Model Context Protocol to transform enterprise business logic into AI-accessible tools for intelligent automation.
+
+            **What You'll Get:** Complete MCP implementation with Flogo flows, AI assistant integration, customer service workflows, and enterprise system connectors for autonomous customer support.
+
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: false
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/mcp-customer-service/catalog-info.yaml
+
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Documents
+        url: /docs?filters%5Buser%5D=all&limit=20
+        icon: techdocs
+      - icon: docs
+        title: Open Flogo AI Customer Service Guide
+        url: /docs/default/System/flogo-mcp-customer-service-template
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace?filters%5Bkind%5D=template&filters%5Btags%5D=devhub-marketplace&limit=20

@@ -1,0 +1,84 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: mp-entry-flogo-cicd-terraform
+  title: Flogo CI/CD Terraform Template
+  description: Infrastructure as Code automation with TIBCO Flogo and Terraform for cloud deployment and DevOps workflows
+  backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 8
+    isMultiInstall: false
+    imageURL: ""
+    moreInfo:
+      - text: Flogo Documentation
+        url: https://docs.tibco.com/products/tibco-flogo-enterprise
+        icon: docs
+      - text: Terraform Documentation
+        url: https://www.terraform.io/docs/
+        icon: docs
+      - text: TIBCO Flogo Enterprise
+        url: https://www.tibco.com/products/tibco-flogo
+        icon: star
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/sample-templates/cicd-terraform
+        icon: github
+  tags:
+    - devhub-marketplace
+    - flogo
+    - terraform
+    - cicd
+    - infrastructure
+    - automation
+    - tibco
+    - lightweight
+    - devops
+    - recommended
+spec:
+  owner: tibco-templates
+  type: service
+  presentation:
+    buttonLabels:
+      createButtonText: Install
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install Flogo CI/CD Terraform Template into your TIBCO Developer Hub
+
+            **Description:** Advanced Infrastructure as Code automation template combining TIBCO Flogo with Terraform for cloud deployment, DevOps workflows, and automated infrastructure management.
+
+            **What You'll Get:** Complete CI/CD pipeline with Flogo applications, Terraform infrastructure definitions, automated deployment workflows, and cloud provisioning configurations.
+
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: false
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/cicd-terraform/catalog-info.yaml
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Documents
+        url: /docs?filters%5Buser%5D=all&limit=20
+        icon: techdocs
+      - icon: docs
+        title: Open Flogo Terraform CI/CD Documentation
+        url: /docs/default/System/flogo-cicd-terraform
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace?filters%5Bkind%5D=template&filters%5Btags%5D=devhub-marketplace&limit=20
