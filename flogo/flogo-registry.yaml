@@ -1,0 +1,102 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: flogo-registry
+  title: TIBCO Flogo Extensions Registry
+  description: |
+    🚀 Complete Registry for all TIBCO Flogo Extensions and Templates 🚀
+    
+    This single file registers EVERYTHING:
+    ✅ Catalog Components (10 extensions for discovery)
+    ✅ Scaffolding Templates (10 templates for project creation)  
+    ✅ Marketplace Entries (10 entries with full documentation)
+    
+    📦 Extension Types:
+    - Activities: AWS Signature V4, Schema Transforms (XSD/JSON/Avro), Template Engine, Write Log, XML Filter (7 total)
+    - Connectors: Server-Sent Events for real-time streaming (1 total)
+    - Triggers: MySQL Binlog Listener, PostgreSQL Listener for database monitoring (2 total)
+    
+    🎯 Use Cases:
+    - Enterprise Integration & Data Processing
+    - Real-time Communication & Event Streaming
+    - Cloud Security & Authentication
+    - Database Change Data Capture
+    - Content Generation & Template Processing
+    
+    📈 Total: 30 registrations (10 components + 10 templates + 10 marketplace entries)
+    
+    🔧 Usage: Add this single URL to your Developer Hub configuration to register all Flogo extensions at once!
+  annotations:
+    backstage.io/managed-by-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/flogo-registry.yaml
+    backstage.io/managed-by-origin: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/flogo-master-registry.yaml
+    marketplace.tibco.com/category: "Flogo Master Registry"
+    marketplace.tibco.com/featured: "true"
+  tags:
+    - flogo
+    - tibco
+    - master-registry
+    - extensions
+    - templates
+    - marketplace
+    - complete-collection
+spec:
+  targets:
+    # =======================================================
+    # 🏗️ CATALOG COMPONENTS - Backstage Discovery (10 components)
+    # =======================================================
+    
+    # Activities (7)
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/catalog-info.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/xsdschematransform/catalog-info.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/jsonschematransform/catalog-info.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/avroschematransform/catalog-info.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/catalog-info.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/write-log/catalog-info.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/catalog-info.yaml
+    
+    # Connectors (1)
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/connector/sse/catalog-info.yaml
+    
+    # Triggers (2)
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/mysql-binlog-listener/catalog-info.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/postgreslistener/catalog-info.yaml
+    
+    # =======================================================
+    # 🏗️ SCAFFOLDING TEMPLATES - Project Creation (10 templates)
+    # =======================================================
+    
+    # Activity Templates (7)
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/template.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/xsdschematransform/template.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/jsonschematransform/template.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/avroschematransform/template.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/template.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/write-log/template.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/template.yaml
+    
+    # Connector Templates (1)
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/connector/sse/template.yaml
+    
+    # Trigger Templates (2)
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/mysql-binlog-listener/template.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/postgreslistener/template.yaml
+    
+    # =======================================================
+    # 🏪 MARKETPLACE ENTRIES - Full Documentation (10 entries)
+    # =======================================================
+    
+    # Activity Marketplace Entries (7)
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/mp-entry-awssignaturev4.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/xsdschematransform/mp-entry-xsdschematransform.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/jsonschematransform/mp-entry-jsonschematransform.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/avroschematransform/mp-entry-avroschematransform.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/mp-entry-templateengine.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/write-log/mp-entry-write-log.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/mp-entry-xmlfilter.yaml
+    
+    # Connector Marketplace Entries (1)
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/connector/sse/mp-entry-sse-connector.yaml
+    
+    # Trigger Marketplace Entries (2)
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/mysql-binlog-listener/mp-entry-mysql-binlog-listener.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/postgreslistener/mp-entry-postgreslistener.yaml
