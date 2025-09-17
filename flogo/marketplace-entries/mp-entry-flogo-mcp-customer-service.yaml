@@ -66,8 +66,7 @@ spec:
       name: Installing Marketplace Entry...
       action: catalog:register
       input:
-        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/raw/main/flogo/sample-templates/mcp-customer-service/template.yaml
-        optional: true
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/mcp-customer-service/template.yaml
   output:
     links:
       - title: Open in catalog

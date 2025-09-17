@@ -11,8 +11,6 @@ metadata:
 spec:
   owner: ACME
   type: library
-
-
   parameters:
     - title: Fill in some steps
       required:
@@ -154,14 +152,6 @@ spec:
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: /catalog-info.yaml
-    - id: jenkinsEarBuild
-      name: Trigger Jenkins EAR Build & Platform Deployment
-      action: tibco:trigger-jenkins-job
-      input:
-        repoUrl: ${{ parameters.repoUrl | parseRepoUrl}}
-        job: bwce/job/build_bwce_ear
-        authToken: tibco
-        jenkinsInstructions: '&bw_project_folder=${{ (parameters.repoUrl | parseRepoUrl).repo }}&deploy=${{ parameters.deploy }}&deployTarget=${{ parameters.deployTarget }}&namespace=${{ parameters.namespace }}&platformToken=${{ parameters.platformToken }}&dpUrl=${{ parameters.dpUrl }}&sonar=${{ parameters.sonar }}&trivy=${{ parameters.trivy }}'
   output:
     links:
       - title: Repository
