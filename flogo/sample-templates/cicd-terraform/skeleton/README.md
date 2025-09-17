@@ -1,95 +1,64 @@
-# ${{ values.name }}
+# Automating Flogo Deployments to AWS Lambda with Terraform
+This repository demonstrates how to automate the deployment of Flogo applications to AWS Lambda using Terraform. By leveraging Infrastructure as Code (IaC) principles, you can streamline your serverless deployments, improve consistency, and reduce manual effort.
 
-${{ values.description }}
+## What is TIBCO Flogo Enterprise?
+ [TIBCO Flogo](https://www.tibco.com/content/dam/tibco/documents/data-sheet/tibco-flogo-enterprise.pdf) is an open-source ecosystem of tools and frameworks designed for building event-driven applications and functions.
 
-## Flogo CI/CD with Terraform
+ It's particularly well-suited for creating lightweight and efficient serverless functions and microservices
 
-This project contains a TIBCO Flogo application with Terraform infrastructure as code for automated deployment.
+## Why Terraform?
 
-### Features
+[Terraform](https://www.terraform.io/) is an open-source IaC tool that allows you to define and manage your infrastructure in a declarative manner. It supports various cloud providers.
 
-- Infrastructure as Code with Terraform
-- Cloud provider: ${{ values.cloudProvider }}
-- Automated infrastructure provisioning
-{%- if values.enableRemoteState %}
-- Remote state management
-{%- endif %}
-- Environment-specific configurations
+## What this repo does:
 
-### Configuration
+This repository provides a Terraform configuration that:
 
-- Cloud Provider: ${{ values.cloudProvider }}
-- Terraform Version: ${{ values.terraformVersion }}
-- Environment: ${{ values.environment }}
-- Region: ${{ values.region }}
-{%- if values.enableRemoteState %}
-- Remote State: Enabled
-{%- else %}
-- Remote State: Disabled (local state)
-{%- endif %}
-- Owner: ${{ values.owner }}
-{%- if values.system %}
-- System: ${{ values.system }}
-{%- endif %}
+- **Creates** an IAM role for the Lambda function with the necessary permissions. 
+- **Builds** a ZIP archive of your Flogo application code.
+- **Creates an AWS Lambda function** and configures it to use the Flogo binary.
 
-### Project Structure
+## Prerequisites
 
-- `main.tf`: Main Terraform configuration for infrastructure
-- `src/`: Flogo application source files
-- `images/`: Documentation and architecture diagrams
+- **AWS Account**: An AWS account with appropriate permissions.
+- **Terraform**: Terraform installed and configured on your local machine.
+- **AWS CLI**: The AWS CLI installed and configured.
+- **Flogo Application**: A Flogo application ready to be deployed.
 
-### Infrastructure Components
+## How to use
 
-The Terraform configuration provisions:
-- Compute resources for Flogo applications
-- Networking and security configurations
-- Storage and database resources
-- Load balancers and auto-scaling groups
-- Monitoring and logging infrastructure
+  1. **Clone the repository**:
+  `git clone https://github.com/mpandav-tibco/flogo-lambda-terraform.git`
 
-### Getting Started
+  2. **Build your Flogo app**:
+  Build your Flogo application either using TIBCO Cloud UI, Platform APIs or Visual Code Extension, ensuring it's built for the correct target architecture (e.g., `linux` and `amd64` for AWS Lambda).
 
-1. **Prerequisites:**
-   - Install Terraform ${{ values.terraformVersion }}
-   - Configure ${{ values.cloudProvider }} credentials
-   - Install TIBCO Flogo Enterprise CLI
+  1. **Configure Terraform**:
+  Follow the steps outlined the main.tf (this is just for demonstration)
 
-2. **Initialize Terraform:**
-   ```bash
-   terraform init
-   ```
+  1. **Run Terraform**:
+  - **Initialize Terraform**: `terraform init `
 
-3. **Plan Infrastructure:**
-   ```bash
-   terraform plan -var="environment=${{ values.environment }}"
-   ```
+    ![image](https://github.com/user-attachments/assets/fb7a400b-5142-4046-9927-8ffbce3f49b3)
 
-4. **Apply Infrastructure:**
-   ```bash
-   terraform apply -var="environment=${{ values.environment }}"
-   ```
+  - **Plan the changes**: `terraform plan `
+  
+    ![image](https://github.com/user-attachments/assets/105c0d76-ee54-4b3b-9643-767210f5701f)
 
-5. **Deploy Flogo Application:**
-   - Build the Flogo application
-   - Deploy to provisioned infrastructure
+  - **Apply the changes**: ` terraform apply `
 
-### CI/CD Integration
+    ![image](https://github.com/user-attachments/assets/db6c172b-762a-4be1-829b-9d2114eafb3e)
 
-The template supports integration with:
-- GitHub Actions with Terraform workflows
-- GitLab CI/CD with infrastructure pipelines
-- Jenkins with Terraform plugins
-- Azure DevOps with Terraform tasks
 
-### Environment Management
+## Customization
+- **Environment variables**: You can add environment variables to your Lambda function configuration in the main.tf file.
+- **IAM permissions**: Adjust the IAM role permissions as needed for your your deployment.
 
-- Separate state files per environment
-- Environment-specific variable files
-- Automated deployment pipelines
-- Infrastructure drift detection
+## Result
+- **Flogo in AWS Lambda**
+  
+  ![alt text](./images/image.png)
 
-### Documentation
-
-For more information about TIBCO Flogo and Terraform, see:
-- [TIBCO Flogo Enterprise Documentation](https://docs.tibco.com/products/tibco-flogo-enterprise)
-- [Terraform Documentation](https://www.terraform.io/docs/)
+- **Testing using dummy event**
+  
+  ![alt text](./images/image-2.png)

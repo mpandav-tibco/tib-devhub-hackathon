@@ -1,46 +1,74 @@
-# ${{ values.name }}
+# Flogo and gRPC for IoT: Real-time Anomaly Detection
 
-${{ values.description }}
+This demo showcases the power of TIBCO Flogo® Enterprise in building a gRPC server for real-time IoT data processing and anomaly detection.
 
-## Flogo gRPC API Project
+## Use Case
 
-This project contains a TIBCO Flogo application that implements high-performance gRPC APIs.
+Imagine a network of IoT sensors sending telemetry data (temperature, pressure, humidity) to a central hub. Our Flogo application acts as a gRPC server, receiving this data from the sensors. It then performs data storage and near real-time calculations, checks for anomalies based on predefined thresholds, and triggers alerts if necessary. Additionally, it sends aggregated data to a time-series database (InfluxDB) for visualization and analysis.
 
-### Features
+## Architecture
 
-- gRPC service implementation: ${{ values.serviceName }}
-- Protocol buffer definitions
-- Client libraries and examples
-{%- if values.enableStreaming %}
-- Bidirectional streaming support
-{%- endif %}
-- High-performance communication
+The demo involves the following components:
 
-### Configuration
+* **IoT Sensors:** Simulate IoT sensors sending telemetry data via gRPC.
+* **Flogo App:** Acts as a gRPC server, processes sensor data, checks for anomalies, triggers alerts, and sends data to InfluxDB.
+* **InfluxDB (Optional) :** A time-series database to store sensor data and calculated metrics.
+* **Grafana (Optional):** A visualization tool to monitor and analyze the sensor data in real-time.
 
-- gRPC Port: ${{ values.grpcPort }}
-- Service Name: ${{ values.serviceName }}
-- Owner: ${{ values.owner }}
-{%- if values.system %}
-- System: ${{ values.system }}
-{%- endif %}
+## Implementation
 
-### Project Structure
+1. **Define the gRPC service:**
+   - Create a Protobuf (`sensor.proto`) file defining the gRPC service and message structures for sensor data.
 
-- `src/`: Flogo application source files
-- `client/`: Client implementation and examples
-- Protocol buffer definitions and generated code
+2. **Generate gRPC code:**
+   - Use the `protoc` compiler to generate server and client code from the `.proto` file.
 
-### Getting Started
+3. **Create the Flogo app:**
+   - Create a new Flogo app with a gRPC trigger configured to receive sensor data.
+   - Implement the flow to process data, calculate metrics (e.g., average temperature), check for anomalies, trigger alerts, and send data to InfluxDB.
 
-1. Import the Flogo application files into TIBCO Flogo Enterprise
-2. Configure the gRPC service endpoints
-3. Generate protocol buffer code if needed
-4. Build and deploy the application
-5. Test using the provided client examples
+4. **Deploy the Flogo app:**
+   - Deploy the app as a gRPC server (standalone executable, container, or serverless function).
 
-### Documentation
+5. **Simulate sensor data:**
+   - Use a script or application to simulate sensor data and send it to the Flogo app via gRPC.
 
-For more information about TIBCO Flogo and gRPC development, see:
-- [TIBCO Flogo Enterprise Documentation](https://docs.tibco.com/products/tibco-flogo-enterprise)
-- [gRPC Documentation](https://grpc.io/docs/)
+6. **Visualize data (optional):**
+   - Set up InfluxDB and Grafana to visualize the sensor data and metrics.
+
+## Flogo App Details
+
+The Flogo app performs the following tasks:
+
+* **Receive sensor data:** Receives `SensorData` messages via gRPC.
+* **Store  data:** Store Data `temperature`, `pressure`, and `humidity` values to postgresql DB
+* **Calculate metrics:** Calculates metrics like average temperature over a period.
+* **Check for anomalies:** Compares sensor readings against predefined thresholds.
+* **Trigger alerts:** Sends alerts (e.g., via email) if anomalies are detected.
+* **Store data:** Sends data to InfluxDB for persistence and analysis.
+
+## Demo
+
+* **Run the Flogo app:** Start the Flogo app as a gRPC server.
+* **Simulate sensor data:** Run the provided Python script to send simulated sensor data to the Flogo app.
+* **Observe logs and alerts:** Monitor the Flogo app logs for processed data and any triggered alerts.
+* **Visualize data (optional):** Use Grafana to visualize the sensor data and calculated metrics stored in InfluxDB.
+
+## Benefits
+
+* **Real-time processing:** Process and analyze IoT data in real-time.
+* **Anomaly detection:** Detect anomalies and trigger alerts promptly.
+* **Data visualization:** Visualize and monitor sensor data for insights.
+* **Edge computing:** Deploy the Flogo app on edge devices for low-latency processing.
+
+## Explore the Code
+
+* **Flogo app:** [telemetry-api.flogo]
+* **Sensor data simulation script:** [simulate_sensor_data.py]
+
+## Learn More
+
+* **TIBCO Flogo:** [Flogo website](https://docs.tibco.com/products/tibco-flogo-enterprise)
+* **gRPC:** [gRPC website](https://grpc.io/)
+* **InfluxDB:** [InfluxDB website](https://www.influxdata.com/)
+* **Grafana:** [Grafana website](https://grafana.com/)

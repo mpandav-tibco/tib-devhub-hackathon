@@ -1,61 +1,80 @@
-# ${{ values.name }}
+# Flogo and RPA: Automating Complex Workflows
 
-${{ values.description }}
+This demo application showcases the integration of TIBCO Flogo® with Robotic Process Automation (RPA) tools to automate complex workflows and bridge the gap between modern and legacy systems.
 
-## Flogo RPA Integration
+## What is RPA?
 
-This project contains a TIBCO Flogo application for integrating with RPA (Robotic Process Automation) platforms.
+Robotic Process Automation (RPA) is a technology that uses software robots (bots) to automate repetitive and rule-based tasks. RPA bots can interact with user interfaces, applications, and systems, mimicking human actions to perform tasks such as data entry, data extraction, and system integration.
 
-### Features
+## Why Flogo and RPA?
 
-- RPA platform integration: ${{ values.rpaProvider }}
-- Automated workflow orchestration
-- API-driven RPA job management
-{%- if values.enableScheduling %}
-- Automated job scheduling
-{%- endif %}
-- Process monitoring and control
+Flogo complements RPA by providing an event-driven orchestration layer. Flogo can be used to:
 
-### Configuration
+* Trigger RPA bots based on events or conditions.
+* Pass data to and from RPA bots.
+* Handle complex logic and decision-making.
+* Integrate with various systems and services.
 
-- RPA Provider: ${{ values.rpaProvider }}
-- Orchestrator URL: ${{ values.orchestratorUrl }}
-- API Timeout: ${{ values.apiTimeout }} seconds
-{%- if values.enableScheduling %}
-- Job Scheduling: Enabled
-{%- else %}
-- Job Scheduling: Disabled
-{%- endif %}
-- Owner: ${{ values.owner }}
-{%- if values.system %}
-- System: ${{ values.system }}
-{%- endif %}
+## Use Case: Automating Product Creation
 
-### Project Structure
+This demo automates the process of creating new products in a web application using Flogo and UiPath.
 
-- `rpa-integration.flogo`: Main Flogo application for RPA integration
-- `rpa-integration.flogotest`: Test configuration for RPA workflows
-- `product-api.html`: Demo web interface for product API testing
-- `UiPath/`: UiPath-specific automation workflows and configurations
+* Flogo: Receives product data (e.g., from an API call) and triggers a UiPath bot.
+* UiPath: Opens a web browser, fills out a product creation form, and submits it.
 
-### Getting Started
+## How to Use
 
-1. Import the Flogo application into TIBCO Flogo Enterprise
-2. Configure RPA orchestrator connection settings
-3. Set up authentication credentials for RPA platform
-4. Deploy automation workflows to RPA platform
-5. Build and deploy the Flogo integration application
-6. Test RPA job execution and monitoring
+1. **Set up UiPath:**
+    * Install UiPath Studio.
+    * Create a UiPath bot that can fill out a web form with provided data. You can refer to Bot app available under directory ` /UiPath `
+    * Publish the bot to UiPath Automation Cloud.
 
-### RPA Integration Features
+2. **Create a Flogo app:**
+    * Clone the repo
+    * Import the rpa-integration.flogo application into your Flogo Dev Environment.
+    * Use  pre-exising .flogotest to verify the behavior
+    * Update your configuration of webhook api and schema for your automation process
 
-- Trigger RPA jobs from Flogo flows
-- Monitor job execution status
-- Handle RPA job results and data
-- Error handling and retry mechanisms
 
-### Documentation
+3. **Run the demo:**
+    * Trigger the Flogo app with sample product data.
+    * Observe the UiPath bot automating the product creation process.
 
-For more information about TIBCO Flogo and RPA integration, see:
-- [TIBCO Flogo Enterprise Documentation](https://docs.tibco.com/products/tibco-flogo-enterprise)
-- [UiPath Documentation](https://docs.uipath.com/)
+## Demo
+
+### Flogo Application Implenentation
+
+<img width="1331" alt="image" src="https://github.com/user-attachments/assets/684248f8-3e6c-47d6-844d-382e780d2cdc" />
+
+### Postman calling Flogo API (Send Product Creation Request)
+<img width="1296" alt="image" src="https://github.com/user-attachments/assets/bc2c029d-3367-490c-9732-615cf8584e3c" />
+
+
+### Flogo Processing the Request and Trigger the UiPath Bot workflow automation
+<img width="1330" alt="image" src="https://github.com/user-attachments/assets/c795e54d-8cc3-46db-8c68-204288c85ffa" />
+
+
+### The video showcasing how RAP takes action on Flogo request.
+
+https://github.com/user-attachments/assets/3407cde6-3b29-42d1-893e-adb6bf18172c
+
+
+
+## Benefits
+
+* **Increased automation:** Automate complex tasks that involve UI interaction and backend logic.
+* **Improved efficiency:** Reduce manual effort and errors in data entry and processing.
+* **Legacy system integration:**  Seamlessly integrate with legacy systems that lack APIs.
+* **Enhanced flexibility:**  Orchestrate interactions between RPA bots and other systems.
+
+## Explore the Code
+
+* **Flogo app:** [rpa-integration.flogo]
+* **UiPath bot:** [/UiPath/RPA_DataEntryAutomation_WorkFlow.uip]
+
+## Learn More
+
+* **TIBCO Flogo:** [Flogo website ](https://docs.tibco.com/products/tibco-flogo-enterprise)
+* **UiPath:** [UiPath.com](https://www.uipath.com/)
+
+This demo showcases the power of combining Flogo and RPA to automate complex workflows and improve business efficiency.

@@ -1,82 +1,34 @@
-# ${{ values.name }}
+# Automated Deployment of FaaS (Lambda) with TIBCO Flogo Enterprise
 
-${{ values.description }}
+## Scenario
 
-## Flogo CI/CD with Jenkins
+The architecture diagram isn't updated for AWS Lambda so it shows HTTP Trigger but in application it uses receive lambda invocation trigger
 
-This project contains a TIBCO Flogo application with complete Jenkins CI/CD pipeline setup.
 
-### Features
+![image](https://github.com/user-attachments/assets/5a24d8a4-9f77-48c9-b085-082d9139ccc5)
 
-- Automated CI/CD pipeline with Jenkins
-- Flogo application build automation
-{%- if values.enableTests %}
-- Automated testing integration
-{%- endif %}
-{%- if values.enableSonarQube %}
-- Code quality analysis with SonarQube
-{%- endif %}
-- Deployment automation to ${{ values.deploymentTarget }}
+## Deployment
+- AWS Lambda
 
-### Configuration
+## Prerequisites
+- We are using TIBCO Cloud Platform APIs to build the app binary. You need to prepare  accessToken to access the platform apis.
+- You will need to get your aws credentials for lambda deployment
+- jenkins server should have http request plugin installed we are using it for calling TIBCO Cloud PAPI
 
-- Jenkins URL: ${{ values.jenkinsUrl }}
-- Build Agent: ${{ values.buildAgent }}
-- Deployment Target: ${{ values.deploymentTarget }}
-{%- if values.enableTests %}
-- Automated Tests: Enabled
-{%- else %}
-- Automated Tests: Disabled
-{%- endif %}
-{%- if values.enableSonarQube %}
-- SonarQube Analysis: Enabled
-{%- else %}
-- SonarQube Analysis: Disabled
-{%- endif %}
-- Owner: ${{ values.owner }}
-{%- if values.system %}
-- System: ${{ values.system }}
-{%- endif %}
+## Result
 
-### Project Structure
+Pipeline Overview:
 
-- `Jenkinsfile`: Jenkins pipeline definition with build, test, and deploy stages
-- `src/`: Flogo application source files and configurations
-- `config/`: Configuration files for different environments
+<img width="1713" alt="image" src="https://github.com/user-attachments/assets/44d3ecf9-0ace-43ae-bf50-5b98af4be57c" />
 
-### CI/CD Pipeline Stages
+Detailed Stage View
 
-1. **Checkout**: Pull source code from repository
-2. **Build**: Compile Flogo application
-{%- if values.enableTests %}
-3. **Test**: Run automated tests and generate reports
-{%- endif %}
-{%- if values.enableSonarQube %}
-4. **Code Analysis**: Perform SonarQube code quality analysis
-{%- endif %}
-5. **Package**: Create deployment artifacts
-6. **Deploy**: Deploy to ${{ values.deploymentTarget }} environment
+<img width="1713" alt="image" src="https://github.com/user-attachments/assets/78530d65-f9af-4848-a890-73a878fc46f8" />
 
-### Getting Started
+Workspace View
 
-1. Configure Jenkins server with required plugins
-2. Set up build agent with label: ${{ values.buildAgent }}
-3. Import the Flogo application into TIBCO Flogo Enterprise
-4. Configure Jenkins job using the provided Jenkinsfile
-5. Set up deployment credentials and target environment
-6. Trigger pipeline or configure automatic builds
+<img width="1713" alt="image" src="https://github.com/user-attachments/assets/8490aa10-4c99-4e4a-87a8-009ad531bbff" />
 
-### Jenkins Requirements
 
-- Jenkins with Pipeline plugin
-- TIBCO Flogo Enterprise CLI tools
-- Docker (if using containerized deployments)
-{%- if values.enableSonarQube %}
-- SonarQube scanner plugin
-{%- endif %}
 
-### Documentation
-
-For more information about TIBCO Flogo and Jenkins CI/CD, see:
-- [TIBCO Flogo Enterprise Documentation](https://docs.tibco.com/products/tibco-flogo-enterprise)
-- [Jenkins Pipeline Documentation](https://www.jenkins.io/doc/book/pipeline/)
+Hopefully, it will give you quick peek of how easy it is to build automation around TIBCO Flogo for FaaS deployment!!!

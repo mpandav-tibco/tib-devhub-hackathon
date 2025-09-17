@@ -1,46 +1,91 @@
-# ${{ values.name }}
+# Flogo for GraphQL APIs
 
-${{ values.description }}
 
-## Flogo GraphQL API Project
+This demo application demonstrates how to use Flogo to create a GraphQL API that provides product information from multiple sources.
 
-This project contains a TIBCO Flogo application that implements GraphQL APIs for product data management.
+## Features
 
-### Features
+- **Flogo**: A lightweight, open-source workflow engine for building scalable and event-driven applications.
+- **GraphQL**: A query language for APIs that provides a flexible and efficient way to access data.
+- **Data Sources**: Simulates accessing data from different sources (e.g., product catalog, pricing, inventory) using dummy service.
 
-- GraphQL schema definition for product queries
-- Product API with flexible data querying
-{%- if values.enableMutation %}
-- GraphQL mutations for data modification
-{%- endif %}
-{%- if values.enableSubscription %}
-- Real-time GraphQL subscriptions
-{%- endif %}
-- Integration with multiple data sources
+## How to Use
 
-### Configuration
+- **Clone the repository**: `git clone https://github.com/mpandav-tibco/flogo-graphql-apis.git`
+- **Install Flogo**: Get access Flogo development enviroment either VSCode Extension or TIBCO Cloud Integration - Flogo.
+- **Open the project**: Open the Flogo project file (product-info.flogo) from the cloned repository.
+- **Build and Run the Flogo app**: Click the "Run" button in the Flogo UI.
+- **Test the API**: Use a GraphQL client (e.g., GraphiQL or Postman) to send queries and mutations to the Flogo API.
 
-- API Port: ${{ values.apiPort }}
-- Owner: ${{ values.owner }}
-{%- if values.system %}
-- System: ${{ values.system }}
-{%- endif %}
+## The Applcation Implemention
+The below snap shows the final implemetation of the application.
 
-### Files
+![image](https://github.com/user-attachments/assets/6093dadc-2545-4a1c-be58-6a4f64b18ec6)
 
-- `product-api.flogo`: Main Flogo application file
-- `product-api.flogotest`: Test configuration for the Flogo application
-- `product.gql`: GraphQL schema definition
+## GQL Schema
+Defined the GQL schema for Query and Mutation. Use below schema
 
-### Getting Started
+```
+type Product {
+  id: ID!
+  name: String!
+  description: String
+  price: Float
+  available: Boolean
+}
 
-1. Import the `.flogo` file into TIBCO Flogo Enterprise
-2. Configure the GraphQL endpoints as needed
-3. Build and deploy the application
-4. Test the GraphQL API using the provided schema
+type Query {
+  product(id: ID!): Product
+}
 
-### Documentation
+type Mutation {
+  upsertProduct(
+    id: ID!
+    name: String!
+    description: String
+    price: Float
+    available: Boolean
+  ): Product
+}
+```
 
-For more information about TIBCO Flogo and GraphQL development, see:
-- [TIBCO Flogo Enterprise Documentation](https://docs.tibco.com/products/tibco-flogo-enterprise)
-- [GraphQL Documentation](https://graphql.org/learn/)
+## Example Queries
+
+- **Get product details**
+```
+query {
+  product(id: 11) {
+    name
+    price
+  }
+}
+```
+- **Create/Update product information**
+```  
+mutation {
+  upsertProduct(id: "456", name: "New Product", price: 49.99, available: true) {
+    id
+    name
+    price
+    available
+    description
+  }
+}
+```
+## Quick Testing
+
+### Build Binary and Run the application
+  
+<img width="1728" alt="image" src="https://github.com/user-attachments/assets/675c0336-f408-484e-bd0e-fb639e7104e8" />
+
+### Use Postman or your preferred tool for API Testing:
+  
+  - Query:
+  <img width="1308" alt="image" src="https://github.com/user-attachments/assets/d8c0683b-b61b-4eb0-aeef-98fb8e854e77" />
+
+
+  - Mutation:
+  <img width="1308" alt="image" src="https://github.com/user-attachments/assets/7337646b-a769-49f0-b733-15c4cd2ce0be" />
+
+
+### ****Enjoy exploring the power of Flogo and GraphQL!****
