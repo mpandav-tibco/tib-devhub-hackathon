@@ -35,8 +35,8 @@ metadata:
     - machine-learning
     - featured
 spec:
-  owner: tibco-templates
-  type: service
+  owner: group:default/marketplace-entries-group
+  type: template
   presentation:
     buttonLabels:
       createButtonText: Install
