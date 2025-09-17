@@ -62,16 +62,22 @@ spec:
           type: boolean
           default: false
   steps:
-    - id: registerTemplate
-      name: Installing Template...
+    - id: registerItem
+      name: Installing Marketplace Entry...
       action: catalog:register
       input:
         catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/cicd-terraform/template.yaml
+        optional: true
+
   output:
     links:
-      - title: Use Template
-        icon: scaffolder
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Templates
+        url: /create?filters%5Bkind%5D=template&filters%5Buser%5D=all&limit=20
+        icon: kind:template
+      - icon: kind:template
+        title: Create Flogo Terraform CI/CD Project
         url: /create/templates/default/flogo-template-cicd-terraform
-      - title: Back to Marketplace
-        icon: dashboard
-        url: /marketplace?filters%5Bkind%5D=template&filters%5Btags%5D=devhub-marketplace&limit=20
