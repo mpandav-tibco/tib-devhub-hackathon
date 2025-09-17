@@ -1,0 +1,35 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flogo-rpa-integration-template
+  title: Flogo RPA Integration Template
+  description: Integrate Robotic Process Automation workflows with TIBCO Flogo for enterprise automation and UiPath integration
+  tags:
+    - flogo
+    - rpa
+    - automation
+    - uipath
+    - tibco
+    - lightweight
+    - process-automation
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - title: Flogo Documentation
+      url: https://docs.tibco.com/products/tibco-flogo-enterprise
+      icon: docs
+    - title: UiPath Integration
+      url: https://www.uipath.com/
+      icon: star
+    - title: TIBCO Flogo Enterprise
+      url: https://www.tibco.com/products/tibco-flogo
+      icon: star
+    - title: Source Repository
+      url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/sample-templates/rpa-integration
+      icon: github
+spec:
+  type: template
+  lifecycle: production
+  owner: group:default/marketplace-entries-group
+  system: tibco-developer-hub

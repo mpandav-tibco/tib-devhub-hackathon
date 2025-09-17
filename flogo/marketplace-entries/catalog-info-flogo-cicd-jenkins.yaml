@@ -1,0 +1,36 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flogo-cicd-jenkins-template
+  title: Flogo CI/CD Jenkins Pipeline
+  description: Automated deployment pipeline for Flogo applications to AWS Lambda with Jenkins and TIBCO Cloud Platform APIs
+  tags:
+    - flogo
+    - cicd
+    - jenkins
+    - aws-lambda
+    - faas
+    - automation
+    - tibco
+    - devops
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - title: Flogo Documentation
+      url: https://docs.tibco.com/products/tibco-flogo-enterprise
+      icon: docs
+    - title: Jenkins Documentation
+      url: https://jenkins.io/doc/
+      icon: build
+    - title: AWS Lambda Documentation
+      url: https://docs.aws.amazon.com/lambda/
+      icon: cloud
+    - title: Source Repository
+      url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/sample-templates/cicd-jenkis
+      icon: github
+spec:
+  type: template
+  lifecycle: production
+  owner: group:default/marketplace-entries-group
+  system: tibco-developer-hub

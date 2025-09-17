@@ -66,7 +66,7 @@ spec:
       name: Installing Marketplace Entry...
       action: catalog:register
       input:
-        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/mqtt-realtime-inventory-managment/catalog-info.yaml
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/catalog-info-flogo-mqtt-inventory.yaml
 
   output:
     links:

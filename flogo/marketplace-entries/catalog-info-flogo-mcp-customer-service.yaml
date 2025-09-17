@@ -1,0 +1,35 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flogo-mcp-customer-service-template
+  title: Flogo AI-Powered Customer Service with MCP
+  description: Revolutionary AI-powered customer service integration using TIBCO Flogo with Model Context Protocol for advanced conversational AI capabilities
+  tags:
+    - flogo
+    - ai
+    - mcp
+    - customer-service
+    - machine-learning
+    - conversational-ai
+    - tibco
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - title: Flogo Documentation
+      url: https://docs.tibco.com/products/tibco-flogo-enterprise
+      icon: docs
+    - title: Model Context Protocol
+      url: https://modelcontextprotocol.io/
+      icon: docs
+    - title: TIBCO Flogo Enterprise
+      url: https://www.tibco.com/products/tibco-flogo
+      icon: star
+    - title: Source Repository
+      url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/sample-templates/mcp-customer-service
+      icon: github
+spec:
+  type: template
+  lifecycle: production
+  owner: group:default/marketplace-entries-group
+  system: tibco-developer-hub
