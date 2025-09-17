@@ -8,7 +8,6 @@ spec:
   category: Database Integration
   subcategory: Event Listening
   type: flogo-trigger
-  
   overview:
     title: PostgreSQL Listener Trigger
     description: |

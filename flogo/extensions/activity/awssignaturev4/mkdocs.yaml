@@ -2,19 +2,17 @@ site_name: AWS Signature V4 Activity
 site_description: AWS Signature Version 4 authentication activity for secure AWS API calls
 
 nav:
-  - Home: index.md
+  - Introduction: index.md
 
-theme:
-  name: material
-  palette:
-    primary: blue
-    accent: blue
+plugins:
+  - techdocs-core
 
 docs_dir: docs
 site_dir: site
 
 markdown_extensions:
-  - codehilite
   - admonition
+  - codehilite
+  - pymdownx.superfences
   - toc:
       permalink: true

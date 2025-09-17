@@ -1,20 +1,18 @@
-site_name: Server-Sent Events (SSE) Connector
-site_description: Real-time data streaming connector with unified trigger and activity
+site_name: Server-Sent Events Connector
+site_description: Real-time streaming communication with Server-Sent Events protocol
 
 nav:
-  - Home: index.md
+  - Introduction: index.md
 
-theme:
-  name: material
-  palette:
-    primary: blue
-    accent: blue
+plugins:
+  - techdocs-core
 
 docs_dir: docs
 site_dir: site
 
 markdown_extensions:
-  - codehilite
   - admonition
+  - codehilite
+  - pymdownx.superfences
   - toc:
       permalink: true

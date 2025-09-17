@@ -1,20 +1,18 @@
 site_name: XML Filter Activity
-site_description: Filter XML content using XPath expressions with configurable logic
+site_description: Advanced XML parsing, filtering, and manipulation capabilities
 
 nav:
-  - Home: index.md
+  - Introduction: index.md
 
-theme:
-  name: material
-  palette:
-    primary: blue
-    accent: blue
+plugins:
+  - techdocs-core
 
 docs_dir: docs
 site_dir: site
 
 markdown_extensions:
-  - codehilite
   - admonition
+  - codehilite
+  - pymdownx.superfences
   - toc:
       permalink: true

@@ -1,20 +1,18 @@
 site_name: Template Engine Activity
-site_description: Comprehensive template processing with multi-engine support and built-in functions
+site_description: Dynamic content generation and template processing capabilities
 
 nav:
-  - Home: index.md
+  - Introduction: index.md
 
-theme:
-  name: material
-  palette:
-    primary: blue
-    accent: blue
+plugins:
+  - techdocs-core
 
 docs_dir: docs
 site_dir: site
 
 markdown_extensions:
-  - codehilite
   - admonition
+  - codehilite
+  - pymdownx.superfences
   - toc:
       permalink: true

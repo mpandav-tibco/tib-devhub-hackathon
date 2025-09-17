@@ -2,16 +2,23 @@ site_name: Avro Schema Transform Activity
 site_description: Transform Avro schemas to JSON Schema and XSD formats with intelligent processing
 
 nav:
-  - Home: index.md
 
-theme:
-  name: material
-  palette:
-    primary: blue
-    accent: blue
+plugins:
+  - techdocs-core
+  - Introduction: index.md
+
+plugins:
+  - techdocs-core
 
 docs_dir: docs
 site_dir: site
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - pymdownx.superfences
+  - toc:
+      permalink: true
 
 markdown_extensions:
   - codehilite

@@ -1,20 +1,18 @@
 site_name: JSON Schema Transform Activity
-site_description: Transform JSON Schema to XSD and Avro formats with constraint mapping
+site_description: Transform and validate JSON schemas with comprehensive processing
 
 nav:
-  - Home: index.md
+  - Introduction: index.md
 
-theme:
-  name: material
-  palette:
-    primary: blue
-    accent: blue
+plugins:
+  - techdocs-core
 
 docs_dir: docs
 site_dir: site
 
 markdown_extensions:
-  - codehilite
   - admonition
+  - codehilite
+  - pymdownx.superfences
   - toc:
       permalink: true

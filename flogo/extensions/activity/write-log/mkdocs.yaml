@@ -1,20 +1,18 @@
 site_name: Write Log Activity
-site_description: Enterprise logging with OpenTelemetry integration and ECS compliance
+site_description: Enhanced logging capabilities with custom formatting and output options
 
 nav:
-  - Home: index.md
+  - Introduction: index.md
 
-theme:
-  name: material
-  palette:
-    primary: blue
-    accent: blue
+plugins:
+  - techdocs-core
 
 docs_dir: docs
 site_dir: site
 
 markdown_extensions:
-  - codehilite
   - admonition
+  - codehilite
+  - pymdownx.superfences
   - toc:
       permalink: true
