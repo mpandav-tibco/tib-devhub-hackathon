@@ -5,7 +5,7 @@ metadata:
   title: Server-Sent Events (SSE) Connector
   description: Real-time data streaming connector with unified trigger and activity for server-sent events communication
   annotations:
-    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/connector/sse
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/connector/sse
     backstage.io/techdocs-ref: dir:.
   tags:
     - flogo
@@ -19,7 +19,7 @@ metadata:
     - notifications
     - web-integration
   links:
-    - url: ./docs/index.md
+    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/connector/sse/docs/index.md
       title: Documentation
       icon: docs
 spec:

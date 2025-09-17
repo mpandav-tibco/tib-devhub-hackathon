@@ -5,7 +5,7 @@ metadata:
   title: MySQL Binlog Listener Trigger
   description: Real-time MySQL/MariaDB binlog monitoring for event-driven architectures and change data capture
   annotations:
-    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/mysql-binlog-listener
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/mysql-binlog-listener
     backstage.io/techdocs-ref: dir:.
   tags:
     - flogo
@@ -21,7 +21,7 @@ metadata:
     - ssl-tls
     - monitoring
   links:
-    - url: ./docs/index.md
+    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/mysql-binlog-listener/docs/index.md
       title: Documentation
       icon: docs
 spec:

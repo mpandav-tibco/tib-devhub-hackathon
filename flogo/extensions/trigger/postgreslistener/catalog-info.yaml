@@ -5,7 +5,7 @@ metadata:
   title: PostgreSQL Listener Trigger
   description: Real-time PostgreSQL NOTIFY/LISTEN event monitoring with SSL/TLS support and comprehensive connection management
   annotations:
-    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/postgreslistener
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/postgreslistener
     backstage.io/techdocs-ref: dir:.
   tags:
     - flogo
@@ -18,7 +18,7 @@ metadata:
     - ssl-tls
     - monitoring
   links:
-    - url: ./docs/index.md
+    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/postgreslistener/docs/index.md
       title: Documentation
       icon: docs
 spec:

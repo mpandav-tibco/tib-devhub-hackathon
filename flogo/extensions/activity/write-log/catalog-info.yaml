@@ -5,7 +5,7 @@ metadata:
   title: Write Log Activity
   description: Structured logging with OpenTelemetry integration, ECS compliance, and advanced data masking capabilities
   annotations:
-    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/activity/write-log
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/write-log
     backstage.io/techdocs-ref: dir:.
   tags:
     - flogo
@@ -19,7 +19,7 @@ metadata:
     - tracing
     - monitoring
   links:
-    - url: ./docs/index.md
+    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/write-log/docs/index.md
       title: Documentation
       icon: docs
 spec:

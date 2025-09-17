@@ -5,7 +5,7 @@ metadata:
   title: XML Filter Activity
   description: Filter XML content using multiple XPath expressions with configurable AND/OR logic for content routing and validation
   annotations:
-    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/activity/xmlfilter
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/xmlfilter
     backstage.io/techdocs-ref: dir:.
   tags:
     - flogo
@@ -17,7 +17,7 @@ metadata:
     - data-validation
     - integration
   links:
-    - url: ./docs/index.md
+    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/docs/index.md
       title: Documentation
       icon: docs
 spec:

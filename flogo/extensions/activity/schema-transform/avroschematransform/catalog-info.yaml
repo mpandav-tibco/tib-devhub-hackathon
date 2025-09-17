@@ -5,7 +5,7 @@ metadata:
   title: Avro Schema Transform Activity
   description: Transform Avro schemas to JSON Schema and/or XSD formats with intelligent processing
   annotations:
-    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/activity/schema-transform/avroschematransform
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/schema-transform/avroschematransform
     backstage.io/techdocs-ref: dir:.
   tags:
     - flogo
@@ -17,7 +17,7 @@ metadata:
     - transformation
     - data-format
   links:
-    - url: ./docs/index.md
+    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/avroschematransform/docs/index.md
       title: Documentation
       icon: docs
 spec:

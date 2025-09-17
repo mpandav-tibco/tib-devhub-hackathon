@@ -5,7 +5,7 @@ metadata:
   title: Template Engine Activity
   description: Comprehensive template processing with multi-engine support, 29 built-in functions, and 10 OOTB templates
   annotations:
-    backstage.io/source-location: url:https://github.com/your-org/tib-devhub-hackathon/tree/main/flogo/extensions/activity/templateengine
+    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/templateengine
     backstage.io/techdocs-ref: dir:.
   tags:
     - flogo
@@ -19,7 +19,7 @@ metadata:
     - email
     - reporting
   links:
-    - url: ./docs/index.md
+    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/docs/index.md
       title: Documentation
       icon: docs
 spec:
