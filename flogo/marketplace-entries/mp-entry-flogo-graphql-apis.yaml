@@ -53,7 +53,7 @@ spec:
 
             **What You'll Get:** Complete Flogo application with GraphQL schema definition, query resolvers, and integration patterns for building scalable API services.
 
-            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/raw/main/LICENSE).
 
             **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
         accept:
@@ -65,7 +65,7 @@ spec:
       name: Installing Marketplace Entry...
       action: catalog:register
       input:
-        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/graphql-apis/template.yaml
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/raw/main/flogo/sample-templates/graphql-apis/template.yaml
         optional: true
   output:
     links:

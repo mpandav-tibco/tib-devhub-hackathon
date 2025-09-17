@@ -54,7 +54,7 @@ spec:
 
             **What You'll Get:** Flogo flows for MQTT-to-database integration, PostgreSQL trigger configurations, Python IoT sensor simulators, and automated inventory alert systems for retail operations.
 
-            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/raw/main/LICENSE).
 
             **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
         accept:
@@ -66,7 +66,7 @@ spec:
       name: Installing Marketplace Entry...
       action: catalog:register
       input:
-        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/sample-templates/mqtt-realtime-inventory-managment/template.yaml
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/raw/main/flogo/sample-templates/mqtt-realtime-inventory-managment/template.yaml
         optional: true
   output:
     links:
