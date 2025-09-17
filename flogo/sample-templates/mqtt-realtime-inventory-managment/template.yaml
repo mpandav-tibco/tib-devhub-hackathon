@@ -13,8 +13,8 @@ metadata:
     - realtime
     - recommended
 spec:
-  owner: TIBCO
-  type: template
+  owner: ACME
+  type: library
 
   parameters:
     - title: Fill in some steps
