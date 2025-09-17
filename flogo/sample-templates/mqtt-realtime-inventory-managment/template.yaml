@@ -1,0 +1,123 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: flogo-template-mqtt-inventory
+  title: Flogo MQTT Real-time Inventory Management
+  description: Create real-time inventory management system using TIBCO Flogo with MQTT messaging for IoT device integration
+  tags:
+    - tibco
+    - flogo
+    - mqtt
+    - iot
+    - inventory
+    - realtime
+    - recommended
+spec:
+  owner: TIBCO
+  type: service
+
+  parameters:
+    - title: Fill in some steps
+      required:
+        - name
+        - description
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name of the Flogo MQTT Inventory Project
+          ui:field: EntityNamePicker
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+          description: A description for the Flogo MQTT Inventory Management Project
+        system:
+          title: System
+          type: string
+          description: Target System 
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: system
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+    - title: MQTT Configuration
+      properties:
+        mqttBroker:
+          title: MQTT Broker URL
+          type: string
+          description: URL of the MQTT broker
+          default: tcp://localhost:1883
+        inventoryTopic:
+          title: Inventory Topic
+          type: string
+          description: MQTT topic for inventory updates
+          default: inventory/updates
+        enableSSL:
+          title: Enable SSL/TLS
+          type: boolean
+          description: Enable secure MQTT connection
+          default: false
+        qosLevel:
+          title: QoS Level
+          type: integer
+          description: MQTT Quality of Service level (0, 1, or 2)
+          default: 1
+          enum: [0, 1, 2]
+
+  steps:
+    - id: fetch
+      name: Flogo MQTT Inventory Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          destination: ${{ parameters.repoUrl | parseRepoUrl }}
+          owner: ${{ parameters.owner }}
+          system: ${{ parameters.system }}
+          mqttBroker: ${{ parameters.mqttBroker }}
+          inventoryTopic: ${{ parameters.inventoryTopic }}
+          enableSSL: ${{ parameters.enableSSL }}
+          qosLevel: ${{ parameters.qosLevel }}
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

@@ -1,0 +1,1150 @@
+{
+  "imports": [
+    "github.com/project-flogo/flow",
+    "github.com/project-flogo/contrib/activity/noop",
+    "github.com/tibco/flogo-general/src/app/General/activity/log",
+    "github.com/project-flogo/flow/activity/subflow",
+    "github.com/tibco/wi-postgres/src/app/PostgreSQL/activity/query",
+    "github.com/tibco/flogo-general/src/app/General/activity/shareddata",
+    "github.com/tibco/flogo-general/src/app/General/activity/mapper",
+    "github.com/tibco/wi-postgres/src/app/PostgreSQL/activity/update",
+    "github.com/tibco/wi-postgres/src/app/PostgreSQL/activity/insert",
+    "github.com/tibco/wi-mqtt/src/app/Mqtt/trigger/subscribe",
+    "github.com/mpandav/postgreslistener",
+    "github.com/project-flogo/contrib/function/coerce",
+    "github.com/project-flogo/contrib/function/string",
+    "github.com/project-flogo/contrib/function/array",
+    "github.com/project-flogo/contrib/function/datetime",
+    "github.com/project-flogo/contrib/function/utils",
+    "github.com/tibco/wi-mqtt/src/app/Mqtt/connector/connection",
+    "connection_1 github.com/tibco/wi-postgres/src/app/PostgreSQL/connector/connection",
+    "github.com/tibco/wi-plugins/contributions/kafka/src/app/Kafka/connector/kafka"
+  ],
+  "name": "real-time-inventory-management",
+  "description": "",
+  "version": "1.0.0",
+  "type": "flogo:app",
+  "appModel": "1.1.1",
+  "tags": [],
+  "triggers": [
+    {
+      "ref": "#subscribe",
+      "name": "mqtt-trigger",
+      "description": "Subscribe to an MQTT topic",
+      "settings": {
+        "mqttConnection": "conn://f946de73-fbec-438b-ba61-132938e1b378"
+      },
+      "id": "MQTTSubscriber",
+      "handlers": [
+        {
+          "description": "subscribe to sales/restock inventory events from MQTT broker",
+          "settings": {
+            "topic": "=$property[\"mqtt.topic\"]",
+            "qos": 2,
+            "valueType": "JSON",
+            "showwill": false,
+            "will": "",
+            "willtopic": "",
+            "willqos": 0,
+            "willretain": false
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:inventory_events_processing_engine"
+            },
+            "input": {
+              "topic": "=$.topic",
+              "retained": "=$.retained",
+              "qos": "=$.qos",
+              "duplicate": "=$.duplicate",
+              "messageID": "=$.messageID",
+              "jsonValue": "=$.jsonValue"
+            }
+          },
+          "schemas": {
+            "output": {
+              "jsonValue": "schema://inventory.event"
+            }
+          },
+          "name": "inventory_events_processing_engine"
+        }
+      ]
+    },
+    {
+      "ref": "#postgreslistener",
+      "name": "postgreslistener",
+      "description": "Starts a flow when a notification is received on a channel",
+      "settings": {
+        "host": "localhost",
+        "port": 5432,
+        "user": "postgres",
+        "password": "postgres",
+        "databaseName": "postgres",
+        "sslmode": "disable",
+        "connectionTimeout": 5,
+        "maxConnectAttempts": 0,
+        "connectionRetryDelay": 5,
+        "tlsConfig": false,
+        "tlsParam": "disable",
+        "cacert": "",
+        "clientCert": "",
+        "clientKey": ""
+      },
+      "id": "PostgresListener",
+      "handlers": [
+        {
+          "description": "Receive Low Inventory Alert if Stock is below Threshold",
+          "settings": {
+            "channel": "low_stock"
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:low_inventory_notifications"
+            },
+            "input": {
+              "payload": "=$.payload"
+            }
+          },
+          "name": "low_inventory_notifications"
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:inventory_events_processing_engine",
+      "data": {
+        "name": "inventory_events_processing_engine",
+        "description": "subscribe to sales/restock inventory events from MQTT broker",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "LogEventData",
+            "type": "label",
+            "label": "StartActivity to LogMessage"
+          },
+          {
+            "id": 2,
+            "from": "LogEventData",
+            "to": "Update_Inventory",
+            "type": "label",
+            "label": "LogEventData to StartaSubFlow"
+          },
+          {
+            "id": 3,
+            "from": "Update_Inventory",
+            "to": "Audit_Inventory_Events",
+            "type": "label",
+            "label": "Update_Inventory to StartaSubFlow"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "LogEventData",
+            "name": "LogEventData",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"##### RECEIVED Inventory Event - \",$flow.jsonValue.event_type ,\" ====>> Payload  - \",coerce.toString($flow.jsonValue))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "Update_Inventory",
+            "name": "Update_Inventory",
+            "description": "Simple SubFlow Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#subflow",
+              "settings": {
+                "flowURI": "res://flow:update_inventory_master_data",
+                "detached": false
+              },
+              "input": {
+                "event_id": "=$flow.jsonValue.event_id",
+                "item_id": "=$flow.jsonValue.item_id",
+                "quantity_change": "=$flow.jsonValue.quantity_change",
+                "store_id": "=$flow.jsonValue.store_id",
+                "event_type": "=$flow.jsonValue.event_type",
+                "timestamp": "=$flow.jsonValue.timestamp"
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Audit_Inventory_Events",
+            "name": "Audit_Inventory_Events",
+            "description": "Simple SubFlow Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#subflow",
+              "settings": {
+                "flowURI": "res://flow:audit_inventory_events",
+                "detached": false
+              },
+              "input": {
+                "inputs": {
+                  "mapping": {
+                    "event_id": "=$flow.jsonValue.event_id",
+                    "item_id": "=$flow.jsonValue.item_id",
+                    "store_id": "=$flow.jsonValue.store_id",
+                    "quantity_change": "=$flow.jsonValue.quantity_change",
+                    "event_type": "=$flow.jsonValue.event_type",
+                    "timestamp": "=$flow.jsonValue.timestamp"
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"inputs\":{\"type\":\"object\",\"properties\":{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"inputs\":{\"type\":\"object\",\"properties\":{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}}}"
+                  }
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiTG9nRXZlbnREYXRhIjp7IngiOjIzMywieSI6OTF9LCJVcGRhdGVfSW52ZW50b3J5Ijp7IngiOjQ4NiwieSI6ODl9LCJBdWRpdF9JbnZlbnRvcnlfRXZlbnRzIjp7IngiOjczMSwieSI6OTR9fQ==",
+        "metadata": {
+          "input": [
+            {
+              "name": "topic",
+              "type": "string"
+            },
+            {
+              "name": "retained",
+              "type": "boolean"
+            },
+            {
+              "name": "qos",
+              "type": "integer"
+            },
+            {
+              "name": "duplicate",
+              "type": "boolean"
+            },
+            {
+              "name": "messageID",
+              "type": "integer"
+            },
+            {
+              "name": "jsonValue",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "output": [],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"MQTTSubscriber\",\"properties\":{\"topic\":{\"type\":\"string\",\"required\":false},\"retained\":{\"type\":\"boolean\",\"required\":false},\"qos\":{\"type\":\"integer\",\"required\":false},\"duplicate\":{\"type\":\"boolean\",\"required\":false},\"messageID\":{\"type\":\"integer\",\"required\":false},\"jsonValue\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}}}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:update_inventory_master_data",
+      "data": {
+        "name": "update_inventory_master_data",
+        "description": "Update Inventory Master Data Per Event",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "Get_Inventory",
+            "type": "label",
+            "label": "StartActivity to PostgreSQLQuery1"
+          },
+          {
+            "id": 2,
+            "from": "Get_Inventory",
+            "to": "Set_NewStockLevel",
+            "type": "label",
+            "label": "Get_Inventory to Set_NewStockLevel"
+          },
+          {
+            "id": 3,
+            "from": "Get_Inventory",
+            "to": "Get_StockLevels",
+            "type": "label",
+            "label": "Get_Inventory to Mapper"
+          },
+          {
+            "id": 4,
+            "from": "Get_StockLevels",
+            "to": "Update_MasterData",
+            "type": "label",
+            "label": "Mapper to Update_MasterData"
+          },
+          {
+            "id": 5,
+            "from": "Update_MasterData",
+            "to": "LogUpdateStatus",
+            "type": "label",
+            "label": "PostgreSQLUpdate to LogUpdateStatus"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "Get_Inventory",
+            "name": "Get_Inventory",
+            "description": "This activity executes query on a PostgreSQL database",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#query",
+              "input": {
+                "Connection": "conn://48d42fc3-c8f5-4a33-b61a-ab40d9310519",
+                "QueryName": "",
+                "Schema": "public",
+                "Query": "SELECT * FROM public.inventory WHERE item_id = ?item_id AND store_id = ?store_id;",
+                "manualmode": false,
+                "Fields": [
+                  {
+                    "FieldName": "item_id",
+                    "Type": "VARCHAR",
+                    "Selected": true,
+                    "Parameter": true,
+                    "isEditable": false
+                  },
+                  {
+                    "FieldName": "store_id",
+                    "Type": "VARCHAR",
+                    "Selected": true,
+                    "Parameter": true,
+                    "isEditable": false
+                  },
+                  {
+                    "FieldName": "stock_level",
+                    "Type": "INTEGER",
+                    "Selected": true,
+                    "Parameter": false,
+                    "isEditable": false
+                  },
+                  {
+                    "FieldName": "low_stock_threshold",
+                    "Type": "INTEGER",
+                    "Selected": true,
+                    "Parameter": false,
+                    "isEditable": false
+                  },
+                  {
+                    "FieldName": "last_updated",
+                    "Type": "TIMESTAMP",
+                    "Selected": true,
+                    "Parameter": false,
+                    "isEditable": false
+                  }
+                ],
+                "RuntimeQuery": "",
+                "State": "7b2550c6-78df-438d-abe0-4e94e52cd602SELECT * FROM public.inventory WHERE item_id = ?item_id AND store_id = ?store_id;",
+                "input": {
+                  "mapping": {
+                    "parameters": {
+                      "store_id": "=$flow.store_id",
+                      "item_id": "=$flow.item_id"
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"}}}}}"
+                  }
+                },
+                "output": {
+                  "Output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"stock_level\":{\"type\":\"integer\"},\"low_stock_threshold\":{\"type\":\"integer\"},\"last_updated\":{\"type\":\"string\",\"format\":\"time\"}}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"stock_level\":{\"type\":\"integer\"},\"low_stock_threshold\":{\"type\":\"integer\"},\"last_updated\":{\"type\":\"string\",\"format\":\"time\"}}}}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Set_NewStockLevel",
+            "name": "Set_NewStockLevel",
+            "description": "Enable sharing of data within or across flows in the application",
+            "activity": {
+              "ref": "#shareddata",
+              "settings": {
+                "scope": "Flow",
+                "operation": "SET",
+                "type": "integer"
+              },
+              "input": {
+                "key": "new_stock_level",
+                "input": {
+                  "mapping": {
+                    "data": {
+                      "@conditional": [
+                        {
+                          "array.count($activity[Get_Inventory].Output.records) > 0": "=$activity[Get_Inventory].Output.records[0].stock_level"
+                        },
+                        {
+                          "@otherwise": 0
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"integer\"}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"integer\"}}}"
+                  }
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"exist\":{\"type\":\"boolean\"},\"data\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"exist\":{\"type\":\"boolean\"},\"data\":{\"type\":\"string\"}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Get_StockLevels",
+            "name": "Get_StockLevels",
+            "description": "Mapper Activity",
+            "activity": {
+              "ref": "#mapper",
+              "input": {
+                "input": {
+                  "mapping": {
+                    "stock_level": {
+                      "@conditional": [
+                        {
+                          "array.count($activity[Get_Inventory].Output.records) > 0": "=($activity[Get_Inventory].Output.records[0].stock_level)"
+                        },
+                        {
+                          "@otherwise": 0
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"stock_level\":{\"type\":\"number\"}}}",
+                    "fe_metadata": "{\n    \"stock_level\":1\n}"
+                  }
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"stock_level\":{\"type\":\"number\"}}}",
+                    "fe_metadata": "{\n  \"stock_level\": 1\n}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Update_MasterData",
+            "name": "Update_MasterData",
+            "description": "This activity executes update on a PostgreSQL database",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#update",
+              "input": {
+                "Connection": "conn://48d42fc3-c8f5-4a33-b61a-ab40d9310519",
+                "UpdateName": "",
+                "Schema": "public",
+                "Query": "INSERT INTO public.inventory (item_id, store_id, low_stock_threshold, stock_level, last_updated)\n  VALUES (?item_id, ?store_id, ?stock_level , ?stock_level, ?last_updated)\n  ON CONFLICT (item_id, store_id) DO UPDATE\n  SET stock_level=?stock_level, last_updated=?last_updated;",
+                "manualmode": false,
+                "RuntimeQuery": "",
+                "Fields": [
+                  {
+                    "FieldName": "item_id",
+                    "Type": "VARCHAR",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "store_id",
+                    "Type": "VARCHAR",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "stock_level",
+                    "Type": "INTEGER",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "last_updated",
+                    "Type": "TIMESTAMP",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  }
+                ],
+                "State": "a2db40a4-e488-473d-ad49-cfa8c442bfaeINSERT INTO public.inventory (item_id, store_id, low_stock_threshold, stock_level, last_updated)\n  VALUES (?item_id, ?store_id, ?stock_level , ?stock_level, ?last_updated)\n  ON CONFLICT (item_id, store_id) DO UPDATE\n  SET stock_level=?stock_level, last_updated=?last_updated;",
+                "input": {
+                  "mapping": {
+                    "parameters": {
+                      "last_updated": "=datetime.currentTime()",
+                      "item_id": "=$flow.item_id",
+                      "store_id": "=$flow.store_id",
+                      "stock_level": {
+                        "@conditional": [
+                          {
+                            "$flow.event_type == \"restock\"": "=$activity[Get_StockLevels].output.stock_level + $flow.quantity_change"
+                          },
+                          {
+                            "$flow.event_type == \"sales\"": "=$activity[Get_StockLevels].output.stock_level - $flow.quantity_change"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"stock_level\":{\"type\":\"integer\"},\"last_updated\":{\"type\":\"string\",\"format\":\"time\"}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"stock_level\":{\"type\":\"integer\"},\"last_updated\":{\"type\":\"string\",\"format\":\"time\"}}}}}"
+                  }
+                },
+                "output": {
+                  "Output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{}}}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "LogUpdateStatus",
+            "name": "LogUpdateStatus",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"##### Inventory Event - \", $flow.event_type ,\" Updated to Master Data \")",
+                "logLevel": ""
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiR2V0X0ludmVudG9yeSI6eyJ4IjoyMzksInkiOjg4fSwiU2V0X05ld1N0b2NrTGV2ZWwiOnsieCI6NDc0LCJ5IjoyNjZ9LCJHZXRfU3RvY2tMZXZlbHMiOnsieCI6NDY1LCJ5Ijo4OH0sIlVwZGF0ZV9NYXN0ZXJEYXRhIjp7IngiOjY3OCwieSI6ODZ9LCJMb2dVcGRhdGVTdGF0dXMiOnsieCI6ODk5LCJ5Ijo4OX19",
+        "metadata": {
+          "input": [
+            {
+              "name": "event_id",
+              "type": "string"
+            },
+            {
+              "name": "item_id",
+              "type": "string"
+            },
+            {
+              "name": "store_id",
+              "type": "string"
+            },
+            {
+              "name": "quantity_change",
+              "type": "float64"
+            },
+            {
+              "name": "event_type",
+              "type": "string"
+            },
+            {
+              "name": "timestamp",
+              "type": "string"
+            }
+          ],
+          "output": [],
+          "fe_metadata": {
+            "input": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:audit_inventory_events",
+      "data": {
+        "name": "audit_inventory_events",
+        "description": "Looging Events performed on the Inventory Master Data",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "Get_NewStockLevel",
+            "type": "label",
+            "label": "StartActivity to SharedData"
+          },
+          {
+            "id": 2,
+            "from": "Get_NewStockLevel",
+            "to": "LogMessage",
+            "type": "label",
+            "label": "Get_NewStockLevel to LogMessage"
+          },
+          {
+            "id": 3,
+            "from": "LogMessage",
+            "to": "PostgreSQLInsert",
+            "type": "label",
+            "label": "LogMessage to PostgreSQLInsert"
+          },
+          {
+            "id": 4,
+            "from": "PostgreSQLInsert",
+            "to": "LogAuditEvent",
+            "type": "label",
+            "label": "PostgreSQLInsert to LogAuditEvent"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "Get_NewStockLevel",
+            "name": "Get_NewStockLevel",
+            "description": "Enable sharing of data within or across flows in the application",
+            "activity": {
+              "ref": "#shareddata",
+              "settings": {
+                "scope": "Flow",
+                "operation": "GET",
+                "type": "integer"
+              },
+              "input": {
+                "key": "new_stock_level"
+              },
+              "schemas": {
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"exist\":{\"type\":\"boolean\"},\"data\":{\"type\":\"integer\"}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"exist\":{\"type\":\"boolean\"},\"data\":{\"type\":\"integer\"}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "LogMessage",
+            "name": "LogMessage",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"##### Audit Event ---> \", coerce.toString($flow.inputs))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "PostgreSQLInsert",
+            "name": "PostgreSQLInsert",
+            "description": "This activity executes insert on a PostgreSQL database",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#insert",
+              "input": {
+                "Connection": "conn://48d42fc3-c8f5-4a33-b61a-ab40d9310519",
+                "QueryName": "",
+                "Schema": "public",
+                "Query": "INSERT INTO public.inventory_log(\n\tlog_id, event_id, item_id, store_id, quantity_change, event_type, event_timestamp, new_stock_level)\n\tVALUES (?log_id, ?event_id, ?item_id, ?store_id, ?quantity_change, ?event_type, ?event_timestamp, ?new_stock_level);",
+                "manualmode": false,
+                "Fields": [
+                  {
+                    "FieldName": "log_id",
+                    "Type": "INTEGER",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "event_id",
+                    "Type": "VARCHAR",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "item_id",
+                    "Type": "VARCHAR",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "store_id",
+                    "Type": "VARCHAR",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "quantity_change",
+                    "Type": "INTEGER",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "event_type",
+                    "Type": "VARCHAR",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "event_timestamp",
+                    "Type": "TIMESTAMP",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "new_stock_level",
+                    "Type": "INTEGER",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  }
+                ],
+                "RuntimeQuery": "",
+                "State": "606854fd-101d-4f94-a432-84574353f464INSERT INTO public.inventory_log(\n\tlog_id, event_id, item_id, store_id, quantity_change, event_type, event_timestamp, new_stock_level)\n\tVALUES (?log_id, ?event_id, ?item_id, ?store_id, ?quantity_change, ?event_type, ?event_timestamp, ?new_stock_level);",
+                "input": {
+                  "mapping": {
+                    "values": [
+                      {
+                        "log_id": "=utils.uuid()",
+                        "event_id": "=$flow.inputs.event_id",
+                        "item_id": "=$flow.inputs.item_id",
+                        "store_id": "=$flow.inputs.store_id",
+                        "quantity_change": "=$flow.inputs.quantity_change",
+                        "event_type": "=$flow.inputs.event_type",
+                        "event_timestamp": "=$flow.inputs.timestamp",
+                        "new_stock_level": "=$activity[Get_NewStockLevel].output.data"
+                      }
+                    ]
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"values\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"log_id\":{\"type\":\"integer\"},\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"integer\"},\"event_type\":{\"type\":\"string\"},\"event_timestamp\":{\"type\":\"string\",\"format\":\"time\"},\"new_stock_level\":{\"type\":\"integer\"}}}},\"parameters\":{\"type\":\"object\",\"properties\":{}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"values\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"log_id\":{\"type\":\"integer\"},\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"integer\"},\"event_type\":{\"type\":\"string\"},\"event_timestamp\":{\"type\":\"string\",\"format\":\"time\"},\"new_stock_level\":{\"type\":\"integer\"}}}},\"parameters\":{\"type\":\"object\",\"properties\":{}}}}"
+                  }
+                },
+                "output": {
+                  "Output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{}}}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "LogAuditEvent",
+            "name": "LogAuditEvent",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "##### Audit Event Logging Success #####",
+                "logLevel": ""
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiR2V0X05ld1N0b2NrTGV2ZWwiOnsieCI6MjQxLCJ5Ijo5M30sIkxvZ01lc3NhZ2UiOnsieCI6NDMzLCJ5Ijo5NH0sIlBvc3RncmVTUUxJbnNlcnQiOnsieCI6NjM1LCJ5Ijo5Mn0sIkxvZ0F1ZGl0RXZlbnQiOnsieCI6ODQ2LCJ5Ijo5M319",
+        "metadata": {
+          "input": [
+            {
+              "name": "inputs",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "output": [
+            {
+              "name": "event_id",
+              "type": "string"
+            },
+            {
+              "name": "item_id",
+              "type": "string"
+            },
+            {
+              "name": "quantity_change",
+              "type": "float64"
+            },
+            {
+              "name": "event_type",
+              "type": "string"
+            },
+            {
+              "name": "timestamp",
+              "type": "string"
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"inputs\":{\"type\":\"object\",\"properties\":{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"store_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}}}",
+            "output": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"event_id\":{\"type\":\"string\"},\"item_id\":{\"type\":\"string\"},\"quantity_change\":{\"type\":\"number\"},\"event_type\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:low_inventory_notifications",
+      "data": {
+        "name": "low_inventory_notifications",
+        "description": "Receive Low Inventory Alert if Stock is below Threshold",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "LogMessage",
+            "type": "label",
+            "label": "StartActivity to LogMessage"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "LogMessage",
+            "name": "LogMessage",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=$flow.payload",
+                "logLevel": ""
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiTG9nTWVzc2FnZSI6eyJ4IjozMTgsInkiOjkwfX0=",
+        "metadata": {
+          "input": [
+            {
+              "name": "payload",
+              "type": "string"
+            }
+          ],
+          "output": [],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"PostgresListener\",\"properties\":{\"payload\":{\"type\":\"string\",\"required\":false}}}"
+          }
+        }
+      }
+    }
+  ],
+  "properties": [
+    {
+      "name": "Mqtt.mqtt_enterprise.Broker_URL",
+      "type": "string",
+      "value": "tcp://localhost:1883"
+    },
+    {
+      "name": "Mqtt.mqtt_enterprise.Username",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "Mqtt.mqtt_enterprise.Password",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "Mqtt.mqtt_enterprise.Client_Id",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "Mqtt.mqtt_enterprise.Encryption_Mode",
+      "type": "string",
+      "value": "None"
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.Host",
+      "type": "string",
+      "value": "localhost"
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.Port",
+      "type": "float64",
+      "value": 5432
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.Database_Name",
+      "type": "string",
+      "value": "postgres"
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.User",
+      "type": "string",
+      "value": "postgres"
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.Password",
+      "type": "string",
+      "value": "SECRET:NkVQm7CUVjJePwDkRWNWGmGFDqwjz7u5"
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.Maximum_Open_Connections",
+      "type": "float64",
+      "value": 0
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.Maximum_Idle_Connections",
+      "type": "float64",
+      "value": 2
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.Maximum_Connection_Lifetime",
+      "type": "string",
+      "value": 0
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.Maximum_Connection_Retry_Attempts",
+      "type": "float64",
+      "value": 3
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.Connection_Retry_Delay",
+      "type": "float64",
+      "value": 5
+    },
+    {
+      "name": "PostgreSQL.postgresql-1.Connection_Timeout",
+      "type": "float64",
+      "value": 20
+    },
+    {
+      "name": "mqtt.topic",
+      "type": "string",
+      "value": "store/+/inventory"
+    }
+  ],
+  "schemas": {
+    "inventory.event": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"event_id\": {\n            \"type\": \"string\"\n        },\n        \"item_id\": {\n            \"type\": \"string\"\n        },\n        \"store_id\": {\n            \"type\": \"string\"\n        },\n        \"quantity_change\": {\n            \"type\": \"number\"\n        },\n        \"event_type\": {\n            \"type\": \"string\"\n        },\n        \"timestamp\": {\n            \"type\": \"string\"\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"event_id\": {\n            \"type\": \"string\"\n        },\n        \"item_id\": {\n            \"type\": \"string\"\n        },\n        \"store_id\": {\n            \"type\": \"string\"\n        },\n        \"quantity_change\": {\n            \"type\": \"number\"\n        },\n        \"event_type\": {\n            \"type\": \"string\"\n        },\n        \"timestamp\": {\n            \"type\": \"string\"\n        }\n    }\n}"
+    }
+  },
+  "connections": {
+    "f946de73-fbec-438b-ba61-132938e1b378": {
+      "id": "f946de73-fbec-438b-ba61-132938e1b378",
+      "name": "mqtt enterprise",
+      "ref": "#connection",
+      "isGlobal": false,
+      "settings": {
+        "name": "mqtt enterprise",
+        "description": "local mqtt broker",
+        "broker": "=$property[\"Mqtt.mqtt_enterprise.Broker_URL\"]",
+        "user": "=$property[\"Mqtt.mqtt_enterprise.Username\"]",
+        "password": "=$property[\"Mqtt.mqtt_enterprise.Password\"]",
+        "clientid": "=$property[\"Mqtt.mqtt_enterprise.Client_Id\"]",
+        "encryptionMode": "=$property[\"Mqtt.mqtt_enterprise.Encryption_Mode\"]",
+        "cacert": "",
+        "clientcert": "",
+        "clientkey": ""
+      }
+    },
+    "48d42fc3-c8f5-4a33-b61a-ab40d9310519": {
+      "id": "48d42fc3-c8f5-4a33-b61a-ab40d9310519",
+      "name": "postgresql-1",
+      "ref": "#connection_1",
+      "isGlobal": false,
+      "settings": {
+        "databaseType": "PostgreSQL",
+        "name": "postgresql-1",
+        "description": "inventory database",
+        "host": "=$property[\"PostgreSQL.postgresql-1.Host\"]",
+        "port": "=$property[\"PostgreSQL.postgresql-1.Port\"]",
+        "databaseName": "=$property[\"PostgreSQL.postgresql-1.Database_Name\"]",
+        "user": "=$property[\"PostgreSQL.postgresql-1.User\"]",
+        "password": "=$property[\"PostgreSQL.postgresql-1.Password\"]",
+        "maxopenconnection": "=$property[\"PostgreSQL.postgresql-1.Maximum_Open_Connections\"]",
+        "maxidleconnection": "=$property[\"PostgreSQL.postgresql-1.Maximum_Idle_Connections\"]",
+        "connmaxlifetime": "=$property[\"PostgreSQL.postgresql-1.Maximum_Connection_Lifetime\"]",
+        "maxconnectattempts": "=$property[\"PostgreSQL.postgresql-1.Maximum_Connection_Retry_Attempts\"]",
+        "connectionretrydelay": "=$property[\"PostgreSQL.postgresql-1.Connection_Retry_Delay\"]",
+        "connectiontimeout": "=$property[\"PostgreSQL.postgresql-1.Connection_Timeout\"]",
+        "onprem": false,
+        "tlsconfig": false,
+        "tlsparam": "VerifyCA",
+        "cacert": "",
+        "clientcert": "",
+        "clientkey": ""
+      }
+    },
+    "cb294f35-9cc9-4990-81c3-82be2078593d": {
+      "id": "cb294f35-9cc9-4990-81c3-82be2078593d",
+      "name": "de",
+      "ref": "#kafka",
+      "isGlobal": false,
+      "settings": {
+        "name": "de",
+        "description": "Apache Kafka client configuration",
+        "brokers": "de",
+        "authMode": "None",
+        "userName": "",
+        "password": "",
+        "clientID": "",
+        "clientSecret": "",
+        "tokenURL": "",
+        "scope": "",
+        "securityProtocol": "SASL_SSL",
+        "clientCert": "",
+        "clientKey": "",
+        "caCert": "",
+        "connectionTimeout": 30,
+        "retryBackoff": 250,
+        "retryMax": 3,
+        "refreshFrequency": 40,
+        "useSchmaRegistry": false,
+        "url": "",
+        "userName_schemaRegistry": "",
+        "password_schemaRegistry": ""
+      }
+    }
+  },
+  "contrib": "W3sicmVmIjoiZ2l0aHViLmNvbS90aWJjby93aS1tcXR0L3NyYy9hcHAvTXF0dCIsImlkIjoiTXF0dCIsInZlcnNpb24iOiIxLjMuMSIsInRhZyI6IjEuMy4xLWIwMiIsIm5hbWUiOiJNUVRUIiwiczNsb2NhdGlvbiI6IlRpYmNvL01xdHQiLCJpc1VzZXJFeHRlbnNpb24iOmZhbHNlfSx7InJlZiI6ImdpdGh1Yi5jb20vdGliY28vZmxvZ28tZ2VuZXJhbC9zcmMvYXBwL0dlbmVyYWwiLCJpZCI6IkdlbmVyYWwiLCJ2ZXJzaW9uIjoiMS42LjciLCJ0YWciOiIxLjYuNy1iMDMiLCJuYW1lIjoiR2VuZXJhbCIsInMzbG9jYXRpb24iOiJUaWJjby9HZW5lcmFsIiwiaXNVc2VyRXh0ZW5zaW9uIjpmYWxzZX0seyJyZWYiOiJnaXRodWIuY29tL3RpYmNvL3dpLXBvc3RncmVzL3NyYy9hcHAvUG9zdGdyZVNRTCIsImlkIjoiUG9zdGdyZVNRTCIsInZlcnNpb24iOiIyLjcuMSIsInRhZyI6IjIuNy4xLWIwMSIsIm5hbWUiOiJQb3N0Z3JlU1FMIiwiczNsb2NhdGlvbiI6IlRpYmNvL1Bvc3RncmVTUUwiLCJpc1VzZXJFeHRlbnNpb24iOmZhbHNlfSx7InJlZiI6ImdpdGh1Yi5jb20vdGliY28vd2ktcGx1Z2lucy9jb250cmlidXRpb25zL2thZmthL3NyYy9hcHAvS2Fma2EiLCJpZCI6IkthZmthIiwidmVyc2lvbiI6IjEuMy4zIiwidGFnIjoiMS4zLjMtYjAxIiwibmFtZSI6IkFwYWNoZSBLYWZrYSIsInMzbG9jYXRpb24iOiJUaWJjby9LYWZrYSIsImlzVXNlckV4dGVuc2lvbiI6ZmFsc2V9LHsicmVmIjoiZ2l0aHViLmNvbS9tcGFuZGF2L3Bvc3RncmVzbGlzdGVuZXIiLCJ2ZXJzaW9uIjoiMC4xLjAiLCJ0YWciOiIwLjEuMCIsIm5hbWUiOiJQb3N0Z3Jlc0xpc3RlbmVyIiwiaWQiOiJwb3N0Z3Jlc2xpc3RlbmVyIiwiczNsb2NhdGlvbiI6IntVU0VSSUR9L0RlZmF1bHQvdHJpZ2dlci9wb3N0Z3Jlc2xpc3RlbmVyIiwiaXNVc2VyRXh0ZW5zaW9uIjp0cnVlfV0=",
+  "metadata": {
+    "endpoints": [],
+    "flogoVersion": "2.25.7"
+  }
+}
