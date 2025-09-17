@@ -1,129 +1,81 @@
-apiVersion: v1
-kind: MarketplaceEntry
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
-  name: flogo-activity-awssignaturev4
+  name: mp-entry-flogo-activity-awssignaturev4
   title: AWS Signature V4 Generator Activity
   description: Generate AWS Signature Version 4 authentication headers for secure REST API calls to AWS services
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 8
+    isMultiInstall: true
+    imageURL: ""
+    moreInfo:
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/awssignaturev4
+        icon: github
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/docs/index.md
+        icon: docs
   tags:
+    - devhub-marketplace
     - flogo
     - activity
     - aws
     - signature-v4
     - authentication
     - security
-    - rest-api
 spec:
-  type: flogo-activity
-  category: Security
-  author: TIBCO Flogo Team
-  version: "1.0.0"
-  license: Apache-2.0
-  
-  summary: |
-    Complete AWS Signature Version 4 implementation for authenticating REST API calls to AWS services. 
-    Supports all AWS services with multi-service compatibility, session tokens, and comprehensive debugging.
+  owner: tibco-flogo-team
+  type: service
+  presentation:
+    buttonLabels:
+      createButtonText: Install Activity
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install AWS Signature V4 Generator Activity into your TIBCO Developer Hub
 
-  features:
-    - Complete AWS Signature V4 authentication implementation
-    - Multi-service support (S3, SQS, DynamoDB, Lambda, EC2, etc.)
-    - Session token support for temporary credentials from AWS STS
-    - Custom headers support with signature calculation
-    - Comprehensive input validation with detailed error messages
-    - Debug outputs including canonical request and string-to-sign
-    - ISO 8601 timestamp handling with automatic current time fallback
-    - Secure cryptographic signing with SHA-256 and HMAC-SHA256
+            **Description:** Complete AWS Signature Version 4 implementation for authenticating REST API calls to AWS services. Supports all AWS services with multi-service compatibility, session tokens, and comprehensive debugging.
 
-  useCases:
-    - Secure authentication for AWS S3 bucket operations
-    - SQS message queue interactions with proper signing
-    - DynamoDB API calls with authenticated requests
-    - Lambda function invocations via REST API
-    - EC2 instance management through AWS APIs
-    - Custom AWS service integrations
-    - Multi-region AWS deployments with region-specific signing
-    - Temporary credential scenarios with session tokens
+            **What You'll Get:** 
+            - Complete AWS Signature V4 authentication implementation
+            - Multi-service support (S3, SQS, DynamoDB, Lambda, EC2, etc.)
+            - Session token support for temporary credentials from AWS STS
+            - Custom headers support with signature calculation
+            - Comprehensive input validation with detailed error messages
+            - Debug outputs including canonical request and string-to-sign
 
-  inputs:
-    accessKeyId:
-      description: AWS Access Key ID for authentication
-      type: string
-      required: true
-    secretAccessKey:
-      description: AWS Secret Access Key for signing
-      type: string
-      required: true
-    region:
-      description: AWS region (e.g., us-east-1, eu-west-1)
-      type: string
-      required: true
-    service:
-      description: AWS service name (e.g., s3, sqs, dynamodb, lambda)
-      type: string
-      required: true
-    httpMethod:
-      description: HTTP method (GET, POST, PUT, DELETE, HEAD, PATCH, OPTIONS)
-      type: string
-      required: true
-    url:
-      description: Complete URL with scheme, host, path, and query parameters
-      type: string
-      required: true
-    sessionToken:
-      description: AWS Session Token for temporary credentials
-      type: string
-      required: false
-    payload:
-      description: Request body content (empty string for GET requests)
-      type: string
-      required: false
-    headers:
-      description: Additional headers to include in the request
-      type: object
-      required: false
-    timestamp:
-      description: ISO 8601 timestamp (RFC3339 format)
-      type: string
-      required: false
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
 
-  outputs:
-    success:
-      description: Boolean indicating successful signature generation
-      type: boolean
-    authorizationHeader:
-      description: Complete AWS Authorization header value
-      type: string
-    xAmzDate:
-      description: AWS X-Amz-Date header value
-      type: string
-    xAmzContentSha256:
-      description: AWS X-Amz-Content-Sha256 header value
-      type: string
-    xAmzSecurityToken:
-      description: AWS X-Amz-Security-Token header (when using session token)
-      type: string
-    allHeaders:
-      description: Complete set of headers needed for AWS request
-      type: object
-    canonicalRequest:
-      description: AWS canonical request string (for debugging)
-      type: string
-    stringToSign:
-      description: AWS string-to-sign (for debugging)
-      type: string
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: false
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/catalog-info.yaml
 
-  documentation:
-    readme: README.md
-    examples: example/
-    
-  repository:
-    type: git
-    url: https://github.com/TIBCOSoftware/tib-devhub-hackathon
-    directory: flogo/extensions/activity/awssignaturev4
-
-  template:
-    scaffoldUrl: ./template.yaml
-    
-  compatibility:
-    flogoVersion: ">=1.0.0"
-    goVersion: ">=1.16"
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/docs/index.md
+        icon: docs
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace
     awsServices: ["S3", "SQS", "DynamoDB", "Lambda", "EC2", "CloudWatch", "SNS", "SES"]

@@ -1,283 +1,70 @@
-apiVersion: v1
-kind: MarketplaceEntry
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
-  name: mp-entry-postgreslistener
+  name: mp-entry-flogo-trigger-postgreslistener
   title: PostgreSQL Listener Trigger
-  description: Real-time PostgreSQL NOTIFY/LISTEN event monitoring with SSL/TLS support and comprehensive connection management
+  description: Real-time PostgreSQL NOTIFY/LISTEN event monitoring with SSL/TLS support
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 7
+    isMultiInstall: true
+    imageURL: ""
+    moreInfo:
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/postgreslistener
+        icon: github
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/postgreslistener/docs/index.md
+        icon: docs
+  tags:
+    - devhub-marketplace
+    - flogo
+    - trigger
 spec:
-  category: Database Integration
-  subcategory: Event Listening
-  type: flogo-trigger
-  overview:
-    title: PostgreSQL Listener Trigger
-    description: |
-      Advanced Flogo trigger for real-time PostgreSQL event monitoring using the LISTEN/NOTIFY mechanism. 
-      Provides enterprise-grade features including comprehensive SSL/TLS support, multi-channel listening, 
-      connection management with retry logic, health monitoring, and distributed tracing capabilities for 
-      event-driven architectures.
-    
-    keyFeatures:
-      - Real-time PostgreSQL NOTIFY message listening with sub-second response times
-      - Multi-channel support for listening on multiple PostgreSQL channels simultaneously
-      - Complete SSL/TLS configuration with certificate support and verification modes
-      - Built-in connection retry logic with configurable attempts and delays
-      - Health monitoring with periodic connection checks and detailed metrics
-      - OpenTelemetry integration with rich PostgreSQL-specific tracing metadata
-      - Enhanced logging with correlation IDs and structured output for debugging
-      - Memory tracking and performance monitoring with resource statistics
-      - Graceful shutdown handling with proper resource cleanup
-      - Direct connection configuration for simplified setup and deployment
-    
-    useCases:
-      - Real-time event notifications from database triggers and functions
-      - Microservices communication through database-driven event messaging
-      - Cache invalidation and data synchronization based on database changes
-      - Real-time dashboard updates and live data streaming applications
-      - Workflow automation triggered by database state changes
-      - Audit logging and compliance monitoring with immediate notifications
-      - Inter-application messaging using PostgreSQL as a message broker
-      - Real-time analytics and reporting with database event triggers
+  owner: tibco-flogo-team
+  type: service
+  presentation:
+    buttonLabels:
+      createButtonText: Install PostgreSQL Listener Trigger
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install PostgreSQL Listener Trigger into your TIBCO Developer Hub
 
-  technical:
-    language: Go
-    framework: Flogo
-    dependencies:
-      - github.com/project-flogo/core (v1.6.13+)
-      - github.com/lib/pq (v1.10.9+)
-    
-    postgresql_compatibility:
-      - PostgreSQL 9.0+ (LISTEN/NOTIFY support)
-      - PostgreSQL 10+ (recommended for enhanced features)
-      - All PostgreSQL-compatible databases supporting LISTEN/NOTIFY
-    
-    configuration:
-      trigger_settings:
-        - name: host
-          type: string
-          required: true
-          description: PostgreSQL server host
-        - name: port
-          type: integer
-          required: true
-          description: PostgreSQL server port
-          default: 5432
-        - name: user
-          type: string
-          required: true
-          description: Database user with LISTEN privileges
-        - name: password
-          type: string
-          required: true
-          description: Database password
-        - name: databaseName
-          type: string
-          required: true
-          description: Database name to connect to
-        - name: sslMode
-          type: string
-          required: false
-          description: SSL mode (disable, require, verify-ca, verify-full)
-          default: disable
-        - name: tlsConfig
+            **Description:** Real-time PostgreSQL NOTIFY/LISTEN event monitoring with SSL/TLS support
+
+            **What You'll Get:** This Flogo extension will be added to your Developer Hub catalog for use in your applications.
+
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
           type: boolean
-          required: false
-          description: Enable advanced TLS certificate configuration
           default: false
-        - name: cacert
-          type: string
-          required: false
-          description: CA certificate (base64 encoded)
-        - name: clientcert
-          type: string
-          required: false
-          description: Client certificate (base64 encoded)
-        - name: clientkey
-          type: string
-          required: false
-          description: Client private key (base64 encoded)
-        - name: connectionTimeout
-          type: integer
-          required: false
-          description: Connection timeout in seconds
-          default: 30
-        - name: maxConnRetryAttempts
-          type: integer
-          required: false
-          description: Maximum connection retry attempts
-          default: 3
-        - name: connectionRetryDelay
-          type: integer
-          required: false
-          description: Delay between retries in seconds
-          default: 5
-      
-      handler_settings:
-        - name: channel
-          type: string
-          required: true
-          description: PostgreSQL channel name to listen on
-      
-      outputs:
-        - name: payload
-          type: string
-          description: The payload string from the NOTIFY message
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/postgreslistener/catalog-info.yaml
 
-  examples:
-    - title: Basic NOTIFY Listening
-      description: Listen for notifications on a specific PostgreSQL channel
-      code: |
-        {
-          "trigger": {
-            "host": "localhost",
-            "port": 5432,
-            "user": "postgres",
-            "password": "password",
-            "databaseName": "myapp_db",
-            "sslMode": "disable"
-          },
-          "handler": {
-            "channel": "order_events"
-          }
-        }
-    
-    - title: Secure SSL Connection
-      description: Connect with SSL certificate verification
-      code: |
-        {
-          "trigger": {
-            "host": "postgres.example.com",
-            "port": 5432,
-            "user": "app_user",
-            "password": "secure_password",
-            "databaseName": "production_db",
-            "sslMode": "verify-full",
-            "tlsConfig": true,
-            "cacert": "LS0tLS1CRUdJTi...",
-            "clientcert": "LS0tLS1CRUdJTi...",
-            "clientkey": "LS0tLS1CRUdJTi..."
-          }
-        }
-    
-    - title: Multi-Channel Setup
-      description: Listen on multiple channels with different handlers
-      code: |
-        {
-          "handlers": [
-            {
-              "channel": "user_events",
-              "flow": "process_user_events"
-            },
-            {
-              "channel": "order_events", 
-              "flow": "process_order_events"
-            },
-            {
-              "channel": "system_alerts",
-              "flow": "handle_system_alerts"
-            }
-          ]
-        }
-    
-    - title: PostgreSQL Trigger Function
-      description: Database setup for sending notifications
-      code: |
-        -- Create notification function
-        CREATE OR REPLACE FUNCTION notify_order_changes()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            PERFORM pg_notify('order_events', 
-                json_build_object(
-                    'action', TG_OP,
-                    'table', TG_TABLE_NAME,
-                    'data', row_to_json(NEW)
-                )::text
-            );
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-        
-        -- Create trigger
-        CREATE TRIGGER order_notify_trigger
-            AFTER INSERT OR UPDATE ON orders
-            FOR EACH ROW
-            EXECUTE FUNCTION notify_order_changes();
-
-  documentation:
-    gettingStartened: |
-      1. Set up PostgreSQL database with LISTEN/NOTIFY capability
-      2. Create database functions and triggers to send NOTIFY messages
-      3. Configure the trigger with database connection details
-      4. Set up SSL/TLS certificates if using secure connections
-      5. Configure handler settings with specific channel names to monitor
-      6. Enable health monitoring and logging for production environments
-      7. The trigger will listen for NOTIFY messages and execute flows with payloads
-    
-    postgresqlSetup: |
-      Database Setup:
-      1. Create notification functions using pg_notify()
-      2. Set up database triggers to call notification functions
-      3. Ensure database user has CONNECT and USAGE privileges
-      4. Test notifications using SELECT pg_notify('channel', 'message')
-      
-      Required Privileges:
-      - CONNECT: Connect to the database
-      - USAGE: Use the database schema
-      - SELECT: Read from tables (if needed in triggers)
-    
-    sslConfiguration: |
-      SSL/TLS Modes:
-      - disable: No SSL/TLS encryption (default)
-      - require: Require SSL/TLS encryption with server's certificate
-      - verify-ca: Verify server certificate against provided CA
-      - verify-full: Full certificate and hostname verification
-      
-      Advanced TLS Configuration:
-      - tlsConfig: Enable for custom certificate configuration
-      - cacert: CA certificate content (base64 encoded)
-      - clientcert: Client certificate for mutual authentication
-      - clientkey: Client private key for mutual authentication
-    
-    notifyMechanism: |
-      PostgreSQL NOTIFY/LISTEN:
-      - NOTIFY: Sends messages to listening connections
-      - LISTEN: Subscribes to a specific channel
-      - Payload: Up to 8000 bytes of message data
-      - Channels: Named channels for message categorization
-      - Transactional: NOTIFY respects transaction boundaries
-    
-    bestPractices:
-      - Use meaningful channel names for message categorization
-      - Keep NOTIFY payloads under 8000 bytes for optimal performance
-      - Implement proper error handling in database trigger functions
-      - Use SSL/TLS for production database connections
-      - Monitor connection health and implement retry logic
-      - Structure NOTIFY payloads as JSON for easier processing
-      - Consider message ordering and delivery guarantees
-    
-    troubleshooting:
-      - "Connection refused": Check PostgreSQL server status and network connectivity
-      - "Authentication failed": Verify database user credentials and privileges
-      - "SSL connection failed": Check SSL configuration and certificate validity
-      - "Channel not receiving messages": Verify trigger functions and NOTIFY calls
-      - "Connection lost": Monitor network stability and connection timeout settings
-      - "Missing notifications": Check transaction boundaries and COMMIT statements
-      - "Performance issues": Monitor payload sizes and message frequency
-
-  support:
-    documentation: "./docs/index.md"
-    examples: "./docs/examples/"
-    issues: "https://github.com/your-org/tib-devhub-hackathon/issues"
-    
-  metadata:
-    version: "0.2.0"
-    maturity: stable
-    maintainer: Flogo Team
-    tags:
-      - postgresql-notify
-      - listen-notify
-      - real-time-events
-      - database-triggers
-      - ssl-tls
-      - multi-channel
-      - event-driven
-      - health-monitoring
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/postgreslistener/docs/index.md
+        icon: docs
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace

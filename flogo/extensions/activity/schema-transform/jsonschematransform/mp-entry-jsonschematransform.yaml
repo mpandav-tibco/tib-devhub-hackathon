@@ -1,108 +1,70 @@
-apiVersion: v1
-kind: MarketplaceEntry
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
-  name: flogo-activity-jsonschematransform
+  name: mp-entry-flogo-activity-jsonschematransform
   title: JSON Schema Transform Activity
-  description: Transform JSON Schema to XSD and Avro schema formats with comprehensive feature support and constraint mapping
+  description: Transform and validate JSON schemas with comprehensive processing capabilities
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 7
+    isMultiInstall: true
+    imageURL: ""
+    moreInfo:
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/schema-transform/jsonschematransform
+        icon: github
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/jsonschematransform/docs/index.md
+        icon: docs
   tags:
+    - devhub-marketplace
     - flogo
     - activity
-    - json-schema
-    - schema-transform
-    - xsd
-    - avro-schema
-    - data-modeling
-    - interoperability
 spec:
-  type: flogo-activity
-  category: Data Processing
-  author: TIBCO Flogo Team
-  version: "1.0.0"
-  license: Apache-2.0
-  
-  summary: |
-    Advanced JSON Schema transformation engine enabling bidirectional schema conversion to XSD and Avro formats. 
-    Supports comprehensive JSON Schema features including unions, constraints, and format types with intelligent mapping.
+  owner: tibco-flogo-team
+  type: service
+  presentation:
+    buttonLabels:
+      createButtonText: Install JSON Schema Transform Activity
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install JSON Schema Transform Activity into your TIBCO Developer Hub
 
-  features:
-    - Multi-format output support (XSD, Avro, or both simultaneously)
-    - Comprehensive JSON Schema feature support (all standard types and constraints)
-    - Advanced schema constructs (anyOf, oneOf, allOf unions and conditional schemas)
-    - String format type conversion (date, date-time, email, uri to appropriate targets)
-    - Enumeration constraint preservation across formats
-    - Validation constraint mapping (pattern, length, numeric bounds)
-    - Flexible namespace and element naming configuration
-    - High-performance processing optimized for enterprise scale
-    - Zero external dependencies using Go standard library
-    - Intelligent format-specific input processing
+            **Description:** Transform and validate JSON schemas with comprehensive processing capabilities
 
-  useCases:
-    - API schema migration from JSON to XML-based systems
-    - Data serialization format standardization across platforms
-    - Schema registry integration and multi-format support
-    - Enterprise data integration with heterogeneous systems
-    - Microservices interoperability schema conversion
-    - Legacy system integration with modern JSON APIs
-    - Data pipeline schema transformation and validation
-    - Cross-platform data exchange format compatibility
+            **What You'll Get:** This Flogo extension will be added to your Developer Hub catalog for use in your applications.
 
-  inputs:
-    jsonSchemaString:
-      description: JSON Schema document to transform
-      type: string
-      required: true
-    outputFormat:
-      description: Output format (xsd, avro, or both)
-      type: string
-      required: false
-      default: "both"
-    rootElementName:
-      description: Root element name for XSD generation
-      type: string
-      required: false
-      default: "RootElement"
-    targetNamespace:
-      description: Target namespace for XSD generation
-      type: string
-      required: false
-    avroRecordName:
-      description: Root record name for Avro generation
-      type: string
-      required: false
-      default: "RootRecord"
-    avroNamespace:
-      description: Namespace for Avro generation
-      type: string
-      required: false
-      default: "com.example"
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
 
-  outputs:
-    xsdString:
-      description: Generated XSD schema string
-      type: string
-    avroSchema:
-      description: Generated Avro schema string
-      type: string
-    error:
-      description: Boolean indicating if an error occurred
-      type: boolean
-    errorMessage:
-      description: Error details if transformation failed
-      type: string
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: false
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/jsonschematransform/catalog-info.yaml
 
-  documentation:
-    readme: README.md
-    examples: examples/
-    
-  repository:
-    type: git
-    url: https://github.com/TIBCOSoftware/tib-devhub-hackathon
-    directory: flogo/extensions/activity/schema-transform/jsonschematransform
-
-  template:
-    scaffoldUrl: ./template.yaml
-    
-  compatibility:
-    flogoVersion: ">=1.0.0"
-    goVersion: ">=1.16"
-    formats: ["JSON Schema", "XSD", "Avro Schema"]
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/jsonschematransform/docs/index.md
+        icon: docs
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace

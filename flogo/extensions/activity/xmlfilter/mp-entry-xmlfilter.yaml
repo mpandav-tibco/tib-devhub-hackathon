@@ -1,205 +1,70 @@
-apiVersion: v1
-kind: MarketplaceEntry
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
-  name: mp-entry-xmlfilter
+  name: mp-entry-flogo-activity-xmlfilter
   title: XML Filter Activity
-  description: Filter XML content using multiple XPath expressions with configurable AND/OR logic for content routing and validation
+  description: Advanced XML parsing, filtering, and manipulation with XPath support
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 6
+    isMultiInstall: true
+    imageURL: ""
+    moreInfo:
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/xmlfilter
+        icon: github
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/docs/index.md
+        icon: docs
+  tags:
+    - devhub-marketplace
+    - flogo
+    - activity
 spec:
-  category: Data Processing
-  subcategory: Content Filtering
-  type: flogo-activity
-  
-  overview:
-    title: XML Filter Activity
-    description: |
-      Powerful XML content filtering activity that evaluates multiple XPath expressions against XML input with 
-      configurable AND/OR logic. Designed for intelligent content routing, data validation, and conditional 
-      processing in enterprise integration scenarios. Returns the original XML string only when specified 
-      conditions are satisfied.
-    
-    keyFeatures:
-      - Multiple XPath expression evaluation with configurable AND/OR logic
-      - XPath 1.0 full compliance including predicates, functions, and axes
-      - Short-circuit evaluation for optimal performance with multiple conditions
-      - Comprehensive error handling with specific error codes and warnings
-      - Support for complex predicates, attribute filters, and text content matching
-      - XML namespace support for enterprise document processing
-      - Thread-safe design for concurrent flow execution
-      - Detailed logging and debugging capabilities for troubleshooting
-      - Memory-efficient processing for large XML documents
-    
-    useCases:
-      - Content routing based on XML structure and values
-      - Data validation before downstream processing
-      - Multi-criteria filtering for business rule implementation
-      - XML message classification and categorization
-      - Conditional processing based on document characteristics
-      - Enterprise integration pattern implementation (Content-Based Router)
-      - Legacy system integration with XML-based protocols
+  owner: tibco-flogo-team
+  type: service
+  presentation:
+    buttonLabels:
+      createButtonText: Install XML Filter Activity
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install XML Filter Activity into your TIBCO Developer Hub
 
-  technical:
-    language: Go
-    framework: Flogo
-    dependencies:
-      - github.com/project-flogo/core (v1.6.12+)
-      - github.com/antchfx/xmlquery (v1.4.4+)
-      - github.com/stretchr/testify (v1.8.1+ for testing)
-    
-    configuration:
-      settings:
-        - name: none
-          description: No global settings - all configuration through inputs for maximum flexibility
-      
-      inputs:
-        - name: xmlString
-          type: string
-          required: true
-          description: XML string to filter and evaluate
-        - name: xpathConditions
-          type: array
-          required: true
-          description: Array of XPath condition objects with 'expression' property
-          example: "[{\"expression\": \"/root/element[@id='value']\"}]"
-        - name: conditionLogic
-          type: string
-          required: false
-          description: Logic to combine conditions - 'AND' or 'OR'
-          default: "AND"
-      
-      outputs:
-        - name: match
+            **Description:** Advanced XML parsing, filtering, and manipulation with XPath support
+
+            **What You'll Get:** This Flogo extension will be added to your Developer Hub catalog for use in your applications.
+
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
           type: boolean
-          description: True if conditions match according to logic, false otherwise
-        - name: filteredXmlString
-          type: string
-          description: Original XML string if conditions match, empty string otherwise
+          default: false
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/catalog-info.yaml
 
-  examples:
-    - title: Single Condition Filter
-      description: Filter XML documents based on a single XPath condition
-      code: |
-        {
-          "xmlString": "<?xml version=\"1.0\"?><catalog><book id=\"bk101\"><title>XML Guide</title></book></catalog>",
-          "xpathConditions": [
-            {
-              "expression": "/catalog/book[@id='bk101']"
-            }
-          ],
-          "conditionLogic": "AND"
-        }
-    
-    - title: Multiple Conditions with AND Logic
-      description: Filter requiring all conditions to be true (validation scenario)
-      code: |
-        {
-          "xmlString": "<?xml version=\"1.0\"?><catalog><book id=\"bk101\"><price>44.95</price><genre>Computer</genre></book></catalog>",
-          "xpathConditions": [
-            {
-              "expression": "/catalog/book[@id='bk101']"
-            },
-            {
-              "expression": "/catalog/book/price[. < 50]"
-            },
-            {
-              "expression": "/catalog/book/genre[text()='Computer']"
-            }
-          ],
-          "conditionLogic": "AND"
-        }
-    
-    - title: Multiple Conditions with OR Logic
-      description: Filter accepting any matching condition (routing scenario)
-      code: |
-        {
-          "xmlString": "<?xml version=\"1.0\"?><catalog><book><genre>Fantasy</genre></book></catalog>",
-          "xpathConditions": [
-            {
-              "expression": "/catalog/book/genre[text()='Fantasy']"
-            },
-            {
-              "expression": "/catalog/book/genre[text()='Romance']"
-            },
-            {
-              "expression": "/catalog/book/genre[text()='Horror']"
-            }
-          ],
-          "conditionLogic": "OR"
-        }
-    
-    - title: Complex XPath Expressions
-      description: Advanced filtering with complex predicates and functions
-      code: |
-        {
-          "xmlString": "<?xml version=\"1.0\"?><catalog><book><author>Doe, John</author><price>25.99</price><description>XML processing guide</description></book></catalog>",
-          "xpathConditions": [
-            {
-              "expression": "//book[contains(author, 'John') and price < 50]"
-            },
-            {
-              "expression": "//book[contains(description, 'XML')]"
-            }
-          ],
-          "conditionLogic": "OR"
-        }
-
-  documentation:
-    gettingStarted: |
-      1. Configure your XML input string containing the document to filter
-      2. Define XPath conditions as an array of objects with 'expression' properties
-      3. Choose condition logic: 'AND' for validation (all must match) or 'OR' for routing (any can match)
-      4. The activity evaluates conditions and returns boolean match result plus filtered XML
-      5. Use the match output to control flow routing and filteredXmlString for downstream processing
-    
-    xpathSupport: |
-      Supported XPath 1.0 Features:
-      - Basic path expressions: /catalog/book, book/author, //book
-      - Predicates: /book[@id='value'], /book[position()=1], /book[price < 50]
-      - Functions: text(), contains(), position(), last(), count(), name()
-      - Operators: and, or, =, !=, <, >, <=, >=
-      - Axes: ancestor::, descendant::, following::, preceding::
-      - Multiple predicates: /book[@id='bk101' and price < 50]
-      - Union operations: /book | /magazine
-    
-    logicEvaluation: |
-      AND Logic:
-      - All conditions must evaluate to true for overall match
-      - Short-circuit evaluation stops at first false condition
-      - Best for validation scenarios requiring all criteria
-      
-      OR Logic:
-      - Any single condition evaluating to true results in overall match
-      - Short-circuit evaluation stops at first true condition
-      - Best for routing scenarios with multiple acceptable patterns
-    
-    bestPractices:
-      - Use specific paths (/catalog/book) over descendant paths (//book) when structure is known
-      - Place most selective conditions first for better performance
-      - Test XPath expressions with sample data before deployment
-      - Use AND logic for validation, OR logic for alternative routing
-      - Consider XML namespace requirements in enterprise environments
-      - Validate XML structure before complex XPath evaluation
-    
-    troubleshooting:
-      - "XMLFILTER-4001": Ensure xmlString input is provided and is a valid string
-      - "XMLFILTER-4003": Verify xpathConditions is an array with valid objects
-      - "XMLFILTER-5001": Check XML syntax and structure for parsing errors
-      - Invalid XPath: Review XPath syntax, check for typos in element/attribute names
-      - No matches: Verify XML structure matches XPath expressions, test with simpler paths
-
-  support:
-    documentation: "./docs/index.md"
-    examples: "./docs/examples/"
-    issues: "https://github.com/your-org/tib-devhub-hackathon/issues"
-    
-  metadata:
-    version: "1.0.0"
-    maturity: stable
-    maintainer: Flogo Team
-    tags:
-      - xml-processing
-      - xpath-filtering
-      - content-routing
-      - data-validation
-      - integration-patterns
-      - enterprise-integration
-      - xml-namespaces
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/docs/index.md
+        icon: docs
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace

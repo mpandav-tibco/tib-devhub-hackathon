@@ -1,259 +1,70 @@
-apiVersion: v1
-kind: MarketplaceEntry
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
-  name: mp-entry-templateengine
+  name: mp-entry-flogo-activity-templateengine
   title: Template Engine Activity
-  description: Comprehensive template processing with multi-engine support, 29 built-in functions, and 10 OOTB templates
+  description: Dynamic content generation and template processing with multiple template formats
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 8
+    isMultiInstall: true
+    imageURL: ""
+    moreInfo:
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/templateengine
+        icon: github
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/docs/index.md
+        icon: docs
+  tags:
+    - devhub-marketplace
+    - flogo
+    - activity
 spec:
-  category: Content Generation
-  subcategory: Template Processing
-  type: flogo-activity
-  
-  overview:
-    title: Template Engine Activity
-    description: |
-      Comprehensive Flogo activity for processing dynamic templates with data binding, supporting Go templates with 
-      Handlebars/Mustache syntax compatibility. Features 29 built-in functions, 10 OOTB templates, advanced output 
-      formatting, and AI workflow integration for enterprise content generation scenarios.
-    
-    keyFeatures:
-      - Multi-engine support: Go templates (full), Handlebars-basic, Mustache-basic with syntax compatibility
-      - 29 built-in template functions: String, math, array, conditional, and utility operations
-      - 10 OOTB templates: Pre-built templates for emails, reports, contracts, and notifications
-      - Advanced output formatting: HTML, XML, JSON, Markdown with proper structure and metadata
-      - Security features: Safe mode operation, HTML escaping, strict mode validation
-      - Performance optimization: Template caching, intelligent path detection, memory-efficient processing
-      - AI workflow ready: Perfect for dynamic content generation in AI-powered enterprise workflows
-      - OpenTelemetry tracing: Performance monitoring and observability
-    
-    useCases:
-      - Dynamic email generation with personalized content and formatting
-      - Report generation with data binding and conditional logic
-      - AI-powered content generation and response templating
-      - Contract and document automation with variable substitution
-      - Notification systems with multi-format output support
-      - Enterprise workflow automation with template-driven content
+  owner: tibco-flogo-team
+  type: service
+  presentation:
+    buttonLabels:
+      createButtonText: Install Template Engine Activity
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install Template Engine Activity into your TIBCO Developer Hub
 
-  technical:
-    language: Go
-    framework: Flogo
-    dependencies:
-      - github.com/project-flogo/core
-      - text/template (Go standard library)
-      - html/template (Go standard library)
-      - github.com/stretchr/testify (testing)
-    
-    configuration:
-      settings:
-        - name: templateEngine
-          type: string
-          required: false
-          description: Template engine - "go" (full), "handlebars-basic", "mustache-basic"
-          default: go
-        - name: templateCacheSize
-          type: integer
-          required: false
-          description: Maximum number of cached templates for performance
-          default: 100
-        - name: enableSafeMode
-          type: boolean
-          required: false
-          description: Enable safe mode - restricts to essential functions only
-          default: true
-        - name: templatePath
-          type: string
-          required: false
-          description: Custom path for template files
-          default: ""
-      
-      inputs:
-        - name: templateType
-          type: string
-          required: true
-          description: OOTB template name or "custom" for custom templates
-        - name: template
-          type: string
-          required: false
-          description: Custom template content (when templateType is "custom")
-        - name: templateData
-          type: object
-          required: true
-          description: Primary data object for template binding
-        - name: outputFormat
-          type: string
-          required: false
-          description: Output format - "text", "html", "json", "xml", "markdown"
-          default: text
-        - name: enableFormatting
-          type: boolean
-          required: false
-          description: Enable automatic formatting based on output format
-          default: true
-        - name: templateVariables
-          type: object
-          required: false
-          description: Additional template variables to merge with templateData
-          default: "{}"
-        - name: escapeHtml
-          type: boolean
-          required: false
-          description: Automatically escape HTML characters
-          default: true
-        - name: strictMode
-          type: boolean
-          required: false
-          description: Fail if template references undefined variables
-          default: true
-      
-      outputs:
-        - name: result
-          type: string
-          description: Generated content from template processing
-        - name: success
-          type: boolean
-          description: Whether template processing succeeded
-        - name: error
-          type: string
-          description: Error message if processing failed
-        - name: templateUsed
-          type: string
-          description: Name of the template that was used
-        - name: processingTime
-          type: integer
-          description: Processing time in milliseconds
-        - name: variablesUsed
-          type: array
-          description: List of variables used in template processing
+            **Description:** Dynamic content generation and template processing with multiple template formats
 
-  examples:
-    - title: Email Welcome Template (OOTB)
-      description: Generate personalized welcome email using predefined template
-      code: |
-        {
-          "templateType": "email-welcome",
-          "templateData": {
-            "customerName": "John Doe",
-            "companyName": "ACME Corp",
-            "accountDetails": {
-              "username": "johndoe",
-              "accountId": "12345"
-            }
-          },
-          "outputFormat": "html",
-          "enableFormatting": true
-        }
-    
-    - title: Custom Template with Functions
-      description: Use custom template with built-in functions for dynamic content
-      code: |
-        {
-          "templateType": "custom",
-          "template": "Hello {{upper .name}}, you have {{length .items}} items. Today is {{formatDate \"2006-01-02\" now}}.",
-          "templateData": {
-            "name": "john doe",
-            "items": ["apple", "banana", "orange"]
-          },
-          "outputFormat": "text",
-          "enableSafeMode": false
-        }
-    
-    - title: AI-Generated Content Integration
-      description: Dynamic content generation for AI workflow integration
-      code: |
-        {
-          "templateType": "custom",
-          "template": "{{.customerName}}, based on your inquiry about {{.inquiry}}: {{.aiResponse}}",
-          "templateData": {
-            "customerName": "Jane Smith",
-            "inquiry": "product recommendations",
-            "aiResponse": "We recommend our premium package based on your usage patterns."
-          },
-          "outputFormat": "json",
-          "enableFormatting": true
-        }
-    
-    - title: Report Summary Generation
-      description: Generate formatted report using OOTB report template
-      code: |
-        {
-          "templateType": "report-summary",
-          "templateData": {
-            "reportTitle": "Q4 Sales Summary",
-            "totalSales": 125000,
-            "salesData": [
-              {"month": "Oct", "amount": 42000},
-              {"month": "Nov", "amount": 38000},
-              {"month": "Dec", "amount": 45000}
-            ]
-          },
-          "outputFormat": "markdown",
-          "strictMode": true
-        }
+            **What You'll Get:** This Flogo extension will be added to your Developer Hub catalog for use in your applications.
 
-  documentation:
-    gettingStarted: |
-      1. Choose your template engine (Go templates recommended for full features)
-      2. Select an OOTB template or create custom template content
-      3. Provide template data object with all required variables
-      4. Configure output format and security settings as needed
-      5. The activity will process the template and generate formatted content
-      6. Monitor processing time and variables used for optimization
-    
-    ootbTemplates: |
-      Available OOTB Templates:
-      - email-welcome: Personalized welcome emails
-      - email-promotional: Marketing and promotional emails  
-      - email-order-confirmation: Order confirmation messages
-      - email-order-update: Order status update notifications
-      - email-apology: Customer service apology templates
-      - report-summary: Business report generation
-      - invoice-template: Invoice and billing documents
-      - contract-template: Legal contract generation
-      - meeting-reminder: Meeting and appointment reminders
-      - notification-alert: System alert notifications
-    
-    templateFunctions: |
-      29 Built-in Functions Available:
-      String (9): upper, lower, title, capitalize, truncate, reverse, replace, contains, trim
-      Math (4): add, subtract, multiply, divide
-      Array (6): first, last, length, sort, join, split
-      Conditional (6): eq, ne, lt, gt, le, ge
-      Utility (4): default, json, formatDate, now
-      
-      Safe Mode (Production): 10 essential functions only
-      Full Mode (Development): All 29 functions available
-    
-    bestPractices:
-      - Use safe mode in production environments for security
-      - Cache templates for better performance with high volume processing
-      - Validate template data structure before processing
-      - Use strict mode to catch undefined variable errors early
-      - Choose appropriate output format for your use case
-      - Enable HTML escaping when generating web content
-    
-    troubleshooting:
-      - Template syntax errors: Check Go template syntax and variable references
-      - Undefined variables: Enable strict mode and validate template data
-      - Function errors: Verify function availability in safe/full mode
-      - Performance issues: Increase cache size and monitor processing times
-      - HTML escaping: Disable if raw HTML output is required
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
 
-  support:
-    documentation: "./docs/index.md"
-    examples: "./docs/examples/"
-    templates: "./skeleton/templates/"
-    issues: "https://github.com/your-org/tib-devhub-hackathon/issues"
-    
-  metadata:
-    version: "1.0.0"
-    maturity: stable
-    maintainer: Flogo Team
-    tags:
-      - template-engine
-      - content-generation
-      - go-templates
-      - handlebars
-      - mustache
-      - email-templates
-      - ai-workflow
-      - enterprise-content
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: false
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/catalog-info.yaml
+
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/docs/index.md
+        icon: docs
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace

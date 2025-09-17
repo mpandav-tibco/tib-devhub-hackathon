@@ -1,120 +1,70 @@
-apiVersion: v1
-kind: MarketplaceEntry
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
 metadata:
-  name: flogo-activity-xsdschematransform
+  name: mp-entry-flogo-activity-xsdschematransform
   title: XSD Schema Transform Activity
-  description: Transform XSD schemas to JSON Schema and Avro Schema formats with comprehensive configuration and namespace handling
+  description: Transform and validate XSD schemas with intelligent processing capabilities
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 7
+    isMultiInstall: true
+    imageURL: ""
+    moreInfo:
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/schema-transform/xsdschematransform
+        icon: github
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/xsdschematransform/docs/index.md
+        icon: docs
   tags:
+    - devhub-marketplace
     - flogo
     - activity
-    - xsd
-    - schema-transform
-    - json-schema
-    - avro-schema
-    - xml
-    - data-modeling
 spec:
-  type: flogo-activity
-  category: Data Processing
-  author: TIBCO Flogo Team
-  version: "1.0.0"
-  license: Apache-2.0
-  
-  summary: |
-    Comprehensive XSD schema transformation engine supporting conversion to JSON Schema and Avro formats. 
-    Features extensive configuration options, namespace management, and intelligent handling of complex XSD constructs.
+  owner: tibco-flogo-team
+  type: service
+  presentation:
+    buttonLabels:
+      createButtonText: Install XSD Schema Transform Activity
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install XSD Schema Transform Activity into your TIBCO Developer Hub
 
-  features:
-    - Complete XSD to JSON Schema conversion with multiple specification versions
-    - Full XSD to Avro Schema transformation with logical types support
-    - Flexible output formats (JSON Schema only, Avro only, or both)
-    - Advanced namespace handling with multiple strategies
-    - Complex type processing with inline, definitions, or reference modes
-    - XML attribute inclusion and preservation options
-    - Choice and union handling with configurable strategies
-    - Input validation with detailed error reporting
-    - Conversion statistics and performance metrics
-    - Example value generation from XSD annotations
+            **Description:** Transform and validate XSD schemas with intelligent processing capabilities
 
-  useCases:
-    - API schema migration from XML to JSON-based systems
-    - Data pipeline schema standardization across formats
-    - Microservices schema compatibility and transformation
-    - Enterprise data integration with multi-format support
-    - Schema registry population and management
-    - Data modeling and architecture documentation
-    - Legacy XML system modernization
-    - Cross-platform data exchange format conversion
+            **What You'll Get:** This Flogo extension will be added to your Developer Hub catalog for use in your applications.
 
-  inputs:
-    xsdString:
-      description: XSD schema string to transform
-      type: string
-      required: true
-    outputFormat:
-      description: Output format (jsonschema, avro, or both)
-      type: string
-      required: false
-      default: "both"
-    validateInput:
-      description: Validate XSD schema before conversion
-      type: boolean
-      required: false
-      default: false
-    jsonSchemaVersion:
-      description: JSON Schema version (draft-04, draft-07, 2019-09, 2020-12)
-      type: string
-      required: false
-      default: "2020-12"
-    avroNamespace:
-      description: Namespace for Avro schema
-      type: string
-      required: false
-      default: "com.example"
-    includeAttributes:
-      description: Include XML attributes in conversion
-      type: boolean
-      required: false
-      default: true
-    namespaceHandling:
-      description: Namespace handling strategy (ignore, prefix, separate)
-      type: string
-      required: false
-      default: "ignore"
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
 
-  outputs:
-    jsonSchemaString:
-      description: Generated JSON Schema string
-      type: string
-    avroSchemaString:
-      description: Generated Avro Schema string
-      type: string
-    validationResult:
-      description: XSD validation result as JSON string
-      type: string
-    conversionStats:
-      description: Conversion statistics as JSON string
-      type: string
-    error:
-      description: Whether an error occurred during conversion
-      type: boolean
-    errorMessage:
-      description: Error message if error occurred
-      type: string
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: false
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/xsdschematransform/catalog-info.yaml
 
-  documentation:
-    readme: README.md
-    examples: example/
-    
-  repository:
-    type: git
-    url: https://github.com/TIBCOSoftware/tib-devhub-hackathon
-    directory: flogo/extensions/activity/schema-transform/xsdschematransform
-
-  template:
-    scaffoldUrl: ./template.yaml
-    
-  compatibility:
-    flogoVersion: ">=1.0.0"
-    goVersion: ">=1.16"
-    formats: ["XSD", "JSON Schema", "Avro Schema"]
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/xsdschematransform/docs/index.md
+        icon: docs
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace

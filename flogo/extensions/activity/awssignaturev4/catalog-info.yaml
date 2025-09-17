@@ -1,57 +1,19 @@
-apiVersion: scaffolder.backstage.io/v1beta3
-kind: Template
+apiVersion: backstage.io/v1alpha1
+kind: Component
 metadata:
   name: flogo-activity-awssignaturev4
-  title: AWS Signature V4 Generator Activity
+  title: AWS Signature V4 Generator Flogo Activity
   description: Generate AWS Signature Version 4 authentication headers for secure AWS API requests
-  annotations:
-    backstage.io/techdocs-ref: dir:.
-    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/awssignaturev4
-  tibco.developer.hub/marketplace:
-    isNew: true
-    popularity: 8
-    isMultiInstall: true
-    imageURL: ""
-    moreInfo:
-      - text: Source Repository
-        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/awssignaturev4
-        icon: github
-      - text: Documentation
-        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/docs/index.md
-        icon: docs
   tags:
-    - devhub-marketplace
     - flogo
     - activity
     - aws
     - signature-v4
     - authentication
     - security
+  annotations:
+    backstage.io/source-location: url:https://github.com/TIBCOSoftware/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/
 spec:
-  owner: tibco-flogo-team
-  type: template
-  presentation:
-    buttonLabels:
-      createButtonText: Install Activity
-  parameters:
-    - title: Accept the Marketplace Entry
-      properties:
-        accept:
-          title: Accept Terms
-          description: |
-            ## AWS Signature V4 Generator Activity
-            
-            Generate AWS Signature Version 4 authentication headers for secure AWS API requests.
-            This activity supports all AWS services with comprehensive authentication capabilities.
-            
-            ### Features:
-            - Complete AWS Signature V4 authentication implementation
-            - Multi-service support (S3, SQS, DynamoDB, Lambda, etc.)
-            - Session token support for temporary credentials
-            - Custom headers and comprehensive debugging
-            
-            By installing this activity, you agree to use it according to TIBCO's terms.
-          type: boolean
-          default: false
-      required:
-        - accept
+  type: library
+  lifecycle: production
+  owner: tibco-flogo

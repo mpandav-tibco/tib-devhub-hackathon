@@ -1,46 +1,33 @@
-apiVersion: scaffolder.backstage.io/v1beta3
-kind: Template
+apiVersion: backstage.io/v1alpha1
+kind: Component
 metadata:
   name: flogo-activity-templateengine
   title: Template Engine Activity
-  description: Dynamic content generation and template processing with multiple template formats
+  description: Comprehensive template processing with multi-engine support, 29 built-in functions, and 10 OOTB templates
   annotations:
-    backstage.io/techdocs-ref: dir:.
     backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/templateengine
-  tibco.developer.hub/marketplace:
-    isNew: true
-    popularity: 8
-    isMultiInstall: true
-    imageURL: ""
-    moreInfo:
-      - text: Source Repository
-        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/templateengine
-        icon: github
-      - text: Documentation
-        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/docs/index.md
-        icon: docs
+    backstage.io/techdocs-ref: dir:.
   tags:
-    - devhub-marketplace
     - flogo
     - activity
+    - template
+    - go-templates
+    - handlebars
+    - mustache
+    - content-generation
+    - ai-workflow
+    - email
+    - reporting
+  links:
+    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/docs/index.md
+      title: Documentation
+      icon: docs
 spec:
-  owner: tibco-flogo-team
-  type: template
-  presentation:
-    buttonLabels:
-      createButtonText: Install Template Engine Activity
-  parameters:
-    - title: Accept the Marketplace Entry
-      properties:
-        accept:
-          title: Accept Terms
-          description: |
-            ## Template Engine Activity
-            
-            Dynamic content generation and template processing with multiple template formats
-            
-            By installing this extension, you agree to use it according to TIBCO's terms.
-          type: boolean
-          default: false
-      required:
-        - accept
+  type: flogo-activity
+  lifecycle: production
+  owner: flogo-team
+  system: flogo-extensions
+  dependsOn:
+    - resource:flogo-core
+  providesApis:
+    - flogo-activity-api

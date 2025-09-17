@@ -1,46 +1,37 @@
-apiVersion: scaffolder.backstage.io/v1beta3
-kind: Template
+apiVersion: backstage.io/v1alpha1
+kind: Component
 metadata:
   name: flogo-trigger-mysql-binlog-listener
   title: MySQL Binlog Listener Trigger
-  description: Real-time MySQL binary log monitoring for change data capture and event processing
+  description: Real-time MySQL/MariaDB binlog monitoring for event-driven architectures and change data capture
   annotations:
-    backstage.io/techdocs-ref: dir:.
     backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/mysql-binlog-listener
-  tibco.developer.hub/marketplace:
-    isNew: true
-    popularity: 7
-    isMultiInstall: true
-    imageURL: ""
-    moreInfo:
-      - text: Source Repository
-        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/trigger/mysql-binlog-listener
-        icon: github
-      - text: Documentation
-        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/mysql-binlog-listener/docs/index.md
-        icon: docs
+    backstage.io/techdocs-ref: dir:.
   tags:
-    - devhub-marketplace
     - flogo
     - trigger
+    - mysql
+    - mariadb
+    - binlog
+    - cdc
+    - change-data-capture
+    - real-time
+    - event-driven
+    - database
+    - ssl-tls
+    - monitoring
+  links:
+    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/mysql-binlog-listener/docs/index.md
+      title: Documentation
+      icon: docs
 spec:
-  owner: tibco-flogo-team
-  type: template
-  presentation:
-    buttonLabels:
-      createButtonText: Install MySQL Binlog Listener Trigger
-  parameters:
-    - title: Accept the Marketplace Entry
-      properties:
-        accept:
-          title: Accept Terms
-          description: |
-            ## MySQL Binlog Listener Trigger
-            
-            Real-time MySQL binary log monitoring for change data capture and event processing
-            
-            By installing this extension, you agree to use it according to TIBCO's terms.
-          type: boolean
-          default: false
-      required:
-        - accept
+  type: flogo-trigger
+  lifecycle: production
+  owner: flogo-team
+  system: flogo-extensions
+  dependsOn:
+    - resource:flogo-core
+    - resource:mysql-driver
+    - resource:go-mysql
+  providesApis:
+    - flogo-trigger-api
