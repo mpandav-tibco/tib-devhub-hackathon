@@ -1,0 +1,130 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: flogo-template-cicd-terraform
+  title: Flogo CI/CD with Terraform Template
+  description: Create Flogo project with Terraform infrastructure as code for automated deployment and infrastructure management
+  tags:
+    - tibco
+    - flogo
+    - cicd
+    - terraform
+    - infrastructure
+    - devops
+    - recommended
+spec:
+  owner: ACME
+  type: library
+
+  parameters:
+    - title: Fill in some steps
+      required:
+        - name
+        - description
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name of the Flogo Terraform CI/CD Project
+          ui:field: EntityNamePicker
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+          description: A description for the Flogo Terraform CI/CD Project
+        system:
+          title: System
+          type: string
+          description: Target System 
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: system
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+    - title: Terraform Configuration
+      properties:
+        cloudProvider:
+          title: Cloud Provider
+          type: string
+          description: Target cloud provider for infrastructure
+          enum: ["aws", "azure", "gcp", "local"]
+          default: aws
+        terraformVersion:
+          title: Terraform Version
+          type: string
+          description: Terraform version constraint
+          default: ">= 1.0"
+        enableRemoteState:
+          title: Enable Remote State
+          type: boolean
+          description: Use remote state backend (S3, Azure Storage, etc.)
+          default: true
+        environment:
+          title: Environment
+          type: string
+          description: Target deployment environment
+          enum: ["dev", "staging", "production"]
+          default: dev
+        region:
+          title: Cloud Region
+          type: string
+          description: Cloud provider region
+          default: us-east-1
+
+  steps:
+    - id: fetch
+      name: Flogo Terraform CI/CD Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          destination: ${{ parameters.repoUrl | parseRepoUrl }}
+          owner: ${{ parameters.owner }}
+          system: ${{ parameters.system }}
+          cloudProvider: ${{ parameters.cloudProvider }}
+          terraformVersion: ${{ parameters.terraformVersion }}
+          enableRemoteState: ${{ parameters.enableRemoteState }}
+          environment: ${{ parameters.environment }}
+          region: ${{ parameters.region }}
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

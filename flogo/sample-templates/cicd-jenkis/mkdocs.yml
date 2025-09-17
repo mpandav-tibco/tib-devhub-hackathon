@@ -1,0 +1,11 @@
+site_name: Flogo CI/CD Jenkins Pipeline
+site_description: Automated deployment pipeline for Flogo applications to AWS Lambda with Jenkins and TIBCO Cloud Platform APIs
+
+nav:
+  - Introduction: index.md
+
+plugins:
+  - techdocs-core
+
+docs_dir: docs
+site_dir: site

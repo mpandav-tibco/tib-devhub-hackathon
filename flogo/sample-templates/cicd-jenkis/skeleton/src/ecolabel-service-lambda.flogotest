@@ -1,0 +1,23 @@
+{
+  "suites": {},
+  "tests": {
+    "Request-Eco-Label:Tester": {
+      "name": "Tester",
+      "flowId": "flow:Request-Eco-Label",
+      "flowName": "Request-Eco-Label",
+      "disabled": false,
+      "description": "default tests",
+      "flowInputs": {
+        "EventPayload": {
+          "productId": 12
+        }
+      }
+    }
+  },
+  "type": "flogo:unittest",
+  "model": "1.1.1",
+  "app": {
+    "name": "Eco-Label-Demo-Service",
+    "version": "1.0.0"
+  }
+}

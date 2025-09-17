@@ -1,0 +1,930 @@
+{
+  "imports": [
+    "github.com/project-flogo/flow",
+    "github.com/project-flogo/contrib/activity/noop",
+    "github.com/tibco/flogo-general/src/app/General/activity/log",
+    "github.com/project-flogo/flow/activity/subflow",
+    "github.com/tibco/wi-postgres/src/app/PostgreSQL/activity/insert",
+    "github.com/tibco/wi-postgres/src/app/PostgreSQL/activity/query",
+    "github.com/tibco/flogo-general/src/app/General/activity/sendmail",
+    "github.com/tibco/flogo-general/src/app/General/activity/rest",
+    "github.com/project-flogo/grpc/trigger/grpc",
+    "github.com/tibco/flogo-general/src/app/General/trigger/timer",
+    "github.com/project-flogo/contrib/function/string",
+    "github.com/project-flogo/contrib/function/array",
+    "github.com/project-flogo/contrib/function/coerce",
+    "git.tibco.com/git/product/ipaas/wi-contrib.git/function/boolean",
+    "github.com/tibco/wi-postgres/src/app/PostgreSQL/connector/connection"
+  ],
+  "name": "Sensor_Telemetry_API",
+  "description": "",
+  "version": "1.0.0",
+  "type": "flogo:app",
+  "appModel": "1.1.1",
+  "tags": [],
+  "triggers": [
+    {
+      "ref": "#grpc",
+      "name": "grpc-trigger",
+      "description": "gRPC Trigger",
+      "settings": {
+        "port": 9090,
+        "protoName": "sensor",
+        "protoFile": "spec://adae8ef6",
+        "enableTLS": false,
+        "enableMTLS": false,
+        "rootCA": "",
+        "serverCert": "",
+        "serverKey": ""
+      },
+      "id": "gRPCTrigger",
+      "handlers": [
+        {
+          "description": "Main Execution Flow of Processing",
+          "settings": {
+            "serviceName": "SensorService",
+            "methodName": "SendTelemetryData"
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:Telemerty_Processing"
+            },
+            "input": {
+              "params": "=$.params"
+            },
+            "output": {
+              "data": "=$.data"
+            }
+          },
+          "reply": {
+            "code": 200
+          },
+          "schemas": {
+            "reply": {
+              "data": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{},\"required\":[]}",
+                "fe_metadata": "{\"type\":\"object\",\"properties\":{},\"required\":[]}"
+              }
+            },
+            "output": {
+              "params": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"sensor_id\":{\"type\":\"string\"},\"temperature\":{\"type\":\"number\"},\"pressure\":{\"type\":\"number\"},\"humidity\":{\"type\":\"number\"},\"timestamp\":{\"type\":\"string\"}},\"required\":[]}",
+                "fe_metadata": "{\"type\":\"object\",\"properties\":{\"sensor_id\":{\"type\":\"string\"},\"temperature\":{\"type\":\"number\"},\"pressure\":{\"type\":\"number\"},\"humidity\":{\"type\":\"number\"},\"timestamp\":{\"type\":\"string\"}},\"required\":[]}"
+              }
+            }
+          },
+          "name": "Telemerty_Processing"
+        }
+      ]
+    },
+    {
+      "ref": "#timer",
+      "name": "tibco-wi-timer",
+      "description": "Simple Timer trigger",
+      "settings": {},
+      "id": "TimerTrigger",
+      "handlers": [
+        {
+          "description": "Calculate the avg temperature for last 5 min",
+          "settings": {
+            "Scheduler Options": "Cron Job",
+            "Start Time": "",
+            "Repeating": false,
+            "Delayed Start": false,
+            "Time Interval": 1,
+            "Interval Unit": "Second",
+            "Cron Expression": "CRON_TZ=Europe/Berlin 0/1 * * * *"
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:Calculate_Avg_Temperatur"
+            }
+          },
+          "name": "Calculate_Avg_Temperatur"
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:Telemerty_Processing",
+      "data": {
+        "name": "Telemerty_Processing",
+        "description": "Main Execution Flow of Processing",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "LogSensorData",
+            "type": "label",
+            "label": "StartActivity to LogMessage"
+          },
+          {
+            "id": 2,
+            "from": "LogSensorData",
+            "to": "InsertToDB",
+            "type": "label",
+            "label": "LogMessage to StartaSubFlow"
+          },
+          {
+            "id": 3,
+            "from": "InsertToDB",
+            "to": "sendToInfluxDB",
+            "type": "label",
+            "label": "InsertToDB to StartaSubFlow"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "LogSensorData",
+            "name": "LogSensorData",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"###### Sensor : \", $flow.params.sensor_id, \" Telemetry Data : \", string.tostring($flow.params))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "InsertToDB",
+            "name": "InsertToDB",
+            "description": "Simple SubFlow Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#subflow",
+              "settings": {
+                "flowURI": "res://flow:Insert_Data_To_DB",
+                "detached": false
+              },
+              "input": {
+                "input": {
+                  "mapping": {
+                    "sensor": "=$flow.params"
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"object\",\"properties\":{\"sensor\":{\"type\":\"object\",\"properties\":{\"sensor_id\":{\"type\":\"string\"},\"temperature\":{\"type\":\"string\"},\"pressure\":{\"type\":\"string\"},\"humidity\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"object\",\"properties\":{\"sensor\":{\"type\":\"object\",\"properties\":{\"sensor_id\":{\"type\":\"string\"},\"temperature\":{\"type\":\"string\"},\"pressure\":{\"type\":\"string\"},\"humidity\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}}}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "sendToInfluxDB",
+            "name": "sendToInfluxDB",
+            "description": "Simple SubFlow Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#subflow",
+              "settings": {
+                "flowURI": "res://flow:Send_To_InFluxDB",
+                "detached": false
+              },
+              "input": {
+                "sensor_id": "=$flow.params.sensor_id",
+                "temperature": "=$flow.params.temperature",
+                "pressure": "=$flow.params.pressure",
+                "humidity": "=$flow.params.humidity",
+                "timestamp": "=$flow.params.timestamp"
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"sensor_id\":{\"type\":\"string\"},\"temperature\":{\"type\":\"number\"},\"pressure\":{\"type\":\"number\"},\"humidity\":{\"type\":\"number\"},\"timestamp\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\n    \"sensor_id\": \"sensor-123\",\n    \"temperature\": 24.614916499949821,\n    \"pressure\": 1020.50021794987,\n    \"humidity\": 49.379245208481379,\n    \"timestamp\": \"2025-01-31 22:25:16\"\n}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiTG9nU2Vuc29yRGF0YSI6eyJ4IjoyMjUsInkiOjg1fSwiSW5zZXJ0VG9EQiI6eyJ4Ijo0NDIsInkiOjg4fSwic2VuZFRvSW5mbHV4REIiOnsieCI6NjgyLCJ5Ijo4OH19",
+        "metadata": {
+          "input": [
+            {
+              "name": "params",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"sensor_id\":{\"type\":\"string\"},\"temperature\":{\"type\":\"number\"},\"pressure\":{\"type\":\"number\"},\"humidity\":{\"type\":\"number\"},\"timestamp\":{\"type\":\"string\"}}"
+              }
+            }
+          ],
+          "output": [
+            {
+              "name": "data",
+              "type": "object"
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"gRPCTrigger\",\"properties\":{\"params\":{\"type\":\"object\",\"properties\":{\"sensor_id\":{\"type\":\"string\"},\"temperature\":{\"type\":\"number\"},\"pressure\":{\"type\":\"number\"},\"humidity\":{\"type\":\"number\"},\"timestamp\":{\"type\":\"string\"}},\"required\":[]}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{},\"required\":[]}},\"required\":[]}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:Insert_Data_To_DB",
+      "data": {
+        "name": "Insert_Data_To_DB",
+        "description": "Inserting Telemetry Data Into Database  Table",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "PostgreSQLInsert",
+            "type": "label",
+            "label": "StartActivity to PostgreSQLInsert"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "PostgreSQLInsert",
+            "name": "PostgreSQLInsert",
+            "description": "This activity executes insert on a PostgreSQL database",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#insert",
+              "input": {
+                "Connection": "conn://d06566b8-8256-46c2-b205-8b7bbe840db8",
+                "QueryName": "",
+                "Schema": "public",
+                "Query": "INSERT INTO sensor_data (sensor_id, temperature, pressure, humidity, timestamp)\n    VALUES (?sensor_id, ?temperature, ?pressure, ?humidity, ?timestamp);",
+                "manualmode": false,
+                "Fields": [
+                  {
+                    "FieldName": "sensor_id",
+                    "Type": "VARCHAR",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "temperature",
+                    "Type": "REAL",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "pressure",
+                    "Type": "REAL",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "humidity",
+                    "Type": "REAL",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  },
+                  {
+                    "FieldName": "timestamp",
+                    "Type": "TIMESTAMP",
+                    "Selected": false,
+                    "Parameter": true,
+                    "isEditable": false,
+                    "Value": true
+                  }
+                ],
+                "RuntimeQuery": "",
+                "State": "ecc7e59c-1c47-4489-b2be-e4ce2153973eINSERT INTO sensor_data (sensor_id, temperature, pressure, humidity, timestamp)\n    VALUES (?sensor_id, ?temperature, ?pressure, ?humidity, ?timestamp);",
+                "input": {
+                  "mapping": {
+                    "values": [
+                      {
+                        "sensor_id": "=$flow.input.sensor.sensor_id",
+                        "temperature": "=coerce.toFloat64($flow.input.sensor.temperature)",
+                        "pressure": "=coerce.toFloat64($flow.input.sensor.pressure)",
+                        "humidity": "=coerce.toFloat64($flow.input.sensor.humidity)",
+                        "timestamp": "=$flow.input.sensor.timestamp"
+                      }
+                    ]
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"values\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"sensor_id\":{\"type\":\"string\"},\"temperature\":{\"type\":\"number\"},\"pressure\":{\"type\":\"number\"},\"humidity\":{\"type\":\"number\"},\"timestamp\":{\"type\":\"string\",\"format\":\"time\"}}}},\"parameters\":{\"type\":\"object\",\"properties\":{}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"values\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"sensor_id\":{\"type\":\"string\"},\"temperature\":{\"type\":\"number\"},\"pressure\":{\"type\":\"number\"},\"humidity\":{\"type\":\"number\"},\"timestamp\":{\"type\":\"string\",\"format\":\"time\"}}}},\"parameters\":{\"type\":\"object\",\"properties\":{}}}}"
+                  }
+                },
+                "output": {
+                  "Output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{}}}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiUG9zdGdyZVNRTEluc2VydCI6eyJ4IjozMzAsInkiOjkxfX0=",
+        "metadata": {
+          "input": [
+            {
+              "name": "input",
+              "type": "object",
+              "schema": "schema://sensor_data"
+            }
+          ],
+          "output": [],
+          "fe_metadata": {
+            "input": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"object\",\"properties\":{\"sensor\":{\"type\":\"object\",\"properties\":{\"sensor_id\":{\"type\":\"string\"},\"temperature\":{\"type\":\"string\"},\"pressure\":{\"type\":\"string\"},\"humidity\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\"}}}}}}}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:Calculate_Avg_Temperatur",
+      "data": {
+        "name": "Calculate_Avg_Temperatur",
+        "description": "Calculate the avg temperature for last 5 min",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "fetch_avg_temp",
+            "type": "label",
+            "label": "StartActivity to PostgreSQLQuery"
+          },
+          {
+            "id": 2,
+            "from": "fetch_avg_temp",
+            "to": "LogHighTempAlert",
+            "type": "expression",
+            "label": "high_temp_alert",
+            "value": "$activity[fetch_avg_temp].Output.records[0].avg > 30"
+          },
+          {
+            "id": 3,
+            "from": "LogHighTempAlert",
+            "to": "SendMail_HighTemp",
+            "type": "expression",
+            "label": "is_email_true",
+            "value": "$property[\"EMAIL.isEmail\"]==boolean.true()"
+          },
+          {
+            "id": 4,
+            "from": "LogHighTempAlert",
+            "to": "DoNothing",
+            "type": "exprOtherwise",
+            "label": "otherwise"
+          },
+          {
+            "id": 5,
+            "from": "fetch_avg_temp",
+            "to": "LogAvgTemp",
+            "type": "exprOtherwise",
+            "label": "fetch_avg_temp to LogMessage"
+          },
+          {
+            "id": 6,
+            "from": "fetch_avg_temp",
+            "to": "LogLowTempAlert",
+            "type": "expression",
+            "label": "low_temp_alert",
+            "value": "$activity[fetch_avg_temp].Output.records[0].avg <=5"
+          },
+          {
+            "id": 7,
+            "from": "LogLowTempAlert",
+            "to": "SendMail_LowTemp",
+            "type": "expression",
+            "label": "is_email_true",
+            "value": "$property[\"EMAIL.isEmail\"]"
+          },
+          {
+            "id": 8,
+            "from": "LogLowTempAlert",
+            "to": "DoNothing",
+            "type": "exprOtherwise",
+            "label": "otherwise"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "fetch_avg_temp",
+            "name": "fetch_avg_temp",
+            "description": "This activity executes query on a PostgreSQL database",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#query",
+              "input": {
+                "Connection": "conn://d06566b8-8256-46c2-b205-8b7bbe840db8",
+                "QueryName": "",
+                "Schema": "public",
+                "Query": "SELECT avg(temperature), sensor_id\nFROM sensor_data\nWHERE timestamp >= now() - interval '1 minutes'\nGROUP BY sensor_id;",
+                "manualmode": false,
+                "Fields": [
+                  {
+                    "FieldName": "avg",
+                    "Type": "FLOAT",
+                    "Selected": true,
+                    "Parameter": false,
+                    "isEditable": false
+                  },
+                  {
+                    "FieldName": "sensor_id",
+                    "Type": "VARCHAR",
+                    "Selected": true,
+                    "Parameter": false,
+                    "isEditable": false
+                  }
+                ],
+                "RuntimeQuery": "",
+                "State": "65a4eec8-adb8-4d36-b2b4-5735e6ef30d3SELECT avg(temperature), sensor_id\nFROM sensor_data\nWHERE timestamp >= now() - interval '1 minutes'\nGROUP BY sensor_id;"
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"parameters\":{\"type\":\"object\",\"properties\":{}}}}"
+                  }
+                },
+                "output": {
+                  "Output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"avg\":{\"type\":\"number\"},\"sensor_id\":{\"type\":\"string\"}}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"definitions\":{},\"properties\":{\"records\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"avg\":{\"type\":\"number\"},\"sensor_id\":{\"type\":\"string\"}}}}}}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "LogHighTempAlert",
+            "name": "LogHighTempAlert",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"######## HIGH TEMPERATURE ALERT ######## \", \"NORMAL AVERAGE TEMPERATURE FOR 5 min : HIGH - \", string.tostring($activity[fetch_avg_temp].Output.records[0].avg))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "SendMail_HighTemp",
+            "name": "SendMail_HighTemp",
+            "description": "Simple Send Mail Activity",
+            "activity": {
+              "ref": "#sendmail",
+              "input": {
+                "Server": "=$property[\"EMAIL.SERVER\"]",
+                "Port": "=$property[\"EMAIL.PORT\"]",
+                "Username": "localhost",
+                "Password": "SECRET:326kPOrMVZshWsYbPreLIfE=",
+                "Connection Security": "NONE",
+                "serverCertificate": "",
+                "sender": "",
+                "recipients": "",
+                "cc_recipients": "",
+                "bcc_recipients": "",
+                "reply_to": "",
+                "subject": "",
+                "message": ""
+              },
+              "schemas": {
+                "input": {
+                  "attachments": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"items\":{\"properties\":{\"file\":{\"type\":\"string\"},\"filename\":{\"type\":\"string\"},\"base64EncodedContents\":{\"type\":\"boolean\"}},\"required\":[\"file\"],\"type\":\"object\"},\"type\":\"array\"}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"items\":{\"properties\":{\"file\":{\"type\":\"string\"},\"filename\":{\"type\":\"string\"},\"base64EncodedContents\":{\"type\":\"boolean\"}},\"required\":[\"file\"],\"type\":\"object\"},\"type\":\"array\"}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "DoNothing",
+            "name": "DoNothing",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "####### ANOMALY DETECTED #########",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "LogAvgTemp",
+            "name": "LogAvgTemp",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"#######  AVERAGE TEMPERATURE FOR 5 min : NORMAL - \", string.tostring($activity[fetch_avg_temp].Output.records[0].avg))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "LogLowTempAlert",
+            "name": "LogLowTempAlert",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"######## LOW TEMPERATURE ALERT ######\", \"  AVERAGE TEMPERATURE FOR 5 min : LOW - \", string.tostring($activity[fetch_avg_temp].Output.records[0].avg))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "SendMail_LowTemp",
+            "name": "SendMail_LowTemp",
+            "description": "Simple Send Mail Activity",
+            "activity": {
+              "ref": "#sendmail",
+              "input": {
+                "Server": "=$property[\"EMAIL.SERVER\"]",
+                "Port": "=$property[\"EMAIL.PORT\"]",
+                "Username": "=$property[\"EMAIL.USER\"]",
+                "Password": "=$property[\"EMAIL.PASSWORD\"]",
+                "Connection Security": "TLS",
+                "serverCertificate": "",
+                "sender": "",
+                "recipients": "",
+                "cc_recipients": "",
+                "bcc_recipients": "",
+                "reply_to": "",
+                "subject": "",
+                "message": ""
+              },
+              "schemas": {
+                "input": {
+                  "attachments": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"items\":{\"properties\":{\"file\":{\"type\":\"string\"},\"filename\":{\"type\":\"string\"},\"base64EncodedContents\":{\"type\":\"boolean\"}},\"required\":[\"file\"],\"type\":\"object\"},\"type\":\"array\"}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"items\":{\"properties\":{\"file\":{\"type\":\"string\"},\"filename\":{\"type\":\"string\"},\"base64EncodedContents\":{\"type\":\"boolean\"}},\"required\":[\"file\"],\"type\":\"object\"},\"type\":\"array\"}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjcxLCJ5Ijo5M30sImZldGNoX2F2Z190ZW1wIjp7IngiOjIwNCwieSI6ODZ9LCJMb2dIaWdoVGVtcEFsZXJ0Ijp7IngiOjQ0NiwieSI6ODZ9LCJTZW5kTWFpbF9IaWdoVGVtcCI6eyJ4Ijo3MTIsInkiOjg2fSwiRG9Ob3RoaW5nIjp7IngiOjY2MiwieSI6MjAyfSwiTG9nQXZnVGVtcCI6eyJ4Ijo0NDQsInkiOjQ0NX0sIkxvZ0xvd1RlbXBBbGVydCI6eyJ4Ijo0NDUsInkiOjMzMH0sIlNlbmRNYWlsX0xvd1RlbXAiOnsieCI6NzQxLCJ5IjozMzB9fQ==",
+        "metadata": {
+          "input": [],
+          "output": [],
+          "fe_metadata": {}
+        }
+      }
+    },
+    {
+      "id": "flow:Send_To_InFluxDB",
+      "data": {
+        "name": "Send_To_InFluxDB",
+        "description": "Send Telemetry Data to Influx for Visualisation",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "sendToInfluxDB",
+            "type": "label",
+            "label": "StartActivity to sendToInfluxDB"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "sendToInfluxDB",
+            "name": "sendToInfluxDB",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "authorizationConn": "",
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "POST",
+                "Uri": "=$property[\"InfluxDB.writeAPI\"]",
+                "requestType": "application/x-www-form-urlencoded",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableKeepAlives": false,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "headers": {
+                  "mapping": {
+                    "Authorization": "Token uF9p17Rip5uClDVq6JKBmpoX9em_rfF50CK-63taNpHi2CZ431-CBttUnINxir_lTnZl-QWfBJbRVaHRAxIzMQ==",
+                    "Content-Type": "text/plain; charset=utf-8"
+                  }
+                },
+                "body": {
+                  "mapping": {
+                    "data": "sensor_data,sensor_id=sensor-123 temperature=24.614916499949821,pressure=1020.50021794987,humidity=49.379245208481379 1738520188"
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Authorization\":{\"type\":\"string\"},\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Authorization\",\"type\":\"string\",\"repeating\":\"\",\"required\":\"\"},{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  },
+                  "body": {
+                    "type": "json",
+                    "value": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"properties\": {\n    \"data\": {\n      \"type\": \"string\"\n    }\n  },\n  \"type\": \"object\"\n}",
+                    "fe_metadata": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"properties\": {\n    \"data\": {\n      \"type\": \"string\"\n    }\n  },\n  \"type\": \"object\"\n}"
+                  }
+                },
+                "output": {
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwic2VuZFRvSW5mbHV4REIiOnsieCI6MjMwLCJ5Ijo4OX19",
+        "metadata": {
+          "input": [
+            {
+              "name": "sensor_id",
+              "type": "string"
+            },
+            {
+              "name": "temperature",
+              "type": "float64"
+            },
+            {
+              "name": "pressure",
+              "type": "float64"
+            },
+            {
+              "name": "humidity",
+              "type": "float64"
+            },
+            {
+              "name": "timestamp",
+              "type": "string"
+            }
+          ],
+          "output": [],
+          "fe_metadata": {
+            "input": "{\n    \"sensor_id\": \"sensor-123\",\n    \"temperature\": 24.614916499949821,\n    \"pressure\": 1020.50021794987,\n    \"humidity\": 49.379245208481379,\n    \"timestamp\": \"2025-01-31 22:25:16\"\n}"
+          }
+        }
+      }
+    }
+  ],
+  "properties": [
+    {
+      "name": "PostgreSQL.k8s.Host",
+      "type": "string",
+      "value": "localhost"
+    },
+    {
+      "name": "PostgreSQL.k8s.Port",
+      "type": "float64",
+      "value": 5432
+    },
+    {
+      "name": "PostgreSQL.k8s.Database_Name",
+      "type": "string",
+      "value": "postgres"
+    },
+    {
+      "name": "PostgreSQL.k8s.User",
+      "type": "string",
+      "value": "postgres"
+    },
+    {
+      "name": "PostgreSQL.k8s.Password",
+      "type": "string",
+      "value": "SECRET:NwwfgnlCF3eTz5TVbmzYF1bKssrAzTCb"
+    },
+    {
+      "name": "PostgreSQL.k8s.Maximum_Open_Connections",
+      "type": "float64",
+      "value": 0
+    },
+    {
+      "name": "PostgreSQL.k8s.Maximum_Idle_Connections",
+      "type": "float64",
+      "value": 2
+    },
+    {
+      "name": "PostgreSQL.k8s.Maximum_Connection_Lifetime",
+      "type": "string",
+      "value": 0
+    },
+    {
+      "name": "PostgreSQL.k8s.Maximum_Connection_Retry_Attempts",
+      "type": "float64",
+      "value": 3
+    },
+    {
+      "name": "PostgreSQL.k8s.Connection_Retry_Delay",
+      "type": "float64",
+      "value": 5
+    },
+    {
+      "name": "PostgreSQL.k8s.Connection_Timeout",
+      "type": "float64",
+      "value": 20
+    },
+    {
+      "name": "EMAIL.SERVER",
+      "type": "string",
+      "value": "localhost"
+    },
+    {
+      "name": "EMAIL.PORT",
+      "type": "float64",
+      "value": 1025
+    },
+    {
+      "name": "EMAIL.USER",
+      "type": "string",
+      "value": "A"
+    },
+    {
+      "name": "EMAIL.PASSWORD",
+      "type": "string",
+      "value": "SECRET:HZSTj903md4eQO9xzJoHgV4="
+    },
+    {
+      "name": "EMAIL.isEmail",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "name": "InfluxDB.writeAPI",
+      "type": "string",
+      "value": "https://influxdb.localhost.dataplanes.pro/api/v2/write?bucket=tibco&org=tibco"
+    }
+  ],
+  "schemas": {
+    "sensor_data": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"sensor\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"sensor_id\": {\n                    \"type\": \"string\"\n                },\n                \"temperature\": {\n                    \"type\": \"string\"\n                },\n                \"pressure\": {\n                    \"type\": \"string\"\n                },\n                \"humidity\": {\n                    \"type\": \"string\"\n                },\n                \"timestamp\": {\n                    \"type\": \"string\"\n                }\n            }\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"sensor\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"sensor_id\": {\n                    \"type\": \"string\"\n                },\n                \"temperature\": {\n                    \"type\": \"string\"\n                },\n                \"pressure\": {\n                    \"type\": \"string\"\n                },\n                \"humidity\": {\n                    \"type\": \"string\"\n                },\n                \"timestamp\": {\n                    \"type\": \"string\"\n                }\n            }\n        }\n    }\n}"
+    }
+  },
+  "specs": {
+    "adae8ef6": {
+      "id": "adae8ef6",
+      "name": "sensor",
+      "type": "gRPC",
+      "content": "c3ludGF4ID0gInByb3RvMyI7CgpwYWNrYWdlIHNlbnNvcnM7CgptZXNzYWdlIFNlbnNvckRhdGEgewogIHN0cmluZyBzZW5zb3JfaWQgPSAxOwogIGRvdWJsZSB0ZW1wZXJhdHVyZSA9IDI7CiAgZG91YmxlIHByZXNzdXJlID0gMzsKICBkb3VibGUgaHVtaWRpdHkgPSA0OwogIHN0cmluZyB0aW1lc3RhbXAgPSA1Owp9CgptZXNzYWdlIEVtcHR5IHt9CgpzZXJ2aWNlIFNlbnNvclNlcnZpY2UgewogIHJwYyBTZW5kVGVsZW1ldHJ5RGF0YSAoU2Vuc29yRGF0YSkgcmV0dXJucyAoRW1wdHkpIHt9Cn0="
+    }
+  },
+  "connections": {
+    "d06566b8-8256-46c2-b205-8b7bbe840db8": {
+      "id": "d06566b8-8256-46c2-b205-8b7bbe840db8",
+      "name": "k8s",
+      "ref": "#connection",
+      "isGlobal": false,
+      "settings": {
+        "databaseType": "PostgreSQL",
+        "name": "k8s",
+        "description": "",
+        "host": "=$property[\"PostgreSQL.k8s.Host\"]",
+        "port": "=$property[\"PostgreSQL.k8s.Port\"]",
+        "databaseName": "=$property[\"PostgreSQL.k8s.Database_Name\"]",
+        "user": "=$property[\"PostgreSQL.k8s.User\"]",
+        "password": "=$property[\"PostgreSQL.k8s.Password\"]",
+        "maxopenconnection": "=$property[\"PostgreSQL.k8s.Maximum_Open_Connections\"]",
+        "maxidleconnection": "=$property[\"PostgreSQL.k8s.Maximum_Idle_Connections\"]",
+        "connmaxlifetime": "=$property[\"PostgreSQL.k8s.Maximum_Connection_Lifetime\"]",
+        "maxconnectattempts": "=$property[\"PostgreSQL.k8s.Maximum_Connection_Retry_Attempts\"]",
+        "connectionretrydelay": "=$property[\"PostgreSQL.k8s.Connection_Retry_Delay\"]",
+        "connectiontimeout": "=$property[\"PostgreSQL.k8s.Connection_Timeout\"]",
+        "onprem": false,
+        "tlsconfig": false,
+        "tlsparam": "VerifyCA",
+        "cacert": "",
+        "clientcert": "",
+        "clientkey": ""
+      }
+    }
+  },
+  "contrib": "W3sicmVmIjoiZ2l0aHViLmNvbS90aWJjby9mbG9nby1nZW5lcmFsL3NyYy9hcHAvR2VuZXJhbCIsImlkIjoiR2VuZXJhbCIsInZlcnNpb24iOiIxLjYuNCIsInRhZyI6IjEuNi40LWIwMiIsIm5hbWUiOiJHZW5lcmFsIiwiczNsb2NhdGlvbiI6IlRpYmNvL0dlbmVyYWwiLCJpc1VzZXJFeHRlbnNpb24iOmZhbHNlfSx7InJlZiI6ImdpdGh1Yi5jb20vdGliY28vd2ktcG9zdGdyZXMvc3JjL2FwcC9Qb3N0Z3JlU1FMIiwiaWQiOiJQb3N0Z3JlU1FMIiwidmVyc2lvbiI6IjIuNy4xIiwidGFnIjoiMi43LjEtYjAxIiwibmFtZSI6IlBvc3RncmVTUUwiLCJzM2xvY2F0aW9uIjoiVGliY28vUG9zdGdyZVNRTCIsImlzVXNlckV4dGVuc2lvbiI6ZmFsc2V9XQ==",
+  "metadata": {
+    "endpoints": [
+      {
+        "protocol": "grpc",
+        "port": "9090",
+        "title": "gRPCTrigger",
+        "type": "public"
+      }
+    ],
+    "flogoVersion": "2.25.3"
+  }
+}

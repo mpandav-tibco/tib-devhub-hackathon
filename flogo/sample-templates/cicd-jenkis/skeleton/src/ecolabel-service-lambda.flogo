@@ -1,0 +1,671 @@
+{
+  "imports": [
+    "github.com/project-flogo/flow",
+    "github.com/project-flogo/contrib/activity/noop",
+    "github.com/tibco/flogo-general/src/app/General/activity/rest",
+    "github.com/tibco/flogo-general/src/app/General/activity/mapper",
+    "github.com/tibco/flogo-general/src/app/General/activity/log",
+    "github.com/project-flogo/contrib/activity/actreturn",
+    "github.com/tibco/wi-plugins/contributions/flogo-lambda/src/app/Lambda/trigger/lambda",
+    "github.com/project-flogo/contrib/function/coerce",
+    "github.com/project-flogo/contrib/function/array",
+    "github.com/project-flogo/contrib/function/string",
+    "github.com/tibco/flogo-aws/src/app/AWS/connector"
+  ],
+  "name": "Eco-Label-Demo-Service",
+  "description": "Request for eco labels from provider",
+  "version": "1.0.0",
+  "type": "flogo:app",
+  "appModel": "1.1.1",
+  "tags": [],
+  "triggers": [
+    {
+      "ref": "#lambda",
+      "name": "flogo-lambda-function",
+      "description": "Start Flow as a Function in Lambda",
+      "settings": {
+        "ConnectionName": "conn://631d9120-b5a9-44fa-85e1-f6ea0f1b9ecb",
+        "ExecutionRoleName": "arn:aws:iam::075021648303:role/EMEA_Lambda"
+      },
+      "id": "ReceiveLambdaInvocation",
+      "handlers": [
+        {
+          "description": "The API help us to request eco label from provider for single product.",
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:Request-Eco-Label"
+            },
+            "input": {
+              "Function": "=$.Function",
+              "Context": "=$.Context",
+              "Identity": "=$.Identity",
+              "ClientApp": "=$.ClientApp",
+              "EventPayload": "=$.EventPayload"
+            },
+            "output": {
+              "data": "=$.data"
+            }
+          },
+          "schemas": {
+            "output": {
+              "Function": {
+                "type": "json",
+                "value": "{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"type\": \"object\",\"properties\": {\"LogGroup\":{\"type\": \"string\"}, \"LogStream\":{\"type\":\"string\"}, \"Name\":{\"type\":\"string\"}, \"Version\":{\"type\":\"string\"}}}",
+                "fe_metadata": "{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"type\": \"object\",\"properties\": {\"LogGroup\":{\"type\": \"string\"}, \"LogStream\":{\"type\":\"string\"}, \"Name\":{\"type\":\"string\"}, \"Version\":{\"type\":\"string\"}}}",
+                "feSchemaMap": {}
+              },
+              "Context": {
+                "type": "json",
+                "value": "{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"type\": \"object\",\"properties\": {\"AwsRequestID\":{\"type\": \"string\"}, \"ARN\":{\"type\":\"string\"}}}",
+                "fe_metadata": "{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"type\": \"object\",\"properties\": {\"AwsRequestID\":{\"type\": \"string\"}, \"ARN\":{\"type\":\"string\"}}}",
+                "feSchemaMap": {}
+              },
+              "Identity": {
+                "type": "json",
+                "value": "{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"type\": \"object\",\"properties\": {\"CognitoIdentityID\":{\"type\": \"string\"}, \"CognitoIdentityPoolID\":{\"type\":\"string\"}}}",
+                "fe_metadata": "{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"type\": \"object\",\"properties\": {\"CognitoIdentityID\":{\"type\": \"string\"}, \"CognitoIdentityPoolID\":{\"type\":\"string\"}}}",
+                "feSchemaMap": {}
+              },
+              "ClientApp": {
+                "type": "json",
+                "value": "{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"type\": \"object\",\"properties\": {\"installation_id\":{\"type\": \"string\"}, \"app_title\":{\"type\":\"string\"}, \"app_version_code\":{\"type\":\"string\"}, \"app_package_name\":{\"type\":\"string\"}}}",
+                "fe_metadata": "{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"type\": \"object\",\"properties\": {\"installation_id\":{\"type\": \"string\"}, \"app_title\":{\"type\":\"string\"}, \"app_version_code\":{\"type\":\"string\"}, \"app_package_name\":{\"type\":\"string\"}}}",
+                "feSchemaMap": {}
+              },
+              "EventPayload": {
+                "type": "json",
+                "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"productId\":{\"type\":\"number\"}}}",
+                "fe_metadata": "{\n    \"productId\": 1\n}",
+                "feSchemaMap": {}
+              }
+            }
+          },
+          "name": "Request-Eco-Label"
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:Request-Eco-Label",
+      "data": {
+        "name": "Request-Eco-Label",
+        "description": "The API help us to request eco label from provider for single product.",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "Get_Products",
+            "type": "label",
+            "label": "StartActivitytoInvokeRESTService"
+          },
+          {
+            "id": 2,
+            "from": "Get_Products",
+            "to": "Get_Unique_ID",
+            "type": "expression",
+            "label": "Success",
+            "value": "$activity[Get_Products].statusCode == 200"
+          },
+          {
+            "id": 3,
+            "from": "Get_Unique_ID",
+            "to": "Enrich_EcoLabel_Request",
+            "type": "expression",
+            "label": "Success",
+            "value": "$activity[Get_Unique_ID].statusCode == 200"
+          },
+          {
+            "id": 4,
+            "from": "Enrich_EcoLabel_Request",
+            "to": "To_EcoLabel_Provider",
+            "type": "expression",
+            "label": "Success",
+            "value": "array.count($activity[Enrich_EcoLabel_Request].output.product)>0"
+          },
+          {
+            "id": 5,
+            "from": "To_EcoLabel_Provider",
+            "to": "Log_Success_Response",
+            "type": "expression",
+            "label": "Success",
+            "value": "$activity[To_EcoLabel_Provider].statusCode == 201"
+          },
+          {
+            "id": 6,
+            "from": "Log_Success_Response",
+            "to": "SUCCESSReply",
+            "type": "label",
+            "label": "LogMessagetoReturn"
+          },
+          {
+            "id": 7,
+            "from": "To_EcoLabel_Provider",
+            "to": "Log_Error_Response",
+            "type": "exprOtherwise",
+            "label": "To_EcoLabel_ProvidertoLog_Error_Response"
+          },
+          {
+            "id": 8,
+            "from": "Log_Error_Response",
+            "to": "ERRORReply",
+            "type": "label",
+            "label": "Log_Error_ResponsetoReturn1"
+          },
+          {
+            "id": 9,
+            "from": "Enrich_EcoLabel_Request",
+            "to": "Log_Error_Response",
+            "type": "exprOtherwise",
+            "label": "Enrich_EcoLabel_RequesttoLog_Error_Response"
+          },
+          {
+            "id": 10,
+            "from": "Get_Unique_ID",
+            "to": "Log_Error_Response",
+            "type": "exprOtherwise",
+            "label": "Get_Unique_IDtoLog_Error_Response"
+          },
+          {
+            "id": 11,
+            "from": "Get_Products",
+            "to": "Log_Error_Response",
+            "type": "exprOtherwise",
+            "label": "Get_ProductstoLog_Error_Response"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "Get_Products",
+            "name": "Get_Products",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "authorizationConn": "",
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "GET",
+                "Uri": "=$property[\"Service_APIs._Products\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableKeepAlives": false,
+                "Timeout": 0,
+                "proxy": "",
+                "host": ""
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                },
+                "output": {
+                  "responseBody": "schema://Schema_Product",
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "Get_Unique_ID",
+            "name": "Get_Unique_ID",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "authorizationConn": "",
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "GET",
+                "Uri": "=$property[\"Service_APIs._UUID\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableKeepAlives": false,
+                "Timeout": 0,
+                "proxy": "",
+                "host": ""
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                },
+                "output": {
+                  "responseBody": "schema://Schema_UUID_API_Response",
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "Enrich_EcoLabel_Request",
+            "name": "Enrich_EcoLabel_Request",
+            "description": "Mapper Activity",
+            "activity": {
+              "ref": "#mapper",
+              "input": {
+                "input": {
+                  "mapping": {
+                    "uuid": "=$activity[Get_Unique_ID].responseBody[0]",
+                    "return_webhook_url": "=$property[\"Internal_APIs._Webhook_Ecolabel\"]",
+                    "product": {
+                      "@foreach($activity[Get_Products].responseBody.products,product, $loop.id == coerce.toInt64($flow.EventPayload.productId))": {
+                        "id": "=$loop.id",
+                        "title": "=$loop.title",
+                        "description": "=$loop.description",
+                        "category": "=$loop.category",
+                        "price": "=$loop.price",
+                        "discountPercentage": "=$loop.discountPercentage",
+                        "rating": "=$loop.rating",
+                        "stock": "=$loop.stock",
+                        "brand": "=$loop.brand",
+                        "sku": "=$loop.sku",
+                        "weight": "=$loop.weight",
+                        "dimensions": "=$loop.dimensions",
+                        "warrantyInformation": "=$loop.warrantyInformation",
+                        "shippingInformation": "=$loop.shippingInformation",
+                        "availabilityStatus": "=$loop.availabilityStatus",
+                        "returnPolicy": "=$loop.returnPolicy"
+                      }
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": "schema://Schema_EcoLabel_Request"
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"uuid\": {\n      \"type\": \"string\"\n    },\n    \"return_webhook_url\": {\n      \"type\": \"string\"\n    },\n    \"product\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\n            \"type\": \"number\"\n          },\n          \"title\": {\n            \"type\": \"string\"\n          },\n          \"description\": {\n            \"type\": \"string\"\n          },\n          \"category\": {\n            \"type\": \"string\"\n          },\n          \"price\": {\n            \"type\": \"number\"\n          },\n          \"discountPercentage\": {\n            \"type\": \"number\"\n          },\n          \"rating\": {\n            \"type\": \"number\"\n          },\n          \"stock\": {\n            \"type\": \"number\"\n          },\n          \"brand\": {\n            \"type\": \"string\"\n          },\n          \"sku\": {\n            \"type\": \"string\"\n          },\n          \"weight\": {\n            \"type\": \"number\"\n          },\n          \"dimensions\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"width\": {\n                \"type\": \"number\"\n              },\n              \"height\": {\n                \"type\": \"number\"\n              },\n              \"depth\": {\n                \"type\": \"number\"\n              }\n            }\n          },\n          \"warrantyInformation\": {\n            \"type\": \"string\"\n          },\n          \"shippingInformation\": {\n            \"type\": \"string\"\n          },\n          \"availabilityStatus\": {\n            \"type\": \"string\"\n          },\n          \"returnPolicy\": {\n            \"type\": \"string\"\n          }\n        }\n      }\n    }\n  }\n}",
+                    "fe_metadata": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"uuid\": {\n      \"type\": \"string\"\n    },\n    \"return_webhook_url\": {\n      \"type\": \"string\"\n    },\n    \"product\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\n            \"type\": \"number\"\n          },\n          \"title\": {\n            \"type\": \"string\"\n          },\n          \"description\": {\n            \"type\": \"string\"\n          },\n          \"category\": {\n            \"type\": \"string\"\n          },\n          \"price\": {\n            \"type\": \"number\"\n          },\n          \"discountPercentage\": {\n            \"type\": \"number\"\n          },\n          \"rating\": {\n            \"type\": \"number\"\n          },\n          \"stock\": {\n            \"type\": \"number\"\n          },\n          \"brand\": {\n            \"type\": \"string\"\n          },\n          \"sku\": {\n            \"type\": \"string\"\n          },\n          \"weight\": {\n            \"type\": \"number\"\n          },\n          \"dimensions\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"width\": {\n                \"type\": \"number\"\n              },\n              \"height\": {\n                \"type\": \"number\"\n              },\n              \"depth\": {\n                \"type\": \"number\"\n              }\n            }\n          },\n          \"warrantyInformation\": {\n            \"type\": \"string\"\n          },\n          \"shippingInformation\": {\n            \"type\": \"string\"\n          },\n          \"availabilityStatus\": {\n            \"type\": \"string\"\n          },\n          \"returnPolicy\": {\n            \"type\": \"string\"\n          }\n        }\n      }\n    }\n  }\n}",
+                    "feSchemaMap": {}
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "To_EcoLabel_Provider",
+            "name": "To_EcoLabel_Provider",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "authorizationConn": "",
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "POST",
+                "Uri": "=$property[\"Service_APIs._Eco_Label\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableKeepAlives": false,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "body": {
+                  "mapping": {
+                    "uuid": "=$activity[Enrich_EcoLabel_Request].output.uuid",
+                    "return_webhook_url": "=$activity[Enrich_EcoLabel_Request].output.return_webhook_url",
+                    "product": {
+                      "@foreach($activity[Enrich_EcoLabel_Request].output.product,product)": {
+                        "=": "$loop"
+                      }
+                    }
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  },
+                  "body": "schema://Schema_EcoLabel_Request"
+                },
+                "output": {
+                  "responseBody": "schema://Schema_EcoLabel_API_Response",
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "Log_Success_Response",
+            "name": "Log_Success_Response",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.tostring($activity[Enrich_EcoLabel_Request].output)",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "SUCCESSReply",
+            "name": "SUCCESSReply",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "code": 200,
+                  "data": {
+                    "mapping": {
+                      "orderId": "=$activity[To_EcoLabel_Provider].responseBody.orderId",
+                      "status": "=$activity[To_EcoLabel_Provider].responseBody.status",
+                      "message": "=$activity[To_EcoLabel_Provider].responseBody.message"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "Log_Error_Response",
+            "name": "Log_Error_Response",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.tostring(\" Error processing Request\")",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "ERRORReply",
+            "name": "ERRORReply",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "code": 500,
+                  "data": {
+                    "mapping": {
+                      "message": "=string.concat(\" Unable to Send Request to Eco Label for Product : \", string.tostring($flow.pathParams.productId))",
+                      "status": "Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiR2V0X1Byb2R1Y3RzIjp7IngiOjI5MCwieSI6OTN9LCJHZXRfVW5pcXVlX0lEIjp7IngiOjU3OSwieSI6OTN9LCJFbnJpY2hfRWNvTGFiZWxfUmVxdWVzdCI6eyJ4Ijo4NTYsInkiOjkzfSwiVG9fRWNvTGFiZWxfUHJvdmlkZXIiOnsieCI6MTE0MSwieSI6OTN9LCJMb2dfU3VjY2Vzc19SZXNwb25zZSI6eyJ4IjoxNDE5LCJ5Ijo5M30sIlNVQ0NFU1NSZXBseSI6eyJ4IjoxNjkzLCJ5Ijo5Mn0sIkxvZ19FcnJvcl9SZXNwb25zZSI6eyJ4Ijo1NzAsInkiOjI4Nn0sIkVSUk9SUmVwbHkiOnsieCI6MTQwNCwieSI6Mjg0fX0=",
+        "metadata": {
+          "input": [
+            {
+              "name": "Function",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"LogGroup\":{\"type\":\"string\"},\"LogStream\":{\"type\":\"string\"},\"Name\":{\"type\":\"string\"},\"Version\":{\"type\":\"string\"}}"
+              }
+            },
+            {
+              "name": "Context",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"AwsRequestID\":{\"type\":\"string\"},\"ARN\":{\"type\":\"string\"}}"
+              }
+            },
+            {
+              "name": "Identity",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"CognitoIdentityID\":{\"type\":\"string\"},\"CognitoIdentityPoolID\":{\"type\":\"string\"}}"
+              }
+            },
+            {
+              "name": "ClientApp",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"installation_id\":{\"type\":\"string\"},\"app_title\":{\"type\":\"string\"},\"app_version_code\":{\"type\":\"string\"},\"app_package_name\":{\"type\":\"string\"}}"
+              }
+            },
+            {
+              "name": "EventPayload",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"productId\":{\"type\":\"number\"}}"
+              }
+            }
+          ],
+          "output": [
+            {
+              "name": "data",
+              "type": "object"
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"ReceiveLambdaInvocation\",\"properties\":{\"Function\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"LogGroup\":{\"type\":\"string\"},\"LogStream\":{\"type\":\"string\"},\"Name\":{\"type\":\"string\"},\"Version\":{\"type\":\"string\"}}},\"Context\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"AwsRequestID\":{\"type\":\"string\"},\"ARN\":{\"type\":\"string\"}}},\"Identity\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"CognitoIdentityID\":{\"type\":\"string\"},\"CognitoIdentityPoolID\":{\"type\":\"string\"}}},\"ClientApp\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"installation_id\":{\"type\":\"string\"},\"app_title\":{\"type\":\"string\"},\"app_version_code\":{\"type\":\"string\"},\"app_package_name\":{\"type\":\"string\"}}},\"EventPayload\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"productId\":{\"type\":\"number\"}}}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\"}},\"required\":[]}"
+          }
+        }
+      }
+    }
+  ],
+  "properties": [
+    {
+      "name": "AWS.aws.Custom_Endpoint",
+      "type": "boolean",
+      "value": true
+    },
+    {
+      "name": "AWS.aws.Endpoint",
+      "type": "string",
+      "value": "https://sts.eu-central-1.amazonaws.com"
+    },
+    {
+      "name": "AWS.aws.Region",
+      "type": "string",
+      "value": "eu-central-1"
+    },
+    {
+      "name": "AWS.aws.Authentication_Type",
+      "type": "string",
+      "value": "AWS Credentials"
+    },
+    {
+      "name": "AWS.aws.Access_key_ID",
+      "type": "string",
+      "value": "ASIARC55DQGXQPVGHOI2"
+    },
+    {
+      "name": "AWS.aws.Secret_access_key",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "AWS.aws.Session_Token",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "AWS.aws.Role_ARN",
+      "type": "string",
+      "value": "arn:aws:iam::075021648303:role/EMEA_Lambda"
+    },
+    {
+      "name": "AWS.aws.Role_Session_Name",
+      "type": "string",
+      "value": "EMEA_Lambda"
+    },
+    {
+      "name": "AWS.aws.External_ID",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "AWS.aws.Expiration_Duration",
+      "type": "float64",
+      "value": 900
+    },
+    {
+      "name": "Service_APIs._Products",
+      "type": "string",
+      "value": "https://dummyjson.com/products?limit=100"
+    },
+    {
+      "name": "Service_APIs._Eco_Label",
+      "type": "string",
+      "value": "https://a595d45b3eb83074b29e4cdd77-integration.eu-west-1.cloud.tibcoapps.com:443/fkunrk22m23kblw7np7ub7m2pflkhirv/ecolabel/v1"
+    },
+    {
+      "name": "Service_APIs._UUID",
+      "type": "string",
+      "value": "http://www.randomnumberapi.com/api/v1.0/uuid"
+    },
+    {
+      "name": "Internal_APIs._Webhook_Ecolabel",
+      "type": "string",
+      "value": "https://a595d45b3eb83074b29e4cdd77-integration.eu-west-1.cloud.tibcoapps.com:443/fkunrk22m23kblw7np7ub7m2pflkhirv/receive/ecolabel/v1"
+    }
+  ],
+  "schemas": {
+    "Schema_EcoLabel_API_Response": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"message\": {\n            \"type\": \"string\"\n        },\n        \"orderId\": {\n            \"type\": \"string\"\n        },\n        \"status\": {\n            \"type\": \"string\"\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"message\": {\n            \"type\": \"string\"\n        },\n        \"orderId\": {\n            \"type\": \"string\"\n        },\n        \"status\": {\n            \"type\": \"string\"\n        }\n    }\n}"
+    },
+    "Schema_Product": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"products\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"id\": {\n                        \"type\": \"number\"\n                    },\n                    \"title\": {\n                        \"type\": \"string\"\n                    },\n                    \"description\": {\n                        \"type\": \"string\"\n                    },\n                    \"category\": {\n                        \"type\": \"string\"\n                    },\n                    \"price\": {\n                        \"type\": \"number\"\n                    },\n                    \"discountPercentage\": {\n                        \"type\": \"number\"\n                    },\n                    \"rating\": {\n                        \"type\": \"number\"\n                    },\n                    \"stock\": {\n                        \"type\": \"number\"\n                    },\n                    \"tags\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"string\"\n                        }\n                    },\n                    \"brand\": {\n                        \"type\": \"string\"\n                    },\n                    \"sku\": {\n                        \"type\": \"string\"\n                    },\n                    \"weight\": {\n                        \"type\": \"number\"\n                    },\n                    \"dimensions\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"width\": {\n                                \"type\": \"number\"\n                            },\n                            \"height\": {\n                                \"type\": \"number\"\n                            },\n                            \"depth\": {\n                                \"type\": \"number\"\n                            }\n                        }\n                    },\n                    \"warrantyInformation\": {\n                        \"type\": \"string\"\n                    },\n                    \"shippingInformation\": {\n                        \"type\": \"string\"\n                    },\n                    \"availabilityStatus\": {\n                        \"type\": \"string\"\n                    },\n                    \"reviews\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"rating\": {\n                                    \"type\": \"number\"\n                                },\n                                \"comment\": {\n                                    \"type\": \"string\"\n                                },\n                                \"date\": {\n                                    \"type\": \"string\"\n                                },\n                                \"reviewerName\": {\n                                    \"type\": \"string\"\n                                },\n                                \"reviewerEmail\": {\n                                    \"type\": \"string\"\n                                }\n                            },\n                            \"required\": [\n                                \"rating\",\n                                \"comment\",\n                                \"date\",\n                                \"reviewerName\",\n                                \"reviewerEmail\"\n                            ]\n                        }\n                    },\n                    \"returnPolicy\": {\n                        \"type\": \"string\"\n                    },\n                    \"minimumOrderQuantity\": {\n                        \"type\": \"number\"\n                    },\n                    \"meta\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"createdAt\": {\n                                \"type\": \"string\"\n                            },\n                            \"updatedAt\": {\n                                \"type\": \"string\"\n                            },\n                            \"barcode\": {\n                                \"type\": \"string\"\n                            },\n                            \"qrCode\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    },\n                    \"images\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"string\"\n                        }\n                    },\n                    \"thumbnail\": {\n                        \"type\": \"string\"\n                    }\n                },\n                \"required\": [\n                    \"id\",\n                    \"title\",\n                    \"description\",\n                    \"category\",\n                    \"price\",\n                    \"discountPercentage\",\n                    \"rating\",\n                    \"stock\",\n                    \"tags\",\n                    \"brand\",\n                    \"sku\",\n                    \"weight\",\n                    \"dimensions\",\n                    \"warrantyInformation\",\n                    \"shippingInformation\",\n                    \"availabilityStatus\",\n                    \"reviews\",\n                    \"returnPolicy\",\n                    \"minimumOrderQuantity\",\n                    \"meta\",\n                    \"images\",\n                    \"thumbnail\"\n                ]\n            }\n        },\n        \"total\": {\n            \"type\": \"number\"\n        },\n        \"skip\": {\n            \"type\": \"number\"\n        },\n        \"limit\": {\n            \"type\": \"number\"\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"products\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"id\": {\n                        \"type\": \"number\"\n                    },\n                    \"title\": {\n                        \"type\": \"string\"\n                    },\n                    \"description\": {\n                        \"type\": \"string\"\n                    },\n                    \"category\": {\n                        \"type\": \"string\"\n                    },\n                    \"price\": {\n                        \"type\": \"number\"\n                    },\n                    \"discountPercentage\": {\n                        \"type\": \"number\"\n                    },\n                    \"rating\": {\n                        \"type\": \"number\"\n                    },\n                    \"stock\": {\n                        \"type\": \"number\"\n                    },\n                    \"tags\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"string\"\n                        }\n                    },\n                    \"brand\": {\n                        \"type\": \"string\"\n                    },\n                    \"sku\": {\n                        \"type\": \"string\"\n                    },\n                    \"weight\": {\n                        \"type\": \"number\"\n                    },\n                    \"dimensions\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"width\": {\n                                \"type\": \"number\"\n                            },\n                            \"height\": {\n                                \"type\": \"number\"\n                            },\n                            \"depth\": {\n                                \"type\": \"number\"\n                            }\n                        }\n                    },\n                    \"warrantyInformation\": {\n                        \"type\": \"string\"\n                    },\n                    \"shippingInformation\": {\n                        \"type\": \"string\"\n                    },\n                    \"availabilityStatus\": {\n                        \"type\": \"string\"\n                    },\n                    \"reviews\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"object\",\n                            \"properties\": {\n                                \"rating\": {\n                                    \"type\": \"number\"\n                                },\n                                \"comment\": {\n                                    \"type\": \"string\"\n                                },\n                                \"date\": {\n                                    \"type\": \"string\"\n                                },\n                                \"reviewerName\": {\n                                    \"type\": \"string\"\n                                },\n                                \"reviewerEmail\": {\n                                    \"type\": \"string\"\n                                }\n                            },\n                            \"required\": [\n                                \"rating\",\n                                \"comment\",\n                                \"date\",\n                                \"reviewerName\",\n                                \"reviewerEmail\"\n                            ]\n                        }\n                    },\n                    \"returnPolicy\": {\n                        \"type\": \"string\"\n                    },\n                    \"minimumOrderQuantity\": {\n                        \"type\": \"number\"\n                    },\n                    \"meta\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"createdAt\": {\n                                \"type\": \"string\"\n                            },\n                            \"updatedAt\": {\n                                \"type\": \"string\"\n                            },\n                            \"barcode\": {\n                                \"type\": \"string\"\n                            },\n                            \"qrCode\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    },\n                    \"images\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"type\": \"string\"\n                        }\n                    },\n                    \"thumbnail\": {\n                        \"type\": \"string\"\n                    }\n                },\n                \"required\": [\n                    \"id\",\n                    \"title\",\n                    \"description\",\n                    \"category\",\n                    \"price\",\n                    \"discountPercentage\",\n                    \"rating\",\n                    \"stock\",\n                    \"tags\",\n                    \"brand\",\n                    \"sku\",\n                    \"weight\",\n                    \"dimensions\",\n                    \"warrantyInformation\",\n                    \"shippingInformation\",\n                    \"availabilityStatus\",\n                    \"reviews\",\n                    \"returnPolicy\",\n                    \"minimumOrderQuantity\",\n                    \"meta\",\n                    \"images\",\n                    \"thumbnail\"\n                ]\n            }\n        },\n        \"total\": {\n            \"type\": \"number\"\n        },\n        \"skip\": {\n            \"type\": \"number\"\n        },\n        \"limit\": {\n            \"type\": \"number\"\n        }\n    }\n}"
+    },
+    "Schema_UUID_API_Response": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"array\",\n    \"items\": {\n        \"type\": \"string\"\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"array\",\n    \"items\": {\n        \"type\": \"string\"\n    }\n}"
+    },
+    "Schema_EcoLabel_Request": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"uuid\": {\n            \"type\": \"string\"\n        },\n        \"return_webhook_url\": {\n            \"type\": \"string\"\n        },\n        \"product\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"id\": {\n                        \"type\": \"number\"\n                    },\n                    \"title\": {\n                        \"type\": \"string\"\n                    },\n                    \"description\": {\n                        \"type\": \"string\"\n                    },\n                    \"category\": {\n                        \"type\": \"string\"\n                    },\n                    \"price\": {\n                        \"type\": \"number\"\n                    },\n                    \"discountPercentage\": {\n                        \"type\": \"number\"\n                    },\n                    \"rating\": {\n                        \"type\": \"number\"\n                    },\n                    \"stock\": {\n                        \"type\": \"number\"\n                    },\n                    \"brand\": {\n                        \"type\": \"string\"\n                    },\n                    \"sku\": {\n                        \"type\": \"string\"\n                    },\n                    \"weight\": {\n                        \"type\": \"number\"\n                    },\n                    \"dimensions\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"width\": {\n                                \"type\": \"number\"\n                            },\n                            \"height\": {\n                                \"type\": \"number\"\n                            },\n                            \"depth\": {\n                                \"type\": \"number\"\n                            }\n                        }\n                    },\n                    \"warrantyInformation\": {\n                        \"type\": \"string\"\n                    },\n                    \"shippingInformation\": {\n                        \"type\": \"string\"\n                    },\n                    \"availabilityStatus\": {\n                        \"type\": \"string\"\n                    },\n                    \"returnPolicy\": {\n                        \"type\": \"string\"\n                    }\n                }\n            }\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"uuid\": {\n            \"type\": \"string\"\n        },\n        \"return_webhook_url\": {\n            \"type\": \"string\"\n        },\n        \"product\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"id\": {\n                        \"type\": \"number\"\n                    },\n                    \"title\": {\n                        \"type\": \"string\"\n                    },\n                    \"description\": {\n                        \"type\": \"string\"\n                    },\n                    \"category\": {\n                        \"type\": \"string\"\n                    },\n                    \"price\": {\n                        \"type\": \"number\"\n                    },\n                    \"discountPercentage\": {\n                        \"type\": \"number\"\n                    },\n                    \"rating\": {\n                        \"type\": \"number\"\n                    },\n                    \"stock\": {\n                        \"type\": \"number\"\n                    },\n                    \"brand\": {\n                        \"type\": \"string\"\n                    },\n                    \"sku\": {\n                        \"type\": \"string\"\n                    },\n                    \"weight\": {\n                        \"type\": \"number\"\n                    },\n                    \"dimensions\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"width\": {\n                                \"type\": \"number\"\n                            },\n                            \"height\": {\n                                \"type\": \"number\"\n                            },\n                            \"depth\": {\n                                \"type\": \"number\"\n                            }\n                        }\n                    },\n                    \"warrantyInformation\": {\n                        \"type\": \"string\"\n                    },\n                    \"shippingInformation\": {\n                        \"type\": \"string\"\n                    },\n                    \"availabilityStatus\": {\n                        \"type\": \"string\"\n                    },\n                    \"returnPolicy\": {\n                        \"type\": \"string\"\n                    }\n                }\n            }\n        }\n    }\n}"
+    }
+  },
+  "connections": {
+    "631d9120-b5a9-44fa-85e1-f6ea0f1b9ecb": {
+      "id": "631d9120-b5a9-44fa-85e1-f6ea0f1b9ecb",
+      "name": "aws",
+      "ref": "#connector",
+      "isGlobal": false,
+      "settings": {
+        "name": "aws",
+        "description": "",
+        "customEndpoint": "=$property[\"AWS.aws.Custom_Endpoint\"]",
+        "endpoint": "=$property[\"AWS.aws.Endpoint\"]",
+        "region": "=$property[\"AWS.aws.Region\"]",
+        "authenticationType": "=$property[\"AWS.aws.Authentication_Type\"]",
+        "accessKey": "=$property[\"AWS.aws.Access_key_ID\"]",
+        "secretKey": "=$property[\"AWS.aws.Secret_access_key\"]",
+        "sessionToken": "=$property[\"AWS.aws.Session_Token\"]",
+        "assumeRole": true,
+        "roleArn": "=$property[\"AWS.aws.Role_ARN\"]",
+        "roleSessionName": "=$property[\"AWS.aws.Role_Session_Name\"]",
+        "externalId": "=$property[\"AWS.aws.External_ID\"]",
+        "expirationDuration": "=$property[\"AWS.aws.Expiration_Duration\"]",
+        "LAMBDA_CONNECTION_INFO": ""
+      }
+    }
+  },
+  "contrib": "W3sicmVmIjoiZ2l0aHViLmNvbS90aWJjby93aS1wbHVnaW5zL2NvbnRyaWJ1dGlvbnMvZmxvZ28tbGFtYmRhL3NyYy9hcHAvTGFtYmRhIiwiaWQiOiJMYW1iZGEiLCJ2ZXJzaW9uIjoiMS4zLjIiLCJ0YWciOiIxLjMuMi1iMDEtZmxvZ28tMi4yNS4xIiwibmFtZSI6IkFXUyBMYW1iZGEiLCJzaGltIjp0cnVlLCJzM2xvY2F0aW9uIjoiVGliY28vTGFtYmRhIiwiaXNVc2VyRXh0ZW5zaW9uIjpmYWxzZX0seyJyZWYiOiJnaXRodWIuY29tL3RpYmNvL2Zsb2dvLWdlbmVyYWwvc3JjL2FwcC9HZW5lcmFsIiwiaWQiOiJHZW5lcmFsIiwidmVyc2lvbiI6IjEuNi4yIiwidGFnIjoiMS42LjItYjAyIiwibmFtZSI6IkdlbmVyYWwiLCJzM2xvY2F0aW9uIjoiVGliY28vR2VuZXJhbCIsImlzVXNlckV4dGVuc2lvbiI6ZmFsc2V9LHsicmVmIjoiZ2l0aHViLmNvbS90aWJjby9mbG9nby1hd3Mvc3JjL2FwcC9BV1MiLCJpZCI6IkFXUyIsInZlcnNpb24iOiIxLjIuMiIsInRhZyI6IjEuMi4yLWIwMiIsIm5hbWUiOiJBV1MiLCJzM2xvY2F0aW9uIjoiVGliY28vQVdTIiwiaXNVc2VyRXh0ZW5zaW9uIjpmYWxzZX1d",
+  "metadata": {
+    "endpoints": [],
+    "flogoVersion": "2.25.1"
+  }
+}

@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flogo-eco-label-app
+  namespace: tibco-apps
+  labels:
+    app: flogo-eco-label-app
+spec:
+  selector:
+    matchLabels:
+      app: flogo-eco-label-app
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: flogo-eco-label-app
+    spec:
+      # initContainers:
+      # Init containers are exactly like regular containers, except:
+      # - Init containers always run to completion.
+      # - Each init container must complete successfully before the next one starts.
+      containers:
+        - name: flogo-eco-label-app
+          image: mpandav/eco-label-api:latest
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+            - containerPort: 9999
+              name: flogo-app
+          env:
+            - name: FLOGO_APP_PROPS_ENV
+              value: auto
+            - name: FLOGO_EXPOSE_SWAGGER_EP
+              value: 'true'
+            - name: FLOGO_HTTP_SERVICE_PORT
+              value: '7777'
+            - name: FLOGO_APP_METRICS
+              value: 'true'
+            - name: FLOGO_OTEL_METRICS
+              value: 'true'
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flogo-eco-service
+  namespace: tibco-apps
+spec:
+  selector:
+    app: flogo-eco-label-app
+  type: ClusterIP
+  sessionAffinity: None
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  ports:
+    - name: flogo-app
+      protocol: TCP
+      port: 9999
+      targetPort: 9999
+      # If you set the `spec.type` field to `NodePort` and you want a specific port number,
+      # you can specify a value in the `spec.ports[*].nodePort` field.
+      #nodePort: 
+
+# https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flogo-eco-ingress
+  namespace: tibco-apps
+spec:
+  rules:
+    - host: flogo.localhost.dataplanes.pro
+      http:
+        paths:
+          - path: /v1
+            pathType: Prefix
+            backend:
+              service:
+                name: flogo-eco-service
+                port:
+                  number: 9999

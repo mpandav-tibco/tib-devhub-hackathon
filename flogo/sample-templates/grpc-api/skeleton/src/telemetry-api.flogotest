@@ -1,0 +1,45 @@
+{
+  "suites": {},
+  "tests": {
+    "Calculate_Avg_Temperatur:Tester": {
+      "name": "Tester",
+      "flowId": "flow:Calculate_Avg_Temperatur",
+      "flowName": "Calculate_Avg_Temperatur",
+      "disabled": false
+    },
+    "Telemerty_Processing:Tester": {
+      "name": "Tester",
+      "flowId": "flow:Telemerty_Processing",
+      "flowName": "Telemerty_Processing",
+      "disabled": false,
+      "flowInputs": {
+        "params": {
+          "sensor_id": "sensor-123",
+          "temperature": 24.61491649994982,
+          "pressure": 1020.50021794987,
+          "humidity": 49.37924520848138,
+          "timestamp": "2025-01-31 22:25:16"
+        }
+      }
+    },
+    "Send_To_InFluxDB:Tester": {
+      "name": "Tester",
+      "flowId": "flow:Send_To_InFluxDB",
+      "flowName": "Send_To_InFluxDB",
+      "disabled": false,
+      "flowInputs": {
+        "sensor_id": "sensor-123",
+        "temperature": 24.61491649994982,
+        "pressure": 1020.50021794987,
+        "humidity": 49.37924520848138,
+        "timestamp": "2025-01-31 22:25:16"
+      }
+    }
+  },
+  "type": "flogo:unittest",
+  "model": "1.1.1",
+  "app": {
+    "name": "Sensor_Telemetry_API",
+    "version": "1.0.0"
+  }
+}

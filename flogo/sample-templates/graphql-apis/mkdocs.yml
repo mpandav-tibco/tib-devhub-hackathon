@@ -1,0 +1,11 @@
+site_name: Flogo GraphQL APIs Template
+site_description: Create GraphQL APIs using TIBCO Flogo with product information from multiple data sources and flexible query capabilities
+
+nav:
+  - Introduction: index.md
+
+plugins:
+  - techdocs-core
+
+docs_dir: docs
+site_dir: site

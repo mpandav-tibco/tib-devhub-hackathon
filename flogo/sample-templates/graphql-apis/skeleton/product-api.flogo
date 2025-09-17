@@ -1,0 +1,1351 @@
+{
+  "imports": [
+    "github.com/project-flogo/flow",
+    "github.com/project-flogo/contrib/activity/noop",
+    "github.com/project-flogo/flow/activity/subflow",
+    "github.com/tibco/flogo-general/src/app/General/activity/mapper",
+    "github.com/tibco/flogo-general/src/app/General/activity/log",
+    "github.com/tibco/flogo-general/src/app/General/activity/actreply",
+    "github.com/tibco/flogo-general/src/app/General/activity/rest",
+    "github.com/project-flogo/contrib/activity/actreturn",
+    "github.com/project-flogo/graphql/trigger/graphql",
+    "github.com/project-flogo/contrib/function/coerce",
+    "github.com/project-flogo/contrib/function/string",
+    "git.tibco.com/git/product/ipaas/wi-contrib.git/function/boolean"
+  ],
+  "name": "GQL-PRODUCT-INFOMATION-API",
+  "description": "",
+  "version": "1.0.0",
+  "type": "flogo:app",
+  "appModel": "1.1.1",
+  "tags": [],
+  "triggers": [
+    {
+      "ref": "#graphql",
+      "name": "tibco-graphql",
+      "description": "Simple GraphQL Trigger",
+      "settings": {
+        "port": "=$property[\"GQL.PORT\"]",
+        "path": "=$property[\"GQL.URI\"]",
+        "schemaFile": {
+          "filename": "product.gql",
+          "content": "data:application/octet-stream;base64,dHlwZSBQcm9kdWN0IHsKICBpZDogSUQhCiAgbmFtZTogU3RyaW5nIQogIGRlc2NyaXB0aW9uOiBTdHJpbmcKICBwcmljZTogRmxvYXQKICBhdmFpbGFibGU6IEJvb2xlYW4KfQoKdHlwZSBRdWVyeSB7CiAgcHJvZHVjdChpZDogSUQhKTogUHJvZHVjdAp9Cgp0eXBlIE11dGF0aW9uIHsKICB1cHNlcnRQcm9kdWN0KAogICAgaWQ6IElEIQogICAgbmFtZTogU3RyaW5nIQogICAgZGVzY3JpcHRpb246IFN0cmluZwogICAgcHJpY2U6IEZsb2F0CiAgICBhdmFpbGFibGU6IEJvb2xlYW4KICApOiBQcm9kdWN0Cn0K"
+        },
+        "secureConnection": false,
+        "serverKey": "",
+        "caCertificate": "",
+        "graphqlSchema": "type Product {\n  id: ID!\n  name: String!\n  description: String\n  price: Float\n  available: Boolean\n}\n\ntype Query {\n  product(id: ID!): Product\n}\n\ntype Mutation {\n  upsertProduct(\n    id: ID!\n    name: String!\n    description: String\n    price: Float\n    available: Boolean\n  ): Product\n}",
+        "introspection": true
+      },
+      "id": "GraphQLTrigger",
+      "handlers": [
+        {
+          "description": "Implement GQL Query",
+          "settings": {
+            "operation": "Query",
+            "resolverFor": "product"
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:GET_PRODUCT"
+            },
+            "input": {
+              "arguments": "=$.arguments",
+              "headers": "=$.headers",
+              "fields": "=$.fields"
+            },
+            "output": {
+              "data": "=isDefined($.data) ? $.data : coerce.toObject('{}')",
+              "error": "=isDefined($.error) ? $.error : ''"
+            }
+          },
+          "reply": {
+            "error": ""
+          },
+          "schemas": {
+            "reply": {
+              "data": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]}",
+                "fe_metadata": "{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]}",
+                "feSchemaMap": {}
+              }
+            },
+            "output": {
+              "arguments": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[\"id\"]}",
+                "fe_metadata": "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[\"id\"]}",
+                "feSchemaMap": {}
+              },
+              "fields": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"fieldName\":{\"type\":\"string\"},\"fields\":{\"type\":\"array\"}}}",
+                "fe_metadata": "{\"type\":\"object\",\"properties\":{\"fieldName\":{\"type\":\"string\"},\"fields\":{\"type\":\"array\"}}}",
+                "feSchemaMap": {}
+              }
+            }
+          },
+          "name": "GET_PRODUCT"
+        },
+        {
+          "description": "Implement GQL Mutation",
+          "settings": {
+            "operation": "Mutation",
+            "resolverFor": "upsertProduct"
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:CREATE_PRODUCT"
+            },
+            "input": {
+              "arguments": "=$.arguments",
+              "headers": "=$.headers",
+              "fields": "=$.fields"
+            },
+            "output": {
+              "data": "=isDefined($.data) ? $.data : coerce.toObject('{}')",
+              "error": "=isDefined($.error) ? $.error : ''"
+            }
+          },
+          "reply": {
+            "error": ""
+          },
+          "schemas": {
+            "reply": {
+              "data": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]}",
+                "fe_metadata": "{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]}",
+                "feSchemaMap": {}
+              }
+            },
+            "output": {
+              "arguments": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}},\"required\":[\"id\",\"name\"]}",
+                "fe_metadata": "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}},\"required\":[\"id\",\"name\"]}",
+                "feSchemaMap": {}
+              },
+              "fields": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"fieldName\":{\"type\":\"string\"},\"fields\":{\"type\":\"array\"}}}",
+                "fe_metadata": "{\"type\":\"object\",\"properties\":{\"fieldName\":{\"type\":\"string\"},\"fields\":{\"type\":\"array\"}}}",
+                "feSchemaMap": {}
+              }
+            }
+          },
+          "name": "CREATE_PRODUCT"
+        }
+      ],
+      "note": {
+        "author": {
+          "name": "VS code user",
+          "userId": "vscode"
+        },
+        "content": "gql query operation",
+        "createAt": 1737149260378,
+        "lastUpdatedAt": 1737149310485,
+        "title": "GraphQLTrigger"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:GET_PRODUCT",
+      "data": {
+        "name": "GET_PRODUCT",
+        "description": "Implement GQL Query",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "GET_PRD",
+            "type": "label",
+            "label": "StartActivity to StartaSubFlow"
+          },
+          {
+            "id": 2,
+            "from": "GET_PRD",
+            "to": "GET_PRICE",
+            "type": "label",
+            "label": "SUCCESS"
+          },
+          {
+            "id": 3,
+            "from": "GET_PRICE",
+            "to": "STOCK_VALIDATION",
+            "type": "label",
+            "label": "SUCCESS"
+          },
+          {
+            "id": 4,
+            "from": "STOCK_VALIDATION",
+            "to": "TRANSFORMATION",
+            "type": "label",
+            "label": "SUCCESS"
+          },
+          {
+            "id": 5,
+            "from": "TRANSFORMATION",
+            "to": "LogPayload",
+            "type": "label",
+            "label": "SUCCESS"
+          },
+          {
+            "id": 6,
+            "from": "LogPayload",
+            "to": "SUCESS_REPLY",
+            "type": "label",
+            "label": "success"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "GET_PRD",
+            "name": "GET_PRD",
+            "description": "Simple SubFlow Activity",
+            "activity": {
+              "ref": "#subflow",
+              "settings": {
+                "flowURI": "res://flow:FROM_PRD_CATALOG",
+                "detached": false
+              },
+              "input": {
+                "id": "=$flow.arguments.id"
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\n    \"id\":\"\"\n}",
+                    "feSchemaMap": {}
+                  }
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Id\":{\"type\":\"string\"},\"Name\":{\"type\":\"string\"},\"Description\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\n    \"Id\":\"\",\n    \"Name\":\"\",\n    \"Description\":\"\"\n}",
+                    "feSchemaMap": {}
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "GET_PRICE",
+            "name": "GET_PRICE",
+            "description": "Simple SubFlow Activity",
+            "activity": {
+              "ref": "#subflow",
+              "settings": {
+                "flowURI": "res://flow:GET_PRICE",
+                "detached": false
+              },
+              "input": {
+                "Id": "=$flow.arguments.id"
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Id\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\n    \"Id\":\"\"\n}",
+                    "feSchemaMap": {}
+                  }
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Price\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\n    \"Price\":\"\"\n}",
+                    "feSchemaMap": {}
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "STOCK_VALIDATION",
+            "name": "STOCK_VALIDATION",
+            "description": "Simple SubFlow Activity",
+            "activity": {
+              "ref": "#subflow",
+              "settings": {
+                "flowURI": "res://flow:CHECK_AVAILABILITY",
+                "detached": false
+              },
+              "input": {
+                "Id": "=$flow.arguments.id"
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Id\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\n    \"Id\":\"\"\n}",
+                    "feSchemaMap": {}
+                  }
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"Available\":{\"type\":\"boolean\"}}}",
+                    "fe_metadata": "{\n    \"Available\": true\n}",
+                    "feSchemaMap": {}
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "TRANSFORMATION",
+            "name": "TRANSFORMATION",
+            "description": "Mapper Activity",
+            "activity": {
+              "ref": "#mapper",
+              "input": {
+                "input": {
+                  "mapping": {
+                    "available": "=$activity[STOCK_VALIDATION].Available",
+                    "price": "=coerce.toFloat64($activity[GET_PRICE].Price)",
+                    "id": "=$activity[GET_PRD].Id",
+                    "name": "=$activity[GET_PRD].Name",
+                    "description": "=$activity[GET_PRD].Description"
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": "schema://PRODUCT_SCHEMA"
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"name\": {\n      \"type\": \"string\"\n    },\n    \"description\": {\n      \"type\": \"string\"\n    },\n    \"price\": {\n      \"type\": \"number\"\n    },\n    \"available\": {\n      \"type\": \"boolean\"\n    }\n  }\n}",
+                    "fe_metadata": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"name\": {\n      \"type\": \"string\"\n    },\n    \"description\": {\n      \"type\": \"string\"\n    },\n    \"price\": {\n      \"type\": \"number\"\n    },\n    \"available\": {\n      \"type\": \"boolean\"\n    }\n  }\n}",
+                    "feSchemaMap": {}
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "LogPayload",
+            "name": "LogPayload",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"#### RESPONSE FOR PRODUCT ID : \",\" : \",$flow.arguments.id, string.tostring($activity[TRANSFORMATION].output))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "SUCESS_REPLY",
+            "name": "SUCESS_REPLY",
+            "description": "Reply back to the trigger and continue flow execution, it must be used only in the flow with the trigger configured.",
+            "activity": {
+              "ref": "#actreply",
+              "input": {
+                "reply": {
+                  "mapping": {
+                    "data": {
+                      "Product": {
+                        "id": "=$activity[TRANSFORMATION].output.id",
+                        "name": "=$activity[TRANSFORMATION].output.name",
+                        "description": "=$activity[TRANSFORMATION].output.description",
+                        "price": "=$activity[TRANSFORMATION].output.price",
+                        "available": "=$activity[TRANSFORMATION].output.available"
+                      }
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "reply": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                    "fe_metadata": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                    "feSchemaMap": {}
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiR0VUX1BSRCI6eyJ4IjoyMzksInkiOjk3fSwiR0VUX1BSSUNFIjp7IngiOjQzOCwieSI6OTh9LCJTVE9DS19WQUxJREFUSU9OIjp7IngiOjY1NywieSI6MTAxfSwiVFJBTlNGT1JNQVRJT04iOnsieCI6MjA5LCJ5IjozMjF9LCJMb2dQYXlsb2FkIjp7IngiOjQyNiwieSI6MzI0fSwiU1VDRVNTX1JFUExZIjp7IngiOjY5MiwieSI6MzIxfX0=",
+        "errorHandler": {
+          "tasks": [
+            {
+              "id": "LogEXCEPTION",
+              "name": "LogEXCEPTION",
+              "description": "Simple Log Message Activity",
+              "activity": {
+                "ref": "#log",
+                "input": {
+                  "Log Level": "INFO",
+                  "flowInfo": false,
+                  "message": "#### EXECUTING ERROR BLOCK",
+                  "logLevel": ""
+                }
+              }
+            },
+            {
+              "id": "ERROR_REPLY",
+              "name": "ERROR_REPLY",
+              "description": "Reply back to the trigger and continue flow execution, it must be used only in the flow with the trigger configured.",
+              "activity": {
+                "ref": "#actreply",
+                "input": {
+                  "reply": {
+                    "mapping": {
+                      "data": {
+                        "Product": {
+                          "id": "",
+                          "name": ""
+                        }
+                      },
+                      "error": "=string.concat(\" ACTIVITY: \", $error.activity, \"  ERROR MESSAGE: \", $error.message,\"   ERROR DATA: \", $error.data)"
+                    }
+                  }
+                },
+                "schemas": {
+                  "input": {
+                    "reply": {
+                      "type": "json",
+                      "value": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                      "fe_metadata": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                      "feSchemaMap": {}
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "links": [
+            {
+              "id": 7,
+              "from": "LogEXCEPTION",
+              "to": "ERROR_REPLY",
+              "type": "label",
+              "label": "LogMessage to ReplyToTrigger1"
+            }
+          ],
+          "fe_metadata": "eyJMb2dFWENFUFRJT04iOnsieCI6MzA4LCJ5IjoxMDN9LCJFUlJPUl9SRVBMWSI6eyJ4Ijo1MTIsInkiOjEwMH19"
+        },
+        "metadata": {
+          "input": [
+            {
+              "name": "arguments",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"id\":{\"type\":\"string\"}}"
+              }
+            },
+            {
+              "name": "headers",
+              "type": "params"
+            },
+            {
+              "name": "fields",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"fieldName\":{\"type\":\"string\"},\"fields\":{\"type\":\"array\"}}"
+              }
+            }
+          ],
+          "output": [
+            {
+              "name": "data",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}}"
+              }
+            },
+            {
+              "name": "error",
+              "type": "string"
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"GraphQLTrigger\",\"properties\":{\"arguments\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[\"id\"]},\"headers\":{\"type\":\"params\"},\"fields\":{\"type\":\"object\",\"properties\":{\"fieldName\":{\"type\":\"string\"},\"fields\":{\"type\":\"array\"}}}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:FROM_PRD_CATALOG",
+      "data": {
+        "name": "FROM_PRD_CATALOG",
+        "description": "Get Product Data",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "CHECK_CATALOG",
+            "type": "label",
+            "label": "StartActivity to InvokeRESTService"
+          },
+          {
+            "id": 2,
+            "from": "CHECK_CATALOG",
+            "to": "PRD_DATA",
+            "type": "expression",
+            "label": "success",
+            "value": "$activity[CHECK_CATALOG].statusCode == 200"
+          },
+          {
+            "id": 3,
+            "from": "CHECK_CATALOG",
+            "to": "PRD_ERROR",
+            "type": "exprOtherwise",
+            "label": "otherwise"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "CHECK_CATALOG",
+            "name": "CHECK_CATALOG",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "authorizationConn": "",
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "GET",
+                "Uri": "=$property[\"PRODUCT_CATALOG.GET_PRD\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableKeepAlives": false,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "pathParams": {
+                  "mapping": {
+                    "id": "=$flow.id"
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "pathParams": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"id\",\"type\":\"string\"}]"
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                },
+                "output": {
+                  "responseBody": "schema://PRD_CATALOG_SCHEMA",
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "PRD_DATA",
+            "name": "PRD_DATA",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "Id": "=$activity[CHECK_CATALOG].responseBody.id",
+                  "Name": "=$activity[CHECK_CATALOG].responseBody.title",
+                  "Description": "=$activity[CHECK_CATALOG].responseBody.description"
+                }
+              }
+            }
+          },
+          {
+            "id": "PRD_ERROR",
+            "name": "PRD_ERROR",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "Id": "NOT FOUND",
+                  "Name": "NOT FOUND",
+                  "Description": "NOT FOUND"
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiQ0hFQ0tfQ0FUQUxPRyI6eyJ4IjoyNzEsInkiOjk3fSwiUFJEX0RBVEEiOnsieCI6NTYxLCJ5Ijo5N30sIlBSRF9FUlJPUiI6eyJ4Ijo1NDAsInkiOjIzMn19",
+        "metadata": {
+          "input": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "output": [
+            {
+              "name": "Id",
+              "type": "string"
+            },
+            {
+              "name": "Name",
+              "type": "string"
+            },
+            {
+              "name": "Description",
+              "type": "string"
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\n    \"id\":\"\"\n}",
+            "output": "{\n    \"Id\":\"\",\n    \"Name\":\"\",\n    \"Description\":\"\"\n}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:GET_PRICE",
+      "data": {
+        "name": "GET_PRICE",
+        "description": "Get Product Price",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "GET_PRICE_OF_PRD",
+            "type": "label",
+            "label": "StartActivity to InvokeRESTService"
+          },
+          {
+            "id": 2,
+            "from": "GET_PRICE_OF_PRD",
+            "to": "PRD_PRICE",
+            "type": "expression",
+            "label": "if_success",
+            "value": "$activity[GET_PRICE_OF_PRD].statusCode == 200"
+          },
+          {
+            "id": 3,
+            "from": "GET_PRICE_OF_PRD",
+            "to": "PRICE_ERROR",
+            "type": "exprOtherwise",
+            "label": "Otherwise"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "GET_PRICE_OF_PRD",
+            "name": "GET_PRICE_OF_PRD",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "authorizationConn": "",
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "GET",
+                "Uri": "=$property[\"PRODUCT_CATALOG.GET_PRD\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableKeepAlives": false,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "pathParams": {
+                  "mapping": {
+                    "id": "=$flow.Id"
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "pathParams": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"id\",\"type\":\"string\"}]"
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                },
+                "output": {
+                  "responseBody": "schema://PRD_CATALOG_SCHEMA",
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "PRD_PRICE",
+            "name": "PRD_PRICE",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "Price": "=$activity[GET_PRICE_OF_PRD].responseBody.price"
+                }
+              }
+            }
+          },
+          {
+            "id": "PRICE_ERROR",
+            "name": "PRICE_ERROR",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "Price": "NOT FOUND"
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiR0VUX1BSSUNFX09GX1BSRCI6eyJ4IjozMDMsInkiOjkzfSwiUFJEX1BSSUNFIjp7IngiOjUzOCwieSI6OTd9LCJQUklDRV9FUlJPUiI6eyJ4Ijo1MjYsInkiOjI2MX19",
+        "metadata": {
+          "input": [
+            {
+              "name": "Id",
+              "type": "string"
+            }
+          ],
+          "output": [
+            {
+              "name": "Price",
+              "type": "string"
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\n    \"Id\":\"\"\n}",
+            "output": "{\n    \"Price\":\"\"\n}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:CHECK_AVAILABILITY",
+      "data": {
+        "name": "CHECK_AVAILABILITY",
+        "description": "Check Product Availability ",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "STOCK_CHECK",
+            "type": "label",
+            "label": "StartActivity to InvokeRESTService"
+          },
+          {
+            "id": 2,
+            "from": "STOCK_CHECK",
+            "to": "STOCK_FOUND",
+            "type": "expression",
+            "label": "if_success",
+            "value": "$activity[STOCK_CHECK].statusCode == 200"
+          },
+          {
+            "id": 3,
+            "from": "STOCK_CHECK",
+            "to": "STOCK_ERROR",
+            "type": "exprOtherwise",
+            "label": "otherwise"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "STOCK_CHECK",
+            "name": "STOCK_CHECK",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "authorizationConn": "",
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "GET",
+                "Uri": "=$property[\"PRODUCT_CATALOG.GET_PRD\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableKeepAlives": false,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "pathParams": {
+                  "mapping": {
+                    "id": "=$flow.Id"
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "pathParams": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"id\",\"type\":\"string\"}]"
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                },
+                "output": {
+                  "responseBody": "schema://PRD_CATALOG_SCHEMA",
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "STOCK_FOUND",
+            "name": "STOCK_FOUND",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "Available": {
+                    "@conditional": [
+                      {
+                        "$activity[STOCK_CHECK].responseBody.stock >0": true
+                      },
+                      {
+                        "@otherwise": "=boolean.false()"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "STOCK_ERROR",
+            "name": "STOCK_ERROR",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "Available": "=boolean.false()"
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiU1RPQ0tfQ0hFQ0siOnsieCI6Mjc0LCJ5IjoxMDJ9LCJTVE9DS19GT1VORCI6eyJ4Ijo1NjIsInkiOjEwMX0sIlNUT0NLX0VSUk9SIjp7IngiOjU2NCwieSI6MjU3fX0=",
+        "metadata": {
+          "input": [
+            {
+              "name": "Id",
+              "type": "string"
+            }
+          ],
+          "output": [
+            {
+              "name": "Available",
+              "type": "boolean"
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\n    \"Id\":\"\"\n}",
+            "output": "{\n    \"Available\": true\n}"
+          }
+        }
+      }
+    },
+    {
+      "id": "flow:CREATE_PRODUCT",
+      "data": {
+        "name": "CREATE_PRODUCT",
+        "description": "Implement GQL Mutation",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "LogREQUEST",
+            "type": "label",
+            "label": "StartActivity to LogMessage"
+          },
+          {
+            "id": 2,
+            "from": "LogREQUEST",
+            "to": "CREATE_PRD",
+            "type": "label",
+            "label": "LogMessage to InvokeRESTService"
+          },
+          {
+            "id": 3,
+            "from": "CREATE_PRD",
+            "to": "LogRESPONSE",
+            "type": "label",
+            "label": "InvokeRESTService to LogMessage1"
+          },
+          {
+            "id": 4,
+            "from": "LogRESPONSE",
+            "to": "ERROR_REPLY",
+            "type": "exprOtherwise",
+            "label": "LogMessage1 to ReplyToTrigger1"
+          },
+          {
+            "id": 5,
+            "from": "LogRESPONSE",
+            "to": "successReply",
+            "type": "expression",
+            "label": "if_success",
+            "value": "$activity[CREATE_PRD].statusCode==201"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "LogREQUEST",
+            "name": "LogREQUEST",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"#### REQUEST FOR CATALOG SERVICE  : \",string.tostring($flow.arguments ))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "CREATE_PRD",
+            "name": "CREATE_PRD",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "authorizationConn": "",
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "POST",
+                "Uri": "=$property[\"PRODUCT_CATALOG.ADD_PRD\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableKeepAlives": false,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "body": {
+                  "mapping": {
+                    "name": "=$flow.arguments.name",
+                    "price": "=$flow.arguments.price",
+                    "available": "=$flow.arguments.available",
+                    "description": {
+                      "@conditional": [
+                        {
+                          "isDefined($flow.arguments.description)": "=$flow.arguments.description"
+                        },
+                        {
+                          "@otherwise": "dummy description"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  },
+                  "body": "schema://PRODUCT_SCHEMA"
+                },
+                "output": {
+                  "responseBody": "schema://PRODUCT_SCHEMA",
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "LogRESPONSE",
+            "name": "LogRESPONSE",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"#### CATALOG SERVICE RESPONSE : \",string.tostring($activity[CREATE_PRD].responseBody))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "ERROR_REPLY",
+            "name": "ERROR_REPLY",
+            "description": "Reply back to the trigger and continue flow execution, it must be used only in the flow with the trigger configured.",
+            "activity": {
+              "ref": "#actreply",
+              "input": {
+                "reply": {
+                  "mapping": {
+                    "data": {
+                      "Product": {
+                        "id": "NOT FOUND",
+                        "name": "NOT FOUND",
+                        "description": "NOT FOUND",
+                        "price": 0
+                      }
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "reply": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                    "fe_metadata": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                    "feSchemaMap": {}
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "successReply",
+            "name": "successReply",
+            "description": "Reply back to the trigger and continue flow execution, it must be used only in the flow with the trigger configured.",
+            "activity": {
+              "ref": "#actreply",
+              "input": {
+                "reply": {
+                  "mapping": {
+                    "data": {
+                      "Product": {
+                        "id": "=$activity[CREATE_PRD].responseBody.id",
+                        "name": "=$flow.arguments.name",
+                        "description": "=$activity[CREATE_PRD].responseBody.description",
+                        "price": "=coerce.toFloat64($activity[CREATE_PRD].responseBody.price)",
+                        "available": "=$flow.arguments.available"
+                      }
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "reply": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                    "fe_metadata": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                    "feSchemaMap": {}
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiTG9nUkVRVUVTVCI6eyJ4IjoxNzMsInkiOjI0OX0sIkNSRUFURV9QUkQiOnsieCI6Mzc2LCJ5IjoxMjl9LCJMb2dSRVNQT05TRSI6eyJ4Ijo1OTAsInkiOjI1Nn0sIkVSUk9SX1JFUExZIjp7IngiOjkwOCwieSI6MzUzfSwic3VjY2Vzc1JlcGx5Ijp7IngiOjkwNSwieSI6MTMyfX0=",
+        "errorHandler": {
+          "tasks": [
+            {
+              "id": "LogEXCEPTION",
+              "name": "LogEXCEPTION",
+              "description": "Simple Log Message Activity",
+              "activity": {
+                "ref": "#log",
+                "input": {
+                  "Log Level": "INFO",
+                  "flowInfo": false,
+                  "message": "#### CREATE PRD: EXECUTING ERROR BLOCK",
+                  "logLevel": ""
+                }
+              }
+            },
+            {
+              "id": "EXCEPTIONReply",
+              "name": "EXCEPTIONReply",
+              "description": "Reply back to the trigger and continue flow execution, it must be used only in the flow with the trigger configured.",
+              "activity": {
+                "ref": "#actreply",
+                "input": {
+                  "reply": {
+                    "mapping": {
+                      "error": "=string.concat(\" ACTIVITY: \", $error.activity, \"  ERROR MESSAGE: \", $error.message,\"   ERROR DATA: \", $error.data)",
+                      "data": {
+                        "Product": {
+                          "id": "",
+                          "name": ""
+                        }
+                      }
+                    }
+                  }
+                },
+                "schemas": {
+                  "input": {
+                    "reply": {
+                      "type": "json",
+                      "value": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                      "fe_metadata": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                      "feSchemaMap": {}
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "links": [
+            {
+              "id": 6,
+              "from": "LogEXCEPTION",
+              "to": "EXCEPTIONReply",
+              "type": "label",
+              "label": "LogEXCEPTION to ReplyToTrigger"
+            }
+          ],
+          "fe_metadata": "eyJMb2dFWENFUFRJT04iOnsieCI6MzQwLCJ5IjoxMDR9LCJFWENFUFRJT05SZXBseSI6eyJ4Ijo2MjIsInkiOjEwNn19"
+        },
+        "metadata": {
+          "input": [
+            {
+              "name": "arguments",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}"
+              }
+            },
+            {
+              "name": "headers",
+              "type": "params"
+            },
+            {
+              "name": "fields",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"fieldName\":{\"type\":\"string\"},\"fields\":{\"type\":\"array\"}}"
+              }
+            }
+          ],
+          "output": [
+            {
+              "name": "data",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}}"
+              }
+            },
+            {
+              "name": "error",
+              "type": "string"
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"GraphQLTrigger\",\"properties\":{\"arguments\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}},\"required\":[\"id\",\"name\"]},\"headers\":{\"type\":\"params\"},\"fields\":{\"type\":\"object\",\"properties\":{\"fieldName\":{\"type\":\"string\"},\"fields\":{\"type\":\"array\"}}}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"Product\":{\"type\":\"object\",\"required\":[\"id\",\"name\"],\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}},\"required\":[]},\"error\":{\"type\":\"string\",\"required\":false}},\"required\":[]}"
+          }
+        }
+      }
+    }
+  ],
+  "properties": [
+    {
+      "name": "GQL.URI",
+      "type": "string",
+      "value": "/graphql"
+    },
+    {
+      "name": "GQL.PORT",
+      "type": "float64",
+      "value": 9090
+    },
+    {
+      "name": "PRODUCT_CATALOG.ADD_PRD",
+      "type": "string",
+      "value": "https://dummyjson.com/products/add"
+    },
+    {
+      "name": "PRODUCT_CATALOG.GET_PRD",
+      "type": "string",
+      "value": "https://dummyjson.com/products/{id}"
+    }
+  ],
+  "schemas": {
+    "PRD_CATALOG_SCHEMA": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"id\": {\n            \"type\": \"number\"\n        },\n        \"title\": {\n            \"type\": \"string\"\n        },\n        \"description\": {\n            \"type\": \"string\"\n        },\n        \"category\": {\n            \"type\": \"string\"\n        },\n        \"price\": {\n            \"type\": \"number\"\n        },\n        \"discountPercentage\": {\n            \"type\": \"number\"\n        },\n        \"rating\": {\n            \"type\": \"number\"\n        },\n        \"stock\": {\n            \"type\": \"number\"\n        },\n        \"tags\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"string\"\n            }\n        },\n        \"brand\": {\n            \"type\": \"string\"\n        },\n        \"sku\": {\n            \"type\": \"string\"\n        },\n        \"weight\": {\n            \"type\": \"number\"\n        },\n        \"dimensions\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"width\": {\n                    \"type\": \"number\"\n                },\n                \"height\": {\n                    \"type\": \"number\"\n                },\n                \"depth\": {\n                    \"type\": \"number\"\n                }\n            }\n        },\n        \"warrantyInformation\": {\n            \"type\": \"string\"\n        },\n        \"shippingInformation\": {\n            \"type\": \"string\"\n        },\n        \"availabilityStatus\": {\n            \"type\": \"string\"\n        },\n        \"reviews\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"rating\": {\n                        \"type\": \"number\"\n                    },\n                    \"comment\": {\n                        \"type\": \"string\"\n                    },\n                    \"date\": {\n                        \"type\": \"string\"\n                    },\n                    \"reviewerName\": {\n                        \"type\": \"string\"\n                    },\n                    \"reviewerEmail\": {\n                        \"type\": \"string\"\n                    }\n                },\n                \"required\": [\n                    \"rating\",\n                    \"comment\",\n                    \"date\",\n                    \"reviewerName\",\n                    \"reviewerEmail\"\n                ]\n            }\n        },\n        \"returnPolicy\": {\n            \"type\": \"string\"\n        },\n        \"minimumOrderQuantity\": {\n            \"type\": \"number\"\n        },\n        \"meta\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"createdAt\": {\n                    \"type\": \"string\"\n                },\n                \"updatedAt\": {\n                    \"type\": \"string\"\n                },\n                \"barcode\": {\n                    \"type\": \"string\"\n                },\n                \"qrCode\": {\n                    \"type\": \"string\"\n                }\n            }\n        },\n        \"images\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"string\"\n            }\n        },\n        \"thumbnail\": {\n            \"type\": \"string\"\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"id\": {\n            \"type\": \"number\"\n        },\n        \"title\": {\n            \"type\": \"string\"\n        },\n        \"description\": {\n            \"type\": \"string\"\n        },\n        \"category\": {\n            \"type\": \"string\"\n        },\n        \"price\": {\n            \"type\": \"number\"\n        },\n        \"discountPercentage\": {\n            \"type\": \"number\"\n        },\n        \"rating\": {\n            \"type\": \"number\"\n        },\n        \"stock\": {\n            \"type\": \"number\"\n        },\n        \"tags\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"string\"\n            }\n        },\n        \"brand\": {\n            \"type\": \"string\"\n        },\n        \"sku\": {\n            \"type\": \"string\"\n        },\n        \"weight\": {\n            \"type\": \"number\"\n        },\n        \"dimensions\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"width\": {\n                    \"type\": \"number\"\n                },\n                \"height\": {\n                    \"type\": \"number\"\n                },\n                \"depth\": {\n                    \"type\": \"number\"\n                }\n            }\n        },\n        \"warrantyInformation\": {\n            \"type\": \"string\"\n        },\n        \"shippingInformation\": {\n            \"type\": \"string\"\n        },\n        \"availabilityStatus\": {\n            \"type\": \"string\"\n        },\n        \"reviews\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"rating\": {\n                        \"type\": \"number\"\n                    },\n                    \"comment\": {\n                        \"type\": \"string\"\n                    },\n                    \"date\": {\n                        \"type\": \"string\"\n                    },\n                    \"reviewerName\": {\n                        \"type\": \"string\"\n                    },\n                    \"reviewerEmail\": {\n                        \"type\": \"string\"\n                    }\n                },\n                \"required\": [\n                    \"rating\",\n                    \"comment\",\n                    \"date\",\n                    \"reviewerName\",\n                    \"reviewerEmail\"\n                ]\n            }\n        },\n        \"returnPolicy\": {\n            \"type\": \"string\"\n        },\n        \"minimumOrderQuantity\": {\n            \"type\": \"number\"\n        },\n        \"meta\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"createdAt\": {\n                    \"type\": \"string\"\n                },\n                \"updatedAt\": {\n                    \"type\": \"string\"\n                },\n                \"barcode\": {\n                    \"type\": \"string\"\n                },\n                \"qrCode\": {\n                    \"type\": \"string\"\n                }\n            }\n        },\n        \"images\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"string\"\n            }\n        },\n        \"thumbnail\": {\n            \"type\": \"string\"\n        }\n    }\n}"
+    },
+    "PRODUCT_SCHEMA": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"id\": {\n            \"type\": \"string\"\n        },\n        \"name\": {\n            \"type\": \"string\"\n        },\n        \"description\": {\n            \"type\": \"string\"\n        },\n        \"price\": {\n            \"type\": \"number\"\n        },\n        \"available\": {\n            \"type\": \"boolean\"\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"id\": {\n            \"type\": \"string\"\n        },\n        \"name\": {\n            \"type\": \"string\"\n        },\n        \"description\": {\n            \"type\": \"string\"\n        },\n        \"price\": {\n            \"type\": \"number\"\n        },\n        \"available\": {\n            \"type\": \"boolean\"\n        }\n    }\n}"
+    }
+  },
+  "connections": {},
+  "contrib": "W3sicmVmIjoiZ2l0aHViLmNvbS90aWJjby9mbG9nby1nZW5lcmFsL3NyYy9hcHAvR2VuZXJhbCIsImlkIjoiR2VuZXJhbCIsInZlcnNpb24iOiIxLjYuMiIsInRhZyI6IjEuNi4yLWIwMiIsIm5hbWUiOiJHZW5lcmFsIiwiczNsb2NhdGlvbiI6IlRpYmNvL0dlbmVyYWwiLCJpc1VzZXJFeHRlbnNpb24iOmZhbHNlfV0=",
+  "metadata": {
+    "endpoints": [
+      {
+        "title": "GraphQLTrigger",
+        "pingable": false,
+        "protocol": "http",
+        "port": "9090",
+        "specType": "graphql",
+        "spec": {
+          "name": "GQL-PRODUCT-INFOMATION-API",
+          "version": "1.1.0"
+        }
+      }
+    ],
+    "flogoVersion": "2.25.1"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "suites": {},
+  "tests": {
+    "RPA_Orchestrator:Tester": {
+      "name": "Tester",
+      "flowId": "flow:RPA_Orchestrator",
+      "flowName": "RPA_Orchestrator",
+      "disabled": false,
+      "flowInputs": {
+        "body": {
+          "product": {
+            "productId": "12345",
+            "productName": "Awesome Shoes",
+            "productDescription": "These shoes are the best!",
+            "price": 99.99,
+            "available": true
+          }
+        }
+      }
+    }
+  },
+  "type": "flogo:unittest",
+  "model": "1.1.1",
+  "app": {
+    "name": "RPA-Integration",
+    "version": "1.0.0"
+  }
+}

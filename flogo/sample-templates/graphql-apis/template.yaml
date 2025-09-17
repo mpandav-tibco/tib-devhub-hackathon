@@ -1,0 +1,114 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: flogo-template-graphql-apis
+  title: Flogo GraphQL APIs Template
+  description: Create GraphQL APIs using TIBCO Flogo with product information from multiple data sources and flexible query capabilities
+  tags:
+    - tibco
+    - flogo
+    - graphql
+    - apis
+    - recommended
+spec:
+  owner: ACME
+  type: library
+
+  parameters:
+    - title: Fill in some steps
+      required:
+        - name
+        - description
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name of the Flogo Project
+          ui:field: EntityNamePicker
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+          description: A description for the Flogo GraphQL API Project
+        system:
+          title: System
+          type: string
+          description: Target System 
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: system
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+    - title: GraphQL Configuration
+      properties:
+        enableMutation:
+          title: Enable GraphQL Mutations
+          type: boolean
+          description: Enable mutation operations for data modification
+          default: true
+        enableSubscription:
+          title: Enable GraphQL Subscriptions
+          type: boolean
+          description: Enable real-time subscriptions
+          default: false
+        apiPort:
+          title: API Port
+          type: integer
+          description: Port number for the GraphQL API
+          default: 9999
+
+  steps:
+    - id: fetch
+      name: Flogo GraphQL Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          destination: ${{ parameters.repoUrl | parseRepoUrl }}
+          owner: ${{ parameters.owner }}
+          system: ${{ parameters.system }}
+          enableMutation: ${{ parameters.enableMutation }}
+          enableSubscription: ${{ parameters.enableSubscription }}
+          apiPort: ${{ parameters.apiPort }}
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

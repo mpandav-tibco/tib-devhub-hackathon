@@ -1,0 +1,525 @@
+{
+  "imports": [
+    "github.com/project-flogo/flow",
+    "github.com/project-flogo/contrib/activity/noop",
+    "github.com/tibco/flogo-general/src/app/General/activity/log",
+    "github.com/project-flogo/flow/activity/subflow",
+    "github.com/tibco/flogo-general/src/app/General/activity/actreply",
+    "github.com/tibco/flogo-general/src/app/General/activity/rest",
+    "github.com/project-flogo/contrib/activity/actreturn",
+    "rest_1 github.com/tibco/flogo-general/src/app/General/trigger/rest",
+    "github.com/project-flogo/contrib/function/string"
+  ],
+  "name": "RPA-Integration",
+  "description": "Integrate with Robotic Process Automation for Data Entry",
+  "version": "1.0.0",
+  "type": "flogo:app",
+  "appModel": "1.1.1",
+  "tags": [],
+  "triggers": [
+    {
+      "ref": "#rest_1",
+      "name": "tibco-wi-rest",
+      "description": "Simple REST Trigger",
+      "settings": {
+        "port": 9999,
+        "APISpecUpdate": false,
+        "swagger": "",
+        "swaggerVersion": "v2",
+        "apiVersion": "1.0.0",
+        "secureConnection": false,
+        "serverKey": "",
+        "caCertificate": ""
+      },
+      "id": "ReceiveHTTPMessage",
+      "handlers": [
+        {
+          "description": "An Orchestrator flow that Takes Product Request and Push to RPA Bot",
+          "settings": {
+            "Method": "POST",
+            "reqType": "application/json",
+            "Path": "/product",
+            "OutputValidation": false
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:RPA_Orchestrator"
+            },
+            "input": {
+              "headers": "=$.headers",
+              "body": "=$.body",
+              "requestURI": "=$.requestURI",
+              "method": "=$.method"
+            },
+            "output": {
+              "code": "=$.code",
+              "message": "=$.message"
+            }
+          },
+          "reply": {
+            "code": 200,
+            "configureResponseCodes": false,
+            "message": {}
+          },
+          "schemas": {
+            "reply": {
+              "responseBody": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"any\"},\"headers\":{\"type\":\"object\"}}}",
+                "fe_metadata": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"any\"},\"headers\":{\"type\":\"object\"}}}",
+                "feSchemaMap": {}
+              }
+            },
+            "output": {
+              "headers": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+              },
+              "body": "schema://schema_product"
+            }
+          },
+          "name": "RPA_Orchestrator"
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "flow:RPA_Orchestrator",
+      "data": {
+        "name": "RPA_Orchestrator",
+        "description": "An Orchestrator flow that Takes Product Request and Push to RPA Bot",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "LogDataRequest",
+            "type": "label",
+            "label": "StartActivity to LogMessage"
+          },
+          {
+            "id": 2,
+            "from": "LogDataRequest",
+            "to": "UiPath_Integration",
+            "type": "label",
+            "label": "LogMessage to StartaSubFlow"
+          },
+          {
+            "id": 3,
+            "from": "UiPath_Integration",
+            "to": "ReplyToTrigger",
+            "type": "label",
+            "label": "StartaSubFlow to ReplyToTrigger"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "LogDataRequest",
+            "name": "LogDataRequest",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"###### Request for UiPATH RPA : \",string.tostring($flow.body))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "UiPath_Integration",
+            "name": "UiPath_Integration",
+            "description": "Simple SubFlow Activity",
+            "activity": {
+              "ref": "#subflow",
+              "settings": {
+                "flowURI": "res://flow:UIPath_Data_Entry",
+                "detached": false
+              },
+              "input": {
+                "input": {
+                  "mapping": {
+                    "product": {
+                      "productId": "=$flow.body.product.productId",
+                      "productName": "=$flow.body.product.productName",
+                      "productDescription": "=$flow.body.product.productDescription",
+                      "price": "=$flow.body.product.price",
+                      "available": "=$flow.body.product.available"
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"object\",\"properties\":{\"product\":{\"type\":\"object\",\"properties\":{\"productId\":{\"type\":\"string\"},\"productName\":{\"type\":\"string\"},\"productDescription\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}}}}}",
+                    "fe_metadata": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"object\",\"properties\":{\"product\":{\"type\":\"object\",\"properties\":{\"productId\":{\"type\":\"string\"},\"productName\":{\"type\":\"string\"},\"productDescription\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}}}}}",
+                    "feSchemaMap": {}
+                  }
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"string\"},\"code\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\n    \"data\":\"\",\n    \"code\":\"\"\n}",
+                    "feSchemaMap": {}
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "ReplyToTrigger",
+            "name": "ReplyToTrigger",
+            "description": "Reply back to the trigger and continue flow execution, it must be used only in the flow with the trigger configured.",
+            "activity": {
+              "ref": "#actreply",
+              "input": {
+                "reply": {
+                  "mapping": {
+                    "code": 200,
+                    "message": "Sent Data for Entry..."
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "reply": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"code\":{\"type\":\"integer\",\"required\":false},\"message\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                    "fe_metadata": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"code\":{\"type\":\"integer\",\"required\":false},\"message\":{\"type\":\"string\",\"required\":false}},\"required\":[]}",
+                    "feSchemaMap": {}
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEyLCJ5IjoxMDd9LCJMb2dEYXRhUmVxdWVzdCI6eyJ4IjoxMzgsInkiOjEwMX0sIlVpUGF0aF9JbnRlZ3JhdGlvbiI6eyJ4Ijo0MDAsInkiOjEwMX0sIlJlcGx5VG9UcmlnZ2VyIjp7IngiOjY1NywieSI6MTA1fX0=",
+        "metadata": {
+          "input": [
+            {
+              "name": "headers",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}}"
+              }
+            },
+            {
+              "name": "body",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"product\":{\"type\":\"object\",\"properties\":{\"productId\":{\"type\":\"string\"},\"productName\":{\"type\":\"string\"},\"productDescription\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}}"
+              }
+            },
+            {
+              "name": "requestURI",
+              "type": "string"
+            },
+            {
+              "name": "method",
+              "type": "string"
+            }
+          ],
+          "output": [
+            {
+              "name": "code",
+              "type": "integer"
+            },
+            {
+              "name": "message",
+              "type": "string"
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"type\":\"object\",\"title\":\"ReceiveHTTPMessage\",\"properties\":{\"headers\":{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]},\"body\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"product\":{\"type\":\"object\",\"properties\":{\"productId\":{\"type\":\"string\"},\"productName\":{\"type\":\"string\"},\"productDescription\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}}},\"requestURI\":{\"type\":\"string\",\"required\":false},\"method\":{\"type\":\"string\",\"required\":false}}}",
+            "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"code\":{\"type\":\"integer\",\"required\":false},\"message\":{\"type\":\"string\",\"required\":false}},\"required\":[]}"
+          }
+        },
+        "explicitReply": true
+      }
+    },
+    {
+      "id": "flow:UIPath_Data_Entry",
+      "data": {
+        "name": "UIPath_Data_Entry",
+        "description": "Trigger RPA Bot for Received Request",
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "InvokeRESTService",
+            "type": "label",
+            "label": "StartActivity to InvokeRESTService"
+          },
+          {
+            "id": 2,
+            "from": "InvokeRESTService",
+            "to": "Return",
+            "type": "expression",
+            "label": "success",
+            "value": "$activity[InvokeRESTService].statusCode == 200"
+          },
+          {
+            "id": 3,
+            "from": "InvokeRESTService",
+            "to": "Error",
+            "type": "exprOtherwise",
+            "label": "otherwise"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "StartActivity",
+            "name": "StartActivity",
+            "description": "NoOp Activity",
+            "activity": {
+              "ref": "#noop"
+            }
+          },
+          {
+            "id": "InvokeRESTService",
+            "name": "InvokeRESTService",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": "",
+                "authorization": false,
+                "authorizationConn": "",
+                "serviceName": "",
+                "resourcePath": "",
+                "Method": "POST",
+                "Uri": "=$property[\"UiPATH.RPA_WEBHOOK\"]",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableKeepAlives": false,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "body": {
+                  "mapping": {
+                    "productId": "=$flow.input.product.productId",
+                    "productName": "=$flow.input.product.productName",
+                    "productDescription": "=$flow.input.product.productDescription",
+                    "price": "=$flow.input.product.price",
+                    "available": "=$flow.input.product.available"
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": false,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  },
+                  "body": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"productId\":{\"type\":\"string\"},\"productName\":{\"type\":\"string\"},\"productDescription\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}",
+                    "fe_metadata": "{\n  \"productId\": \"12345\",\n  \"productName\": \"Awesome Shoes\",\n  \"productDescription\": \"These shoes are the best!\",\n  \"price\": 99.99,\n  \"available\": true\n}\n",
+                    "feSchemaMap": {}
+                  }
+                },
+                "output": {
+                  "responseBody": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"correlationId\":{\"type\":\"string\"},\"webhookEventId\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\n    \"correlationId\": \"3d78ddaf-5360-4bf9-8aaa-25b1d1a5be93\",\n    \"webhookEventId\": \"wr-28a20a9afe.2d9aa49c-83b4-466e-93ac-65c2a7f6c559-228610-1737313302885\"\n}",
+                    "feSchemaMap": {}
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "Return",
+            "name": "Return",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "data": "=string.concat(\"JOB Triggerred Successfully with \", string.tostring($activity[InvokeRESTService].responseBody))",
+                  "code": 200
+                }
+              }
+            }
+          },
+          {
+            "id": "Error",
+            "name": "Error",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "data": "Error Sending Data",
+                  "code": "Error Sending Data"
+                }
+              }
+            }
+          }
+        ],
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEwMCwieSI6MTAwfSwiSW52b2tlUkVTVFNlcnZpY2UiOnsieCI6Mjc3LCJ5Ijo4OX0sIlJldHVybiI6eyJ4Ijo1NDQsInkiOjg5fSwiRXJyb3IiOnsieCI6NTUwLCJ5IjoyNDR9fQ==",
+        "metadata": {
+          "input": [
+            {
+              "name": "input",
+              "type": "object",
+              "schema": {
+                "type": "json",
+                "value": "{\"product\":{\"type\":\"object\",\"properties\":{\"productId\":{\"type\":\"string\"},\"productName\":{\"type\":\"string\"},\"productDescription\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}}"
+              }
+            }
+          ],
+          "output": [
+            {
+              "name": "data",
+              "type": "string"
+            },
+            {
+              "name": "code",
+              "type": "string"
+            }
+          ],
+          "fe_metadata": {
+            "input": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"input\":{\"type\":\"object\",\"properties\":{\"product\":{\"type\":\"object\",\"properties\":{\"productId\":{\"type\":\"string\"},\"productName\":{\"type\":\"string\"},\"productDescription\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"},\"available\":{\"type\":\"boolean\"}}}}}}}",
+            "output": "{\n    \"data\":\"\",\n    \"code\":\"\"\n}"
+          }
+        }
+      }
+    }
+  ],
+  "properties": [
+    {
+      "name": "UiPATH.RPA_WEBHOOK",
+      "type": "string",
+      "value": "https://cloud.uipath.com/freeleczndkm/052ef9bd-652b-4714-8f94-0ab504eebd2a/elements_/v1/webhooks/events/uipath-http-webhook/2d9aa49c-83b4-466e-93ac-65c2a7f6c559"
+    }
+  ],
+  "schemas": {
+    "schema_product": {
+      "type": "json",
+      "value": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"product\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"productId\": {\n                    \"type\": \"string\"\n                },\n                \"productName\": {\n                    \"type\": \"string\"\n                },\n                \"productDescription\": {\n                    \"type\": \"string\"\n                },\n                \"price\": {\n                    \"type\": \"number\"\n                },\n                \"available\": {\n                    \"type\": \"boolean\"\n                }\n            }\n        }\n    }\n}",
+      "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"product\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"productId\": {\n                    \"type\": \"string\"\n                },\n                \"productName\": {\n                    \"type\": \"string\"\n                },\n                \"productDescription\": {\n                    \"type\": \"string\"\n                },\n                \"price\": {\n                    \"type\": \"number\"\n                },\n                \"available\": {\n                    \"type\": \"boolean\"\n                }\n            }\n        }\n    }\n}"
+    }
+  },
+  "connections": {},
+  "contrib": "W3sicmVmIjoiZ2l0aHViLmNvbS90aWJjby9mbG9nby1nZW5lcmFsL3NyYy9hcHAvR2VuZXJhbCIsImlkIjoiR2VuZXJhbCIsInZlcnNpb24iOiIxLjYuMiIsInRhZyI6IjEuNi4yLWIwMiIsIm5hbWUiOiJHZW5lcmFsIiwiczNsb2NhdGlvbiI6IlRpYmNvL0dlbmVyYWwiLCJpc1VzZXJFeHRlbnNpb24iOmZhbHNlfV0=",
+  "metadata": {
+    "endpoints": [
+      {
+        "protocol": "http",
+        "port": "9999",
+        "spec": {
+          "name": "RPA-Integration",
+          "version": "1.0.0"
+        },
+        "title": "ReceiveHTTPMessage",
+        "swagger": {
+          "swagger": "2.0",
+          "info": {
+            "title": "RPA-Integration",
+            "version": "1.0.0",
+            "description": "Simple REST Trigger"
+          },
+          "paths": {
+            "/product": {
+              "post": {
+                "summary": "RPA_Orchestrator",
+                "operationId": "post_product",
+                "parameters": [
+                  {
+                    "name": "body",
+                    "in": "body",
+                    "description": "request body parameter",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/schema1"
+                    }
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "Rest Response",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "description": "An Orchestrator flow that Takes Product Request and Push to RPA Bot",
+                "consumes": [
+                  "application/json"
+                ]
+              }
+            }
+          },
+          "definitions": {
+            "schema1": {
+              "type": "object",
+              "properties": {
+                "product": {
+                  "type": "object",
+                  "properties": {
+                    "productId": {
+                      "type": "string"
+                    },
+                    "productName": {
+                      "type": "string"
+                    },
+                    "productDescription": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "number"
+                    },
+                    "available": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "flogoVersion": "2.25.1"
+  }
+}

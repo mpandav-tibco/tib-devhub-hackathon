@@ -1,0 +1,123 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: flogo-template-rpa-integration
+  title: Flogo RPA Integration Template
+  description: Create RPA integration solutions using TIBCO Flogo with UiPath automation workflows and API orchestration
+  tags:
+    - tibco
+    - flogo
+    - rpa
+    - automation
+    - uipath
+    - integration
+    - recommended
+spec:
+  owner: ACME
+  type: library
+
+  parameters:
+    - title: Fill in some steps
+      required:
+        - name
+        - description
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name of the Flogo RPA Integration Project
+          ui:field: EntityNamePicker
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+          description: A description for the Flogo RPA Integration Project
+        system:
+          title: System
+          type: string
+          description: Target System 
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: system
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+    - title: RPA Configuration
+      properties:
+        rpaProvider:
+          title: RPA Provider
+          type: string
+          description: RPA automation platform
+          enum: ["uipath", "automation-anywhere", "blue-prism", "other"]
+          default: uipath
+        orchestratorUrl:
+          title: Orchestrator URL
+          type: string
+          description: URL of the RPA orchestrator
+          default: https://cloud.uipath.com
+        enableScheduling:
+          title: Enable Job Scheduling
+          type: boolean
+          description: Enable automated job scheduling
+          default: true
+        apiTimeout:
+          title: API Timeout (seconds)
+          type: integer
+          description: Timeout for RPA API calls
+          default: 300
+
+  steps:
+    - id: fetch
+      name: Flogo RPA Integration Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          destination: ${{ parameters.repoUrl | parseRepoUrl }}
+          owner: ${{ parameters.owner }}
+          system: ${{ parameters.system }}
+          rpaProvider: ${{ parameters.rpaProvider }}
+          orchestratorUrl: ${{ parameters.orchestratorUrl }}
+          enableScheduling: ${{ parameters.enableScheduling }}
+          apiTimeout: ${{ parameters.apiTimeout }}
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

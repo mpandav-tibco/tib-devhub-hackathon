@@ -1,0 +1,21 @@
+type Product {
+  id: ID!
+  name: String!
+  description: String
+  price: Float
+  available: Boolean
+}
+
+type Query {
+  product(id: ID!): Product
+}
+
+type Mutation {
+  upsertProduct(
+    id: ID!
+    name: String!
+    description: String
+    price: Float
+    available: Boolean
+  ): Product
+}

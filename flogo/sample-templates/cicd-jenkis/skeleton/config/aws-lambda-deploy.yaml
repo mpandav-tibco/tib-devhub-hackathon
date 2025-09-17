@@ -1,0 +1,1 @@
+aws lambda create-function --function-name eco-label-lambda \ --runtime provided.al2023 --handler bootstrap \ --architectures x86_64 \ --role arn:aws:iam::xxxx:role/EMEA_Lambda \ --region eu-central-1 \ --zip-file fileb:///Users/milindpandav/Downloads/Work/Customers/PUMA/Demo/Flogo-workspace/bin/eco-label-linux_amd64.zip

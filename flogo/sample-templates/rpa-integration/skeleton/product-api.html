@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create Product</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/lux/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: sans-serif;
+        background-image: url("https://plus.unsplash.com/premium_photo-1678566111481-8e275550b700?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+      .container {
+        margin-top: 50px;
+      }
+      #orderResponse pre {
+        white-space: pre-wrap;
+      }
+      .card-img-top {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        margin: 0 auto;
+        transition: transform 0.2s;
+      }
+      .card-title {
+        min-height: 40px;
+      }
+      .card-text {
+        min-height: 60px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+      }
+      .navbar-brand img {
+        margin-right: 10px;
+        vertical-align: top;
+      }
+      .add-to-order {
+        width: 100%;
+      }
+      .navbar-brand span {
+        font-size: 40px;
+        line-height: 3;
+        padding: 5px 0;
+        vertical-align: top;
+        color: ffff;
+        font-style: bold;
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+      }
+      .card {
+        transition: transform 0.2s;
+        background-color: ffff;
+      }
+      .card:hover {
+        transform: scale(1.1);
+      }
+      .larger-label {
+        font-size: 22px;
+        color: #000;
+      }
+      #orderResponse pre {
+        white-space: pre-wrap;
+        font-weight: bold;
+        color: green;
+        font-size: 40px;
+      }
+
+      /* Form styles */
+      .form-label {
+        font-size: 18px;
+        color: #ffffff;
+        margin-bottom: 10px;
+      }
+      .form-input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 15px;
+      }
+      .form-submit-button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .form-submit-button:hover {
+        background-color: #0066cc;
+      }
+      .text-center {
+        color: #ffffff;
+      }
+      .form-check {
+        margin-right: 10px;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <img
+            src="https://static.vecteezy.com/system/resources/thumbnails/023/817/918/small_2x/solid-icon-for-demo-vector.jpg"
+            alt="Logo"
+            width="100"
+            height="100"
+            class="me-2"
+          />
+          <span style="font-size: 50px">Product Catalog</span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href=""
+                title="Go to the homepage"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" title="Learn more about us">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" title="See our services">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" title="Get in touch with us"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h1 class="text-center mb-4">Create New Product</h1>
+
+      <form id="productForm" class="needs-validation" novalidate>
+        <div class="mb-3">
+          <label for="productName" class="form-label">Product Name:</label>
+          <input
+            type="text"
+            id="productName"
+            name="productName"
+            class="form-control form-input"
+            required
+          />
+          <div class="invalid-feedback">
+            Please provide a valid product name.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="productDescription" class="form-label"
+            >Description:</label
+          >
+          <textarea
+            id="productDescription"
+            name="productDescription"
+            class="form-control form-input"
+          ></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="price" class="form-label">Price:</label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            class="form-control form-input"
+            min="0.01"
+            step="0.01"
+            required
+          />
+          <div class="invalid-feedback">Please provide a valid price.</div>
+        </div>
+
+        <div class="mb-3">
+          <div class="form-check">
+            <input
+              type="checkbox"
+              id="available"
+              name="available"
+              class="form-check-input"
+            />
+            <label for="available" class="form-check-label">Available:</label>
+          </div>
+        </div>
+
+        <div class="col-12 text-center">
+          <button type="submit" class="btn btn-primary form-submit-button">
+            Create Product
+          </button>
+        </div>
+      </form>
+
+
+    <script>
+      const form = document.getElementById("productForm");
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        // Create the banner element
+        const banner = document.createElement("div");
+        banner.textContent = "Product created successfully!";
+        banner.style.cssText = `
+        position: fixed;
+        top: 90%; /* Center vertically */
+        left: 50%;
+        transform: translate(-50%, -50%); /* Center horizontally and vertically */
+        background-color: #4CAF50; 
+        color: white;
+        padding: 20px 40px; /* Increased padding */
+        border-radius: 10px; /* Larger border radius */
+        z-index: 1000; 
+        font-size: 24px; /* Larger font size */
+        text-align: center; /* Center text */
+        `;
+
+        // Add the banner to the page
+        document.body.appendChild(banner);
+
+        // Optionally, add a close button to the banner
+        const closeButton = document.createElement("span");
+        closeButton.textContent = "x";
+        closeButton.style.cssText = `
+          float: right;
+          cursor: pointer;
+          margin-left: 10px;
+        `;
+        closeButton.addEventListener("click", () => {
+          document.body.removeChild(banner);
+        });
+        banner.appendChild(closeButton);
+
+        // Optionally, remove the banner after a few seconds
+        setTimeout(() => {
+          document.body.removeChild(banner);
+        }, 5000); // 5 seconds
+      });
+    </script>
+  </body>
+</html>
