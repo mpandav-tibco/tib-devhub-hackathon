@@ -1,41 +1,23 @@
 apiVersion: backstage.io/v1alpha1
-kind: L    # =======================================================
-    # 🏪 MARKETPLACE ENTRIES - Flogo Extensions & Templates (17 entries)
-    # =======================================================
-    
-    # Activity Marketplace Entries (7)on
+kind: Location
 metadata:
   name: flogo-marketplace-registry
   title: TIBCO Flogo Marketplace Registry
   description: |
-    🏪 TIBCO Flogo Extensions & Templates Marketplace Registry 🏪
+    Comprehensive registry for all TIBCO Flogo marketplace entries.
+    This single file registers all Flogo extensions, templates, and marketplace assets in the Developer Hub.
     
-    Discover and install Flogo extensions and templates directly from the marketplace:
-    ✅ 17 Marketplace Entries with complete documentation, examples, and installation guides
+    Categories included:
+    - Extension Activities (7 entries)
+    - Extension Connectors (1 entry)
+    - Extension Triggers (2 entries)
+    - Template Solutions (7 entries)
     
-    📦 Extension Types:
-    - Activities: AWS Signature V4, Schema Transforms (XSD/JSON/Avro), Template Engine, Write Log, XML Filter (7 total)
-    - Connectors: Server-Sent Events for real-time streaming (1 total)
-    - Triggers: MySQL Binlog Listener, PostgreSQL Listener for database monitoring (2 total)
-    - Templates: CI/CD, GraphQL APIs, gRPC APIs, MCP Customer Service, MQTT Inventory, RPA Integration (7 total)
-    
-    🎯 Use Cases:
-    - Enterprise Integration & Data Processing
-    - Real-time Communication & Event Streaming
-    - Cloud Security & Authentication
-    - Database Change Data Capture
-    - Content Generation & Template Processing
-    - CI/CD Pipelines & DevOps
-    - API Development (GraphQL, gRPC)
-    - IoT & Message Processing
-    
-    📈 Total: 17 marketplace entries (10 extensions + 7 templates)
-    
-    🔧 Usage: Add this single URL to your Developer Hub to enable the Flogo marketplace!
+    Total: 17 Flogo marketplace entries
   annotations:
     backstage.io/managed-by-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/flogo-marketplace-registry.yaml
-    marketplace.tibco.com/category: "Flogo Extensions"
-    marketplace.tibco.com/featured: "true"
+    backstage.io/managed-by-origin: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/flogo-marketplace-registry.yaml
+    marketplace.tibco.com/category: "Flogo Registry"
   tags:
     - flogo
     - tibco
@@ -44,30 +26,68 @@ metadata:
 spec:
   targets:
     # =======================================================
-    #  MARKETPLACE ENTRIES - Flogo Extensions (10 entries)
+    # FLOGO EXTENSION ACTIVITIES (7 entries)
     # =======================================================
     
-    # Activity Marketplace Entries (7)
+    # AWS Signature V4 - Secure AWS service authentication and authorization
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/mp-entry-awssignaturev4.yaml
+    
+    # XSD Schema Transform - XML schema validation and transformation
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/xsdschematransform/mp-entry-xsdschematransform.yaml
+    
+    # JSON Schema Transform - JSON schema validation and transformation
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/jsonschematransform/mp-entry-jsonschematransform.yaml
+    
+    # Avro Schema Transform - Apache Avro schema processing and transformation
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/avroschematransform/mp-entry-avroschematransform.yaml
+    
+    # Template Engine - Dynamic content generation and template processing
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/mp-entry-templateengine.yaml
+    
+    # Write Log - Enhanced logging capabilities with custom formatting
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/write-log/mp-entry-write-log.yaml
+    
+    # XML Filter - Advanced XML parsing, filtering, and manipulation
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/mp-entry-xmlfilter.yaml
     
-    # Connector Marketplace Entries (1)
+    # =======================================================
+    # FLOGO EXTENSION CONNECTORS (1 entry)
+    # =======================================================
+    
+    # Server-Sent Events Connector - Real-time streaming communication
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/connector/sse/mp-entry-sse-connector.yaml
     
-    # Trigger Marketplace Entries (2)
+    # =======================================================
+    # FLOGO EXTENSION TRIGGERS (2 entries)
+    # =======================================================
+    
+    # MySQL Binlog Listener - Real-time MySQL database change data capture
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/mysql-binlog-listener/mp-entry-mysql-binlog-listener.yaml
+    
+    # PostgreSQL Listener - Real-time PostgreSQL database event monitoring
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/trigger/postgreslistener/mp-entry-postgreslistener.yaml
     
-    # Additional Template Marketplace Entries (7)
+    # =======================================================
+    # FLOGO TEMPLATE SOLUTIONS (7 entries)
+    # =======================================================
+    
+    # CI/CD Jenkins Pipeline - Complete DevOps automation and continuous integration
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-cicd-jenkins.yaml
+    
+    # CI/CD Terraform Infrastructure - Infrastructure as Code deployment automation  
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-cicd-terraform.yaml
+    
+    # GraphQL APIs - Modern API development with GraphQL integration
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-graphql-apis.yaml
+    
+    # gRPC API Services - High-performance API services with gRPC protocol
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-grpc-api.yaml
+    
+    # MCP Customer Service - Model Context Protocol customer service integration
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-mcp-customer-service.yaml
+    
+    # MQTT Inventory Management - IoT inventory tracking with MQTT messaging
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-mqtt-inventory.yaml
+    
+    # RPA Integration Platform - Robotic Process Automation integration solutions
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-rpa-integration.yaml
