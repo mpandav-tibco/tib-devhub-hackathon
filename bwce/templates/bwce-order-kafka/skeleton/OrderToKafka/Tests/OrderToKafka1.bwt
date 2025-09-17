@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<emulation:EmulationData xmlns:emulation="http:///emulation.ecore" isBW="true" location="/OrderToKafka/Tests/OrderToKafka1.bwt" isSelected="true">
+  <ProcessNode Id="ordersync.MP_Order_Service" Name="ordersync.MP_Order_Service" ModelType="BW" moduleName="OrderToKafka" componentProcessName="ComponentProcess"/>
+</emulation:EmulationData>

@@ -1,0 +1,6 @@
+projectKey=com.tibco.bw:OrderToKafka.application.parent
+serverUrl=https://sonarqube.localhost.dataplanes.pro
+serverVersion=9.9.8.100196
+dashboardUrl=https://sonarqube.localhost.dataplanes.pro/dashboard?id=com.tibco.bw%3AOrderToKafka.application.parent
+ceTaskId=AZPOh-75Fa7dES27__ul
+ceTaskUrl=https://sonarqube.localhost.dataplanes.pro/api/ce/task?id=AZPOh-75Fa7dES27__ul

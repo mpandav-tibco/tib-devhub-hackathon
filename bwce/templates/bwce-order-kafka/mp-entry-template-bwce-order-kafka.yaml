@@ -1,0 +1,116 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: mp-entry-template-bwce-order-kafka
+  title: BWCE Order Kafka Processing Template
+  description: A TIBCO BusinessWorks Container Edition template for order processing and Kafka message streaming integration.
+  backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 8
+    isMultiInstall: false
+    imageURL: ""
+    moreInfo:
+      - text: BWCE Documentation
+        url: https://docs.tibco.com/products/tibco-businessworks-container-edition
+        icon: docs
+      - text: TIBCO BusinessWorks
+        url: https://www.tibco.com/products/tibco-businessworks
+        icon: star
+      - text: Sample Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/templates/bwce-order-kafka
+        icon: github
+  tags:
+    - devhub-marketplace
+    - bwce-templates
+    - business-works-container-edition
+    - order-processing
+    - kafka-streaming
+    - e-commerce
+    - recommended
+spec:
+  owner: group:default/marketplace-entries-group
+  type: template
+  presentation:
+    buttonLabels:
+      createButtonText: Install
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      errorMessage: Please accept the Marketplace Entry
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install BWCE Order Kafka Processing Template into your TIBCO Developer Hub
+
+            **ID:** mp-entry-template-bwce-order-kafka
+
+            **Description:** A TIBCO BusinessWorks Container Edition template for order processing and Kafka message streaming integration.
+
+            ### What This Template Provides:
+
+            **🛒 Order Processing Features:**
+            - **Order Management** - Complete order lifecycle processing workflows
+            - **Kafka Integration** - Real-time order event streaming to Kafka topics
+            - **Data Validation** - Comprehensive order data validation and verification
+            - **Business Logic** - Configurable business rules and processing logic
+
+            **🏗️ Architecture Components:**
+            - **BWCE Library** - Shared components and reusable modules
+            - **Order Processing Module** - Complete order handling workflows
+            - **Application Structure** - Modular design with parent-child project structure
+            - **Test Framework** - Built-in testing capabilities and test cases
+
+            **🚀 Enterprise Features:**
+            - **Maven Integration** - Complete Maven build and dependency management
+            - **Scalable Design** - Handle high-volume order processing
+            - **Error Handling** - Comprehensive exception management and retry mechanisms
+            - **Monitoring** - Built-in logging and order tracking capabilities
+
+            **📊 Use Cases:**
+            - E-commerce order processing workflows
+            - Real-time order event streaming
+            - Order management system integration
+            - Event-driven commerce architectures
+            - Supply chain and inventory management
+            - Customer notification systems
+
+            **🛠️ Template Contents:**
+            - Complete BWCE order processing application
+            - Shared library with common order utilities
+            - Maven-based build configuration
+            - Test cases and sample order data
+            - Documentation and deployment guides
+            - Kafka connectivity and messaging logic
+
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. You are responsible for reviewing the specific license terms that apply to each item that you access or use. Cloud Software Group, Inc. and its affiliates: (1) do not make any representation, promises, or guarantees about these items; and (2) are making these items available to you "AS IS," without any warranties or indemnities.
+            This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: null
+          enum:
+            - null
+            - true
+  steps:
+    - id: registerItem
+      name: Installing Marketplace Entry...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-order-kafka/template-order-kafka.yaml
+  output:
+    links:
+      - title: Open in catalog
+        type: catalog
+        icon: catalog
+        entityRef: ${{ steps.registerItem.output.entityRef }}
+      - title: Templates
+        url: /create?filters%5Bkind%5D=template&filters%5Buser%5D=all&limit=20
+        icon: kind:template
+      - icon: kind:template
+        title: Create Order Kafka Processing Project
+        url: /create/templates/default/bwce-template-order-kafka
