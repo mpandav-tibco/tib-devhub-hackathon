@@ -17,7 +17,7 @@ metadata:
     marketplace.tibco.com/maturity: "Production Ready"
     marketplace.tibco.com/version: "1.0.0"
     marketplace.tibco.com/last-updated: "2025-09-16"
-    marketplace.tibco.com/documentation-url: "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/docs/cicd-jenkins/README.md"
+    marketplace.tibco.com/documentation-url: "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/cicd-jenkins/README.md"
     marketplace.tibco.com/support-level: "Community"
     marketplace.tibco.com/estimated-time: "2-4 hours"
   tags:
@@ -175,7 +175,7 @@ metadata:
   name: bwce-cicd-template-location
   description: Location of BWCE CI/CD pipeline template in the repository
   annotations:
-    marketplace.tibco.com/template-path: "/bwce/docs/cicd-jenkins/template-bwce-cicd.yaml"
+    marketplace.tibco.com/template-path: "/bwce/templates/cicd-jenkins/template-bwce-cicd.yaml"
 spec:
   type: url
-  target: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/docs/cicd-jenkins/template-bwce-cicd.yaml
+  target: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/cicd-jenkins/template-bwce-cicd.yaml
