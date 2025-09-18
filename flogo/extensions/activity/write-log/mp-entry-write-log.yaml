@@ -10,7 +10,7 @@ metadata:
     isNew: true
     popularity: 7
     isMultiInstall: true
-    imageURL: ""
+    imageURL: "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/img/flogo-custom-activities.png"
     moreInfo:
       - text: Source Repository
         url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/write-log
