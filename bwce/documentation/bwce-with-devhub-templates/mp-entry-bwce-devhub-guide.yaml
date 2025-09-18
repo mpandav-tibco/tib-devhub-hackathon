@@ -33,7 +33,7 @@ metadata:
     - tibco
     - maven
 spec:
-  owner: tibco-templates
+  owner: group:default/platform-team
   type: Documentation
   presentation:
     buttonLabels:

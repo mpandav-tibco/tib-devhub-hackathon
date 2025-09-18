@@ -31,7 +31,7 @@ metadata:
     - bwce
     - tibco
 spec:
-  owner: tibco-templates
+  owner: group:default/platform-team
   type: template
   presentation:
     buttonLabels:

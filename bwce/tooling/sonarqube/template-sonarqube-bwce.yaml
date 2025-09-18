@@ -12,7 +12,7 @@ metadata:
     - businessworks
     - docker
 spec:
-  owner: tibco-templates
+  owner: group:default/platform-team
   type: service
 
   parameters:

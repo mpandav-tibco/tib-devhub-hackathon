@@ -14,7 +14,7 @@ metadata:
     - docker
     - observability
 spec:
-  owner: user:guest
+  owner: group:default/platform-team
   type: documentation
   parameters:
     - title: Documentation Configuration

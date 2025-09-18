@@ -35,7 +35,7 @@ metadata:
     - docker
     - kubernetes
 spec:
-  owner: tibco-integration-team
+  owner: group:default/platform-team
   type: template
   presentation:
     buttonLabels:
