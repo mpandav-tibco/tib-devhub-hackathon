@@ -95,21 +95,18 @@ spec:
       action: catalog:register
       input:
         catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/ecommerce-platform.yaml
-        optional: true
     
     - id: registerTeams
       name: Registering E-Commerce Teams...
       action: catalog:register
       input:
         catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/team.yaml
-        optional: true
     
     - id: registerAPIs
       name: Registering E-Commerce APIs Collection...
       action: catalog:register
       input:
         catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/apis/all-apis.yaml
-        optional: true
 
   output:
     links:
