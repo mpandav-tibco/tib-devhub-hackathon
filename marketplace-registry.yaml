@@ -5,15 +5,7 @@ metadata:
   title: Platform Solutions Marketplace Registry
   description: |
     Comprehensive registry for all platform-level solutions and complete system architectures.
-    This registry includes enterprise-grade platforms, complete solution stacks, and integrated systems.
-    
-    Categories included:
-    - E-Commerce Platforms (1 entry)  
-    - Microservices Architectures (future entries)
-    - Enterprise Solutions (future entries)
-    - Complete System Stacks (future entries)
-    
-    Total: 1 platform marketplace entry (with expansion planned)
+    This registry includes enterprise-grade platforms, complete solution stacks, and integrated systems.    
   annotations:
     marketplace.tibco.com/category: "Platform Solutions Registry"
   tags:
