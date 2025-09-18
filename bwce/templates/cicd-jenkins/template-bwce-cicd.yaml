@@ -13,6 +13,8 @@ metadata:
     - cicd
     - jenkins
     - kubernetes
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   owner: group:tibco-integration-team
   type: library

@@ -10,6 +10,8 @@ metadata:
     - ebx
     - sap
     - bapi
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   owner: group:default/tibco-templates
   type: library
