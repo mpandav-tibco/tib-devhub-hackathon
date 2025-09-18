@@ -1,0 +1,81 @@
+# TIBCO Developer Hub System
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: tibco-developer-hub
+  title: TIBCO Developer Hub
+  description: |
+    TIBCO Developer Hub is an enterprise-grade developer portal built on Backstage.
+    It provides a unified platform for managing APIs, services, documentation, templates,
+    and development workflows across the TIBCO ecosystem.
+    
+    Key capabilities include:
+    - Service catalog management
+    - API documentation and discovery
+    - Template scaffolding and code generation
+    - TechDocs integration
+    - CI/CD pipeline management
+    - Marketplace for extensions and templates
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+  tags:
+    - developer-portal
+    - backstage
+    - tibco
+    - platform
+    - devops
+    - marketplace
+  links:
+    - url: https://docs.tibco.com/pub/platform-cp/1.10.0/doc/html/Default.htm#Subsystems/platform-devhub/User-Guide/TIBCO-Developer-Hub-Overview.htm
+      title: TIBCO Developer Hub Documentation
+      icon: docs
+    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon
+      title: Templates and Extensions Repository
+      icon: github
+spec:
+  owner: group:default/platform-team
+  domain: developer-experience
+---
+# Developer Experience Domain
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: developer-experience
+  title: Developer Experience Domain
+  description: |
+    The Developer Experience domain encompasses all tools, platforms, and processes
+    that support and enhance developer productivity, collaboration, and delivery.
+    
+    This includes developer portals, CI/CD systems, documentation platforms, 
+    template systems, and development tooling.
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - developer-experience
+    - platform
+    - devops
+    - productivity
+spec:
+  owner: group:default/platform-team
+---
+# Platform Team
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-team
+  title: Platform Engineering Team
+  description: |
+    The Platform Engineering team is responsible for building and maintaining
+    developer experience platforms, tools, and infrastructure that enable
+    other teams to deliver software efficiently and reliably.
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - platform
+    - engineering
+    - devops
+    - infrastructure
+spec:
+  type: team
+  children: []

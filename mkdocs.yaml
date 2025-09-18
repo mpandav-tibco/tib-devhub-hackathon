@@ -1,0 +1,24 @@
+site_name: TIBCO Developer Hub System Documentation
+site_description: Enterprise developer portal built on Backstage for the TIBCO ecosystem
+
+nav:
+  - Overview: index.md
+
+plugins:
+  - techdocs-core
+
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - content.code.annotate
+    - search.highlight
+    - search.suggest
+    - search.share
