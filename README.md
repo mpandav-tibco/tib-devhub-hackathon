@@ -50,8 +50,8 @@ Collection contributions of templates, APIs, systems, and integration patterns f
 | CI/CD Jenkins Pipeline | AWS Lambda deployment | DevOps |
 | CI/CD Terraform Pipeline | Infrastructure as Code | DevOps |
 | **Activities** | | |
-| Template Engine | Multi-engine template processor with AI workflow support | Activity |
-| XML Filter | High-performance XML processing with XPath filtering | Activity |
+| Template Engine | Multi-engine template processor  | Activity |
+| XML Filter | XML processing with XPath filtering | Activity |
 | AWS Signature V4 | Native AWS authentication integration | Activity |
 | Write Log | Enterprise logging solution with structured output | Activity |
 | JSON Schema Transform | Advanced JSON-to-JSON transformations | Activity |
