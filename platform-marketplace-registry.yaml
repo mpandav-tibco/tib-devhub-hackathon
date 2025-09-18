@@ -1,0 +1,45 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: platform-marketplace-registry
+  title: Platform Solutions Marketplace Registry
+  description: |
+    Comprehensive registry for all platform-level solutions and complete system architectures.
+    This registry includes enterprise-grade platforms, complete solution stacks, and integrated systems.
+    
+    Categories included:
+    - E-Commerce Platforms (1 entry)  
+    - Microservices Architectures (future entries)
+    - Enterprise Solutions (future entries)
+    - Complete System Stacks (future entries)
+    
+    Total: 1 platform marketplace entry (with expansion planned)
+  annotations:
+    backstage.io/managed-by-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/platform-marketplace-registry.yaml
+    backstage.io/managed-by-origin: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/platform-marketplace-registry.yaml
+    marketplace.tibco.com/category: "Platform Solutions Registry"
+  tags:
+    - platform
+    - marketplace  
+    - tibco
+    - registry
+    - enterprise
+    - solutions
+spec:
+  targets:
+    # =======================================================
+    # E-COMMERCE PLATFORM SOLUTIONS (1 entry)
+    # =======================================================
+    
+    # Complete E-Commerce Platform with APIs, Teams, and Documentation
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/mp-entry-ecommerce-platform.yaml
+    
+    # =======================================================
+    # FUTURE PLATFORM EXPANSIONS (placeholder)
+    # =======================================================
+    # Additional platform solutions will be added here:
+    # - Healthcare Management Platform
+    # - Financial Services Platform  
+    # - IoT Platform Solutions
+    # - Manufacturing Platform
+    # - Supply Chain Platform
