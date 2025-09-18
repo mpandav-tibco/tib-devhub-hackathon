@@ -9,9 +9,6 @@ metadata:
     - connector
     - sse
     - server-sent-events
-    - streaming
-    - real-time
-    - http
   annotations:
     github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
     backstage.io/techdocs-ref: dir:.

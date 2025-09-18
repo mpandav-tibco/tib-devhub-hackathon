@@ -7,11 +7,8 @@ metadata:
   tags:
     - flogo
     - activity
-    - xml
-    - filter
+    - xml-filter
     - xpath
-    - parsing
-    - data-processing
   annotations:
     github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
     backstage.io/techdocs-ref: dir:.

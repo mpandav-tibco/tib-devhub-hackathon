@@ -8,11 +8,9 @@ metadata:
     - flogo
     - trigger
     - postgresql
-    - listen
-    - notify
-    - database
-    - real-time
-    - pub-sub
+    - change-data-capture
+    - database-streaming
+
   annotations:
     github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
     backstage.io/techdocs-ref: dir:.

@@ -7,14 +7,7 @@ metadata:
   tags:
     - flogo
     - activity
-    - template
     - go-templates
-    - handlebars
-    - mustache
-    - content-generation
-    - ai-workflow
-    - email
-    - reporting
   annotations:
     github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
     backstage.io/techdocs-ref: dir:.

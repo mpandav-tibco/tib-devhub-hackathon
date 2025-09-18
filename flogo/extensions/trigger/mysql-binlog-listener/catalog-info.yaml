@@ -7,12 +7,9 @@ metadata:
   tags:
     - flogo
     - trigger
-    - mysql
-    - binlog
-    - cdc
+    - mysql-binlog
     - change-data-capture
-    - database
-    - streaming
+    - database-streaming
   annotations:
     github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
     backstage.io/techdocs-ref: dir:.

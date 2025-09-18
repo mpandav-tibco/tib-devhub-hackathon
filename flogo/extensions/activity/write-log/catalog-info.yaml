@@ -8,9 +8,6 @@ metadata:
     - flogo
     - activity
     - logging
-    - debug
-    - monitoring
-    - output
   annotations:
     github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
     backstage.io/techdocs-ref: dir:.

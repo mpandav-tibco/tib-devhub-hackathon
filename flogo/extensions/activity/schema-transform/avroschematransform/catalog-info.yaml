@@ -7,12 +7,9 @@ metadata:
   tags:
     - flogo
     - activity
-    - schema
     - avro
     - json-schema
     - xsd
-    - transformation
-    - data-format
   annotations:
     github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
     backstage.io/techdocs-ref: dir:.
