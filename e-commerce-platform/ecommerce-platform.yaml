@@ -27,6 +27,8 @@ kind: Domain
 metadata:
   name: e-commerce
   description: The e-commerce domain
+  annotations:
+    backstage.io/techdocs-ref: dir:.
   tags:
     - ecommerce
     - microservices
