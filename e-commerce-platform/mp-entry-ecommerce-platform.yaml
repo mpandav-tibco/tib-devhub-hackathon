@@ -1,0 +1,134 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: mp-entry-ecommerce-platform
+  title: E-Commerce Platform Complete Solution
+  description: Comprehensive e-commerce platform with microservices architecture including APIs for catalog, cart, checkout, shipment tracking, and team structures. Features complete documentation, API specifications, and organizational structure for enterprise retail solutions.
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tibco.developer.hub/marketplace:
+    isNew: true
+    popularity: 9
+    isMultiInstall: false
+    imageURL: ""
+    moreInfo:
+      - text: E-Commerce System Overview
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/ecommerce-platform.yaml
+        icon: system
+      - text: API Collection
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/e-commerce-platform/apis
+        icon: api
+      - text: Team Structure
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/team.yaml
+        icon: group
+      - text: Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/docs/index.md
+        icon: docs
+      - text: Source Repository
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/e-commerce-platform
+        icon: github
+  tags:
+    - devhub-marketplace
+    - ecommerce
+    - platform
+    - microservices
+    - apis
+    - retail
+    - enterprise
+    - system
+    - complete-solution
+spec:
+  owner: ecommerce-team
+  type: template
+  presentation:
+    buttonLabels:
+      createButtonText: Install E-Commerce Platform
+  parameters:
+    - title: Accept the Marketplace Entry
+      required:
+        - accept
+      properties:
+        description:
+          type: "null"
+          description: |
+            ## Install Complete E-Commerce Platform into your TIBCO Developer Hub
+
+            **Description:** Comprehensive e-commerce platform solution with complete microservices architecture, APIs, documentation, and organizational structure.
+
+            **What You'll Get:**
+            - **System Architecture**: Complete e-commerce system with domain and environments
+            - **Microservices APIs**: Cart, Catalog, Checkout, Product Catalogue, Shipment Tracking APIs
+            - **API Specifications**: OpenAPI and SOAP/WSDL specifications with examples
+            - **Team Structure**: Complete organizational hierarchy for e-commerce teams
+            - **Documentation**: Comprehensive platform documentation with TechDocs
+            - **Components**: All services, resources, and APIs properly cataloged
+
+            **Key Features:**
+            ✅ **Multi-Environment Support**: Production, Staging, Development environments
+            ✅ **Complete API Suite**: REST APIs and SOAP services for all e-commerce functions
+            ✅ **Microservices Architecture**: Scalable and maintainable service design
+            ✅ **Team Management**: Proper group and user management structure
+            ✅ **Documentation**: Full TechDocs integration with comprehensive guides
+            ✅ **Enterprise Ready**: Production-ready configuration and best practices
+
+            **Components Included:**
+            - E-Commerce System (Domain, Environments)
+            - Cart Management API
+            - Product Catalog API  
+            - Checkout Processing API
+            - Product Catalogue with OpenAPI spec
+            - Shipment Tracking API
+            - SOAP/WSDL Services
+            - Team Structure (Groups, Roles)
+            - Complete Documentation
+
+            Each item made available to you in the TIBCO® Developer Hub Marketplace is subject to its own individual license. This item is subject to the following [license](https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/LICENSE).
+
+            **By accessing or using this item, you agree to assume full responsibility for its proper use and compliance with all applicable license terms.**
+        accept:
+          title: I Agree
+          type: boolean
+          default: false
+  steps:
+    - id: registerSystem
+      name: Registering E-Commerce Platform System...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/ecommerce-platform.yaml
+    
+    - id: registerTeams
+      name: Registering E-Commerce Teams...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/team.yaml
+    
+    - id: registerAPIs
+      name: Registering E-Commerce APIs Collection...
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/apis/all-apis.yaml
+
+  output:
+    links:
+      - title: E-Commerce System
+        type: catalog
+        icon: system
+        entityRef: system:default/ecommerce-platform
+      - title: E-Commerce Domain
+        type: catalog
+        icon: domain
+        entityRef: domain:default/e-commerce
+      - title: E-Commerce Teams
+        type: catalog
+        icon: group
+        entityRef: group:default/ecommerce-team
+      - title: API Collection
+        type: catalog
+        icon: api
+        entityRef: location:default/collection-of-apis
+      - title: Platform Documentation
+        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/docs/index.md
+        icon: docs
+      - title: Back to Marketplace
+        icon: dashboard
+        url: /marketplace

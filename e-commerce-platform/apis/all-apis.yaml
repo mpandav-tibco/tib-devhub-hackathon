@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: ecommerce-apis-collection
+  title: E-Commerce Platform APIs Collection
+  description: Complete collection of e-commerce platform APIs including cart, catalog, checkout, product catalogue, shipment tracking, and SOAP services
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+  tags:
+    - ecommerce
+    - apis
+    - microservices
+spec:
+  targets:
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/apis/cart/cart-api.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/apis/catalog/catalog-api.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/apis/checkout/checkout-api.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/apis/product-catalgue/openapi-product-catalogue.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/apis/shipment-tracking/shipping-api.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/apis/soap-wsdl/api-soap-wsdl.yaml

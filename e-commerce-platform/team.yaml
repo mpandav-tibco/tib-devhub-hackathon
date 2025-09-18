@@ -1,6 +1,84 @@
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
+  name: tibco-organization
+  description: The TIBCO organization
+spec:
+  type: organization
+  profile:
+    displayName: TIBCO
+    email: tibco@tibco.com
+    picture: https://www.tibco.com/sites/tibco/files/media_entity/2021-05/TIBCO-logo.png
+  children:
+    - group:default/tibco-integration-team
+    - group:default/tibco-flogo-team
+    - group:default/tibco-templates
+    - group:default/marketplace-entries-group
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: tibco-integration-team
+  description: The team responsible for TIBCO integration solutions and BWCE templates
+spec:
+  type: team
+  profile:
+    displayName: TIBCO Integration Team
+    email: integration-team@tibco.com
+    picture: https://www.tibco.com/sites/tibco/files/media_entity/2021-05/TIBCO-logo.png
+  parent: group:default/tibco-organization
+  children: []
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: tibco-flogo-team
+  description: The team responsible for Flogo extensions and activities
+spec:
+  type: team
+  profile:
+    displayName: TIBCO Flogo Team
+    email: flogo-team@tibco.com
+    picture: https://www.tibco.com/sites/tibco/files/media_entity/2021-05/TIBCO-logo.png
+  parent: group:default/tibco-organization
+  children: []
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: tibco-templates
+  description: The team responsible for TIBCO template development and management
+spec:
+  type: team
+  profile:
+    displayName: TIBCO Templates Team
+    email: templates@tibco.com
+    picture: https://www.tibco.com/sites/tibco/files/media_entity/2021-05/TIBCO-logo.png
+  parent: group:default/tibco-organization
+  children: []
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: marketplace-entries-group
+  description: The group responsible for managing marketplace entries and templates
+spec:
+  type: team
+  profile:
+    displayName: Marketplace Entries Group
+    email: marketplace@tibco.com
+    picture: https://www.tibco.com/sites/tibco/files/media_entity/2021-05/TIBCO-logo.png
+  parent: group:default/tibco-organization
+  children: []
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
   name: ecommerce-team
   description: The team responsible for the e-commerce platform
 spec:
@@ -10,9 +88,8 @@ spec:
     email: ecommerce-team@example.com
     picture: https://example.com/ecommerce-team-logo.png
   parent: group:default/engineering
-  children: [engineering]
+  children: []
   members: []
-  tags: e-commerce-team
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Group
@@ -25,9 +102,17 @@ spec:
     displayName: Engineering
     email: engineering@example.com
     picture: https://example.com/engineering-logo.png
-  parent: E-Commerce
   children:
     - group:default/ecommerce-team
+    - group:default/inventory-team
+    - group:default/order-team
+    - group:default/shipping-team
+    - group:default/user-team
+    - group:default/catalog-team
+    - group:default/checkout-team
+    - group:default/cart-team
+    - group:default/database-team
+    - group:default/payments-team
   members: [jdoe]
 ---
 apiVersion: backstage.io/v1alpha1
@@ -41,8 +126,7 @@ spec:
     displayName: Inventory Team
     email: inventory-team@example.com
   parent: group:default/engineering
-  children:
-    - component:default/inventory-service
+  children: []
   members: []
 ---
 apiVersion: backstage.io/v1alpha1
@@ -56,8 +140,7 @@ spec:
     displayName: Order Team
     email: order-team@example.com
   parent: group:default/engineering
-  children:
-    - component:default/checkout-api
+  children: []
   members: []
 ---
 apiVersion: backstage.io/v1alpha1
@@ -71,8 +154,7 @@ spec:
     displayName: Shipping Team
     email: shipping-team@example.com
   parent: group:default/engineering
-  children:
-    - component:default/shipping-service
+  children: []
   members: []
 ---
 apiVersion: backstage.io/v1alpha1
@@ -86,8 +168,7 @@ spec:
     displayName: User Team
     email: user-team@example.com
   parent: group:default/engineering
-  children:
-    - component:default/user-service
+  children: []
   members: []
 ---
 apiVersion: backstage.io/v1alpha1
@@ -101,8 +182,7 @@ spec:
     displayName: Catalog Team
     email: catalog-team@example.com
   parent: group:default/engineering
-  children:
-    - component:default/catalog-api
+  children: []
   members: []
 ---
 apiVersion: backstage.io/v1alpha1
@@ -116,8 +196,21 @@ spec:
     displayName: Checkout Team
     email: checkout-team@example.com
   parent: group:default/engineering
-  children:
-    - component:default/checkout-api
+  children: []
+  members: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: cart-team
+  description: The team responsible for cart management
+spec:
+  type: team
+  profile:
+    displayName: Cart Team
+    email: cart-team@example.com
+  parent: group:default/engineering
+  children: []
   members: []
 ---
 apiVersion: backstage.io/v1alpha1
@@ -131,10 +224,7 @@ spec:
     displayName: Database Team
     email: database-team@example.com
   parent: group:default/engineering
-  children:
-    - component:default/catalog-database
-    - component:default/cart-database
-    - component:default/user-database
+  children: []
   members: []
 ---
 apiVersion: backstage.io/v1alpha1
@@ -148,8 +238,7 @@ spec:
     displayName: Payments Team
     email: payments-team@example.com
   parent: group:default/engineering
-  children:
-    - component:default/payment-gateway
+  children: []
   members: []
 ---
 apiVersion: backstage.io/v1alpha1
