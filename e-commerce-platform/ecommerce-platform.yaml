@@ -234,6 +234,126 @@ spec:
   definition:
     $text: ./apis/shipment-tracking/shipping-api.yaml
 ---
+# order-api.yaml
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: order-api
+  description: Handles order creation, tracking, and management
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/order-team
+  system: ecommerce-platform
+  apiConsumedBy:
+    - component:default/order-service
+    - component:default/storefront
+  definition:
+    openapi: 3.0.0
+    info:
+      title: Order API
+      version: v1
+    paths:
+      /orders:
+        post:
+          summary: Create a new order
+          responses:
+            '201':
+              description: Order created
+        get:
+          summary: Get all orders
+          responses:
+            '200':
+              description: List of orders
+      /orders/{orderId}:
+        get:
+          summary: Get order details
+          responses:
+            '200':
+              description: Order details
+---
+# user-api.yaml
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: user-api
+  description: Manages user authentication, profiles, and account operations
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/user-team
+  system: ecommerce-platform
+  apiConsumedBy:
+    - component:default/user-service
+    - component:default/storefront
+  definition:
+    openapi: 3.0.0
+    info:
+      title: User API
+      version: v1
+    paths:
+      /users:
+        get:
+          summary: Get user profile
+          responses:
+            '200':
+              description: User profile
+        post:
+          summary: Create user account
+          responses:
+            '201':
+              description: User created
+      /auth/login:
+        post:
+          summary: User login
+          responses:
+            '200':
+              description: Login successful
+---
+# inventory-api.yaml
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: inventory-api
+  description: Manages product inventory levels, stock tracking, and availability
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/inventory-team
+  system: ecommerce-platform
+  apiConsumedBy:
+    - component:default/inventory-service
+    - component:default/catalog-api
+  definition:
+    openapi: 3.0.0
+    info:
+      title: Inventory API
+      version: v1
+    paths:
+      /inventory/{productId}:
+        get:
+          summary: Get inventory level for product
+          responses:
+            '200':
+              description: Inventory level
+        put:
+          summary: Update inventory level
+          responses:
+            '200':
+              description: Inventory updated
+      /inventory/check:
+        post:
+          summary: Check availability for multiple products
+          responses:
+            '200':
+              description: Availability status
+---
 # payment-gateway.yaml
 apiVersion: backstage.io/v1alpha1
 kind: Resource
