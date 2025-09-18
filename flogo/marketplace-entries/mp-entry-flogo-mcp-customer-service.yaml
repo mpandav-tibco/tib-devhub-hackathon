@@ -27,7 +27,7 @@ metadata:
     - mcp
     - tibco
 spec:
-  owner: group:default/marketplace-entries-group
+  owner: group:default/platform-team
   type: template
   presentation:
     buttonLabels:

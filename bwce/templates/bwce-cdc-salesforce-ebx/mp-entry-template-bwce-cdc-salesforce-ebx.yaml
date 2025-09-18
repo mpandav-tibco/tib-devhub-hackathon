@@ -26,7 +26,7 @@ metadata:
     - salesforce-integration
     - ebx-integration
 spec:
-  owner: group:default/marketplace-entries-group
+  owner: group:default/platform-team
   type: template
   presentation:
     buttonLabels:

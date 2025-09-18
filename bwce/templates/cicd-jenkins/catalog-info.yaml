@@ -21,5 +21,5 @@ metadata:
 spec:
   type: template
   lifecycle: production
-  owner: group:default/marketplace-entries-group
+  owner: group:default/platform-team
   system: tibco-developer-hub
