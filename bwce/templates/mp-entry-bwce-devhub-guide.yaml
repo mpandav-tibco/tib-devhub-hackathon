@@ -34,7 +34,7 @@ metadata:
     - maven
 spec:
   owner: tibco-templates
-  type: service
+  type: Documentation
   presentation:
     buttonLabels:
       createButtonText: Install

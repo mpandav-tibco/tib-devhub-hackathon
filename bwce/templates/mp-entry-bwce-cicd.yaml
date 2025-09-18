@@ -40,7 +40,7 @@ metadata:
       url: https://community.tibco.com/
       icon: forum
 spec:
-  type: template
+  type: Documentation
   lifecycle: production
   owner: group:tibco-integration-team
   system: tibco-developer-hub

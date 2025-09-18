@@ -27,7 +27,7 @@ metadata:
       url: https://hub.docker.com/repository/docker/mpandav/tib-sonarqube-community-lts/general
       icon: docker
 spec:
-  type: template
+  type: Tooling-Template
   lifecycle: production
   owner: group:default/tibco-templates
   system: tibco-code-quality-platform

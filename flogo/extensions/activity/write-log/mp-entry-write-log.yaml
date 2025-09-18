@@ -24,7 +24,7 @@ metadata:
     - activity
 spec:
   owner: tibco-flogo-team
-  type: Component
+  type: Flogo-Custom-Extension
   presentation:
     buttonLabels:
       createButtonText: Install Write Log Activity
