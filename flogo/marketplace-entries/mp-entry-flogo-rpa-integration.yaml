@@ -27,7 +27,7 @@ metadata:
     - process-automation
 spec:
   owner: group:default/marketplace-entries-group
-  type: flogo-template
+  type: template
   presentation:
     buttonLabels:
       createButtonText: Install
