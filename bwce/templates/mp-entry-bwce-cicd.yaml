@@ -8,7 +8,7 @@ metadata:
     Includes Jenkins pipeline configuration, Docker containerization, Kubernetes deployment,
     automated testing, monitoring, and best practices for enterprise integration applications.
   annotations:
-    backstage.io/techdocs-ref: dir:.
+    backstage.io/techdocs-ref: dir:./cicd-jenkins
     marketplace.tibco.com/category: "DevOps & CI/CD"
     marketplace.tibco.com/subcategory: "Pipeline Templates"
     marketplace.tibco.com/technology: "TIBCO BusinessWorks Container Edition"

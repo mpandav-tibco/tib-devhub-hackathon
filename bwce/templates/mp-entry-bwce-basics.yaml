@@ -4,7 +4,7 @@ metadata:
   name: mp-entry-bwce-basics-guide
   title: BWCE Basics Learning Guide
   description: Comprehensive learning guide for TIBCO BusinessWorks Container Edition fundamentals, featuring hands-on tutorials, sample applications, and practical exercises for developers new to BWCE
-  backstage.io/techdocs-ref: dir:.
+  backstage.io/techdocs-ref: dir:./basics-of-bwce
   tibco.developer.hub/marketplace:
     isNew: true
     popularity: 9

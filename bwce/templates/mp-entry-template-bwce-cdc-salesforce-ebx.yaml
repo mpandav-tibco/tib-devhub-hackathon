@@ -4,7 +4,7 @@ metadata:
   name: mp-entry-template-bwce-cdc-salesforce-ebx
   title: BWCE CDC Salesforce EBX Integration Template
   description: A TIBCO BusinessWorks Container Edition template for Change Data Capture integration between Salesforce and EBX using Kafka messaging.
-  backstage.io/techdocs-ref: dir:.
+  backstage.io/techdocs-ref: dir:./bwce-cdc-salesforce-ebx
   tibco.developer.hub/marketplace:
     isNew: true
     popularity: 7

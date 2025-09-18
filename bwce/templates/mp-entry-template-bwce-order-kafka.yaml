@@ -4,7 +4,7 @@ metadata:
   name: mp-entry-template-bwce-order-kafka
   title: BWCE Order Kafka Processing Template
   description: A TIBCO BusinessWorks Container Edition template for order processing and Kafka message streaming integration.
-  backstage.io/techdocs-ref: dir:.
+  backstage.io/techdocs-ref: dir:./bwce-order-kafka
   tibco.developer.hub/marketplace:
     isNew: true
     popularity: 8

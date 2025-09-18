@@ -4,7 +4,7 @@ metadata:
   name: mp-entry-bwce-devhub-templates-guide
   title: BWCE DevHub Templates Guide
   description: Documentation template providing comprehensive know-how and step-by-step guidance for integrating TIBCO BusinessWorks Container Edition with Developer Hub templates, Jenkins CI/CD pipelines, Kubernetes deployment, and governance tools
-  backstage.io/techdocs-ref: dir:.
+  backstage.io/techdocs-ref: dir:../documentation/bwce-with-devhub-templates
   tibco.developer.hub/marketplace:
     isNew: true
     popularity: 9

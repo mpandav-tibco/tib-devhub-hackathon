@@ -4,7 +4,7 @@ metadata:
   name: mp-entry-template-bwce-s3-operation
   title: BWCE S3 Operations Template
   description: A TIBCO BusinessWorks Container Edition template for Amazon S3 file operations and cloud storage integration.
-  backstage.io/techdocs-ref: dir:.
+  backstage.io/techdocs-ref: dir:./bwce-s3-operation
   tibco.developer.hub/marketplace:
     isNew: true
     popularity: 8

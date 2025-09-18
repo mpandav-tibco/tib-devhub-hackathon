@@ -4,7 +4,7 @@ metadata:
   name: mp-entry-template-bwce-java-operations
   title: BWCE Java Operations Template
   description: A TIBCO BusinessWorks Container Edition template demonstrating scheduled Java method invocation with custom string functions, deployment automation, and governance features.
-  backstage.io/techdocs-ref: dir:.
+  backstage.io/techdocs-ref: dir:./bwce-java-op
   tibco.developer.hub/marketplace:
     isNew: true
     popularity: 8

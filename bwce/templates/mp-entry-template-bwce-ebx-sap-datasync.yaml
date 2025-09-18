@@ -4,7 +4,7 @@ metadata:
   name: mp-entry-template-bwce-ebx-sap-datasync
   title: BWCE EBX SAP DataSync Integration Template
   description: A TIBCO BusinessWorks Container Edition template for data synchronization between EBX Master Data Management and SAP systems using BAPI integration.
-  backstage.io/techdocs-ref: dir:.
+  backstage.io/techdocs-ref: dir:./bwce-ebx-sap-datasync
   tibco.developer.hub/marketplace:
     isNew: true
     popularity: 6
