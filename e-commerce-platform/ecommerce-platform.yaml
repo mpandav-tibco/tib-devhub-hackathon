@@ -89,7 +89,7 @@ spec:
   apiConsumedBy:
     - component:default/storefront
   definition:
-    $text: ../apis/catalog/catalog-api.yaml
+    $text: ./apis/catalog/catalog-api.yaml
 ---
 # cart-api.yaml
 apiVersion: backstage.io/v1alpha1
@@ -108,7 +108,7 @@ spec:
   apiConsumedBy:
     - component:default/storefront
   definition:
-    $text: ../apis/cart/cart-api.yaml
+    $text: ./apis/cart/cart-api.yaml
 ---
 # checkout-api.yaml
 apiVersion: backstage.io/v1alpha1
@@ -127,7 +127,7 @@ spec:
   apiConsumedBy:
     - component:default/storefront
   definition:
-    $text: ../apis/checkout/checkout-api.yaml
+    $text: ./apis/checkout/checkout-api.yaml
 ---
 # user-service.yaml
 apiVersion: backstage.io/v1alpha1
@@ -212,7 +212,7 @@ spec:
     - component:default/shipping-service
     - component:default/order-service
   definition:
-    $text: ../apis/shipment-tracking/shipping-api.yaml
+    $text: ./apis/shipment-tracking/shipping-api.yaml
 ---
 # payment-gateway.yaml
 apiVersion: backstage.io/v1alpha1
