@@ -28,7 +28,7 @@ metadata:
     - tibco
     - bwce
     - monitoring
-     - bwcemon
+    - bwcemon
     - kubernetes
 spec:
   owner: tibco-templates
