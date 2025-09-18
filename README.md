@@ -142,6 +142,11 @@ curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
   -H "Content-Type: application/json" \
   -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/platform-marketplace-registry.yaml"}'
 
+# TIBCO Developer Hub System  
+curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
+  -H "Content-Type: application/json" \
+  -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/tibco-developer-hub-system.yaml"}'
+
 # E-Commerce Platform Components
 curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
   -H "Content-Type: application/json" \
