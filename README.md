@@ -75,7 +75,6 @@ Collection contributions of templates, APIs, systems, and integration patterns f
 | Product Catalogue | `product-catalgue/openapi-product-catalogue.yaml` | OpenAPI 3.0 | Product catalog specification |
 | Shipment Tracking | `shipment-tracking/shipping-api.yaml` | REST | Order fulfillment & tracking |
 | SOAP Service | `soap-wsdl/api-soap-wsdl.yaml` | WSDL/SOAP | Legacy integration |
-| API Registry | `all-apis.yaml` | Multi-API | Comprehensive registry |
 
 ---
 *Accelerating enterprise integration and API development with standardized templates and best practices.*
