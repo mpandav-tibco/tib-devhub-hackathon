@@ -82,6 +82,8 @@ kind: API
 metadata:
   name: catalog-api
   description: Provides product catalog information
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: openapi
   lifecycle: production
@@ -101,6 +103,8 @@ kind: API
 metadata:
   name: cart-api
   description: Manages shopping carts and user sessions
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: openapi
   lifecycle: production
@@ -120,6 +124,8 @@ kind: API
 metadata:
   name: checkout-api
   description: Handles order processing and payment integration
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: openapi # Corrected typo here
   lifecycle: production
@@ -139,6 +145,8 @@ kind: Component
 metadata:
   name: user-service
   description: Manages user accounts and authentication
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: service
   lifecycle: production
@@ -156,6 +164,8 @@ kind: Component
 metadata:
   name: inventory-service
   description: Tracks product inventory levels
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: service
   lifecycle: production
@@ -173,6 +183,8 @@ kind: Component
 metadata:
   name: order-service
   description: Processes and fulfills orders
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: service
   lifecycle: production
@@ -191,6 +203,8 @@ kind: Component
 metadata:
   name: shipping-service
   description: Integrates with shipping providers
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: service
   lifecycle: production
@@ -207,6 +221,8 @@ kind: API
 metadata:
   name: shipping-api
   description: Provides shipping rates and tracking information
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: openapi
   lifecycle: production
