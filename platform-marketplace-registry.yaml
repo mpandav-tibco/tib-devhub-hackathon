@@ -26,20 +26,7 @@ metadata:
     - enterprise
     - solutions
 spec:
-  targets:
-    # =======================================================
-    # E-COMMERCE PLATFORM SOLUTIONS (1 entry)
-    # =======================================================
-    
+  targets:    
     # Complete E-Commerce Platform with APIs, Teams, and Documentation
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/mp-entry-ecommerce-platform.yaml
     
-    # =======================================================
-    # FUTURE PLATFORM EXPANSIONS (placeholder)
-    # =======================================================
-    # Additional platform solutions will be added here:
-    # - Healthcare Management Platform
-    # - Financial Services Platform  
-    # - IoT Platform Solutions
-    # - Manufacturing Platform
-    # - Supply Chain Platform
