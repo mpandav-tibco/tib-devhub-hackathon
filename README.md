@@ -1,14 +1,15 @@
 # TIBCO® Developer Hub - Marketplace Contributions
 
-Comprehensive collection of templates, APIs, systems, and integration patterns for TIBCO® Developer Hub (Backstage).
+Collection contributions of templates, APIs, systems, and integration patterns for TIBCO® Developer Hub (Backstage) Marketplace.
 
 ## 📂 Repository Structure
 
-| Directory | Purpose | Count |
-|-----------|---------|-------|
-| `/system/` | Backstage System & Domain Definitions | 3 files |
-| `/bwce/` | TIBCO BusinessWorks Container Edition | 10 templates |
-| `/flogo/` | TIBCO Flogo Enterprise Templates | 7 templates |
+| Directory | Purpose |
+|-----------|---------|
+| `/bwce/` | TIBCO BusinessWorks Container Edition templates and documentation |
+| `/flogo/` | TIBCO Flogo Enterprise templates, extensions, and sample applications |
+| `/e-commerce-platform/` | Complete microservices e-commerce platform with APIs and resources |
+
 
 ## 🏛️ System Components
 
@@ -16,17 +17,51 @@ Comprehensive collection of templates, APIs, systems, and integration patterns f
 
 | Component | File | Type | Description |
 |-----------|------|------|-------------|
-| E-Commerce Platform | `ecommerce-platform.yaml` | System & Domain | Microservices e-commerce platform |
-| Teams | `team.yaml` | Groups | E-Commerce, Engineering, Inventory teams |
-| Documentation | `mkdocs.yaml` | Config | TechDocs configuration |
+| TIBCO Developer Hub System | `tibco-developer-hub-system.yaml` | System, Domain & Team | Core system with platform-team group and developer-experience domain |
+| E-Commerce Platform | `e-commerce-platform/ecommerce-platform.yaml` | System & Domain | Microservices e-commerce platform |
+| Teams | `e-commerce-platform/team.yaml` | Groups | E-Commerce, Engineering, Inventory teams |
 
-### Team Structure
 
-| Team | Type | Purpose | Parent |
-|------|------|---------|--------|
-| E-Commerce Team | Team | Platform development | Engineering |
-| Engineering | Organization | Parent organization | - |
-| Inventory Team | Team | Inventory management | Engineering |
+## 🚀 BWCE Templates 
+
+| Template | Description | Category |
+|----------|-------------|----------|
+| BWCE DevHub Integration | Comprehensive integration documentation | Documentation |
+| BWCE Monitoring Setup | BWCEMon deployment and configuration | Documentation |
+| BWCE Basics | Fundamentals and hands-on tutorials | Learning |
+| Order Processing with Kafka | E-commerce order management | Application |
+| S3 Operations | AWS S3 integration and file processing | Application |
+| Java Operations | Custom Java integration | Application |
+| EBX-SAP Data Sync | Enterprise data synchronization | Integration |
+| CDC Salesforce-EBX | Change data capture sync | Integration |
+| CI/CD Jenkins Pipeline | Complete DevOps pipeline | DevOps |
+| SonarQube BWCE Plugin | Code quality analysis | DevOps |
+
+## 🎯 Flogo Templates & Extensions
+
+| Template | Description | Category |
+|----------|-------------|----------|
+| **Application Templates** | | |
+| GraphQL APIs | Flexible data querying | API Development |
+| gRPC IoT Telemetry | High-performance data processing | API Development |
+| MQTT Inventory Management | Retail inventory automation | IoT & Real-time |
+| AI Customer Service with MCP | AI integration | AI & Machine Learning |
+| RPA Integration | Robotic Process Automation | Enterprise Integration |
+| CI/CD Jenkins Pipeline | AWS Lambda deployment | DevOps |
+| CI/CD Terraform Pipeline | Infrastructure as Code | DevOps |
+| **Activities** | | |
+| Template Engine | Multi-engine template processor with AI workflow support | Activity |
+| XML Filter | High-performance XML processing with XPath filtering | Activity |
+| AWS Signature V4 | Native AWS authentication integration | Activity |
+| Write Log | Enterprise logging solution with structured output | Activity |
+| JSON Schema Transform | Advanced JSON-to-JSON transformations | Activity |
+| Avro Schema Transform | High-performance Avro data processing | Activity |
+| XSD Schema Transform | Enterprise XML schema transformations | Activity |
+| **Connectors** | | |
+| Server-Sent Events (SSE) | Real-time data streaming connector | Connector |
+| **Triggers** | | |
+| MySQL Binlog Listener | Real-time change data capture for MySQL | Trigger |
+| PostgreSQL Listener | Advanced PostgreSQL change notification | Trigger |
 
 ## 🌐 API Catalog
 
@@ -41,161 +76,6 @@ Comprehensive collection of templates, APIs, systems, and integration patterns f
 | Shipment Tracking | `shipment-tracking/shipping-api.yaml` | REST | Order fulfillment & tracking |
 | SOAP Service | `soap-wsdl/api-soap-wsdl.yaml` | WSDL/SOAP | Legacy integration |
 | API Registry | `all-apis.yaml` | Multi-API | Comprehensive registry |
-
-## 🔧 BWCE Templates (10 Total)
-
-### Documentation & Guides
-
-| Template | Description | Category |
-|----------|-------------|----------|
-| BWCE DevHub Integration | Comprehensive integration documentation | Documentation |
-| BWCE Monitoring Setup | BWCEMon deployment and configuration | Documentation |
-
-### Learning & Tutorials
-
-| Template | Description | Category |
-|----------|-------------|----------|
-| BWCE Basics | Fundamentals and hands-on tutorials | Learning |
-
-### Application Templates
-
-| Template | Description | Technologies |
-|----------|-------------|--------------|
-| Order Processing with Kafka | E-commerce order management | Kafka, Messaging |
-| S3 Operations | AWS S3 integration and file processing | AWS, S3 |
-| Java Operations | Custom Java integration | Java, Custom Operations |
-
-### Integration Templates
-
-| Template | Description | Systems |
-|----------|-------------|---------|
-| EBX-SAP Data Sync | Enterprise data synchronization | EBX, SAP |
-| CDC Salesforce-EBX | Change data capture sync | Salesforce, EBX, Kafka |
-
-### DevOps & Tooling
-
-| Template | Description | Tools |
-|----------|-------------|-------|
-| CI/CD Jenkins Pipeline | Complete DevOps pipeline | Jenkins, Docker, K8s |
-| SonarQube BWCE Plugin | Code quality analysis | SonarQube, Static Analysis |
-
-## 🎯 Flogo Templates (7 Total)
-
-### API Development
-
-| Template | Description | Technology |
-|----------|-------------|------------|
-| GraphQL APIs | Flexible data querying | GraphQL, Multi-source |
-| gRPC IoT Telemetry | High-performance data processing | gRPC, IoT, Real-time |
-
-### IoT & Real-time Processing
-
-| Template | Description | Use Case |
-|----------|-------------|----------|
-| MQTT Inventory Management | Retail inventory automation | MQTT, IoT, Retail |
-
-### AI & Machine Learning
-
-| Template | Description | Technology |
-|----------|-------------|------------|
-| AI Customer Service with MCP | AI integration | Model Context Protocol, AI |
-
-### Enterprise Integration
-
-| Template | Description | Technology |
-|----------|-------------|------------|
-| RPA Integration | Robotic Process Automation | RPA, Workflow Automation |
-
-### DevOps & Automation
-
-| Template | Description | Platform |
-|----------|-------------|----------|
-| CI/CD Jenkins Pipeline | AWS Lambda deployment | Jenkins, AWS Lambda |
-| CI/CD Terraform Pipeline | Infrastructure as Code | Terraform, IaC |
-
-## 🚀 Quick Setup
-
-### Prerequisites
-
-| Requirement | Purpose |
-|-------------|---------|
-| TIBCO® Developer Hub | Backstage platform |
-| GitHub Token | Template scaffolding |
-| BWCE License | BusinessWorks templates |
-| Flogo License | Flogo templates |
-
-### Registration Commands
-
-```bash
-# BWCE Marketplace
-curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
-  -H "Content-Type: application/json" \
-  -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/bwce-marketplace-registry.yaml"}'
-
-# Flogo Marketplace  
-curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
-  -H "Content-Type: application/json" \
-  -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/flogo-marketplace-registry.yaml"}'
-
-# Platform Solutions Marketplace
-curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
-  -H "Content-Type: application/json" \
-  -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/platform-marketplace-registry.yaml"}'
-
-# TIBCO Developer Hub System  
-curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
-  -H "Content-Type: application/json" \
-  -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/tibco-developer-hub-system.yaml"}'
-
-# E-Commerce Platform Components
-curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
-  -H "Content-Type: application/json" \
-  -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/ecommerce-platform.yaml"}'
-```
-
-## ✨ Template Features
-
-### Common Features
-
-| Feature | BWCE | Flogo | Description |
-|---------|------|-------|-------------|
-| Backstage Integration | ✅ | ✅ | Full catalog-info.yaml support |
-| CI/CD Ready | ✅ | ✅ | Jenkins, GitHub Actions, Terraform |
-| Documentation | ✅ | ✅ | README and TechDocs |
-| Containerization | ✅ | ✅ | Docker and Kubernetes |
-| Testing | ✅ | ✅ | Unit tests and quality gates |
-| Security | ✅ | ✅ | Auth, authorization, best practices |
-
-### Technology-Specific Features
-
-| Technology | Features |
-|------------|----------|
-| **BWCE** | Enterprise Integration (SAP, Salesforce), CDC, Cloud Native, SonarQube |
-| **Flogo** | Lightweight Runtime, API-First (GraphQL, gRPC), AI/MCP, IoT/MQTT |
-
-## 🏷️ Technology Stack
-
-### Core Technologies
-`tibco` `bwce` `flogo` `backstage` `microservices` `api` `integration`
-
-### Infrastructure & DevOps  
-`cicd` `devops` `kubernetes` `docker` `jenkins` `terraform` `sonarqube`
-
-### Integration & Data
-`kafka` `mqtt` `aws` `s3` `salesforce` `sap` `ebx` `graphql` `grpc`
-
-### Specialized
-`iot` `ai` `rpa` `cdc` `realtime`
-
-## 📚 Resources
-
-| Resource | Link |
-|----------|------|
-| TIBCO® Developer Hub Docs | [docs.tibco.com/products/tibco-developer-hub](https://docs.tibco.com/products/tibco-developer-hub) |
-| BWCE Documentation | [docs.tibco.com/products/tibco-businessworks-container-edition](https://docs.tibco.com/products/tibco-businessworks-container-edition) |
-| Flogo Documentation | [docs.tibco.com/products/tibco-flogo-enterprise](https://docs.tibco.com/products/tibco-flogo-enterprise) |
-| Backstage.io | [backstage.io/docs](https://backstage.io/docs) |
-| TIBCO Support | [support.tibco.com/s/](https://support.tibco.com/s/) |
 
 ---
 *Accelerating enterprise integration and API development with standardized templates and best practices.*
