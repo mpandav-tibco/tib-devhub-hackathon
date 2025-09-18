@@ -9,14 +9,7 @@ metadata:
     automated testing, monitoring, and best practices for enterprise integration applications.
   annotations:
     backstage.io/techdocs-ref: dir:./cicd-jenkins
-    marketplace.tibco.com/category: "DevOps & CI/CD"
-    marketplace.tibco.com/subcategory: "Pipeline Templates"
-    marketplace.tibco.com/technology: "TIBCO BusinessWorks Container Edition"
-    marketplace.tibco.com/difficulty: "Intermediate"
-    marketplace.tibco.com/use-case: "Continuous Integration and Deployment"
-    marketplace.tibco.com/maturity: "Production Ready"
-    marketplace.tibco.com/version: "1.0.0"
-    marketplace.tibco.com/documentation-url: "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/cicd-jenkins/README.md"
+    
   tags:
     - tibco
     - bwce

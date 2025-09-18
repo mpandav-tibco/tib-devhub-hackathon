@@ -21,6 +21,7 @@ metadata:
     marketplace.tibco.com/category: "BWCE Registry"
   tags:
     - bwce
+    - marketplace
     - tibco
     - registry
 spec:
@@ -30,47 +31,37 @@ spec:
     # =======================================================
     
     # BWCE DevHub Integration Guide - Comprehensive integration documentation
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-bwce-devhub-guide.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/documentation/bwce-with-devhub-templates/mp-entry-bwce-devhub-guide.yaml
     
     # BWCE Monitoring Setup Guide - BWCEMon deployment and configuration
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-bwce-monitoring.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/documentation/bwce-monitoring/mp-entry-bwce-monitoring.yaml
     
-    # =======================================================
-    # BWCE LEARNING & TUTORIALS (1 entry)
-    # =======================================================
     
     # BWCE Basics Learning Guide - Fundamentals and hands-on tutorials
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-bwce-basics.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/basics-of-bwce/mp-entry-bwce-basics.yaml
     
     # =======================================================
     # BWCE APPLICATION TEMPLATES (3 entries)
     # =======================================================
     
     # Order Processing with Kafka - E-commerce order management template
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-template-bwce-order-kafka.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-order-kafka/mp-entry-template-bwce-order-kafka.yaml
     
     # S3 Operations Template - AWS S3 integration and file processing
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-template-bwce-s3-operation.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-s3-operation/mp-entry-template-bwce-s3-operation.yaml
     
     # Java Operations Template - Custom Java integration and operations
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-template-bwce-java-operations.yaml
-    
-    # =======================================================
-    # BWCE INTEGRATION TEMPLATES (2 entries)
-    # =======================================================
-    
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-java-op/mp-entry-template-bwce-java-operations.yaml
+        
     # EBX-SAP Data Sync - Enterprise data synchronization template
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-template-bwce-ebx-sap-datasync.yaml
-    
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-ebx-sap-datasync/mp-entry-template-bwce-ebx-sap-datasync.yaml
+
     # CDC Salesforce-EBX - Change data capture and synchronization
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-template-bwce-cdc-salesforce-ebx.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/bwce-cdc-salesforce-ebx/mp-entry-template-bwce-cdc-salesforce-ebx.yaml
     
-    # =======================================================
-    # BWCE DEVOPS & TOOLING (2 entries) 
-    # =======================================================
     
     # CI/CD Jenkins Pipeline - Complete DevOps pipeline template
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/mp-entry-bwce-cicd.yaml
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/templates/cicd-jenkins/mp-entry-bwce-cicd.yaml
     
     # SonarQube BWCE Plugin - Code quality and analysis tooling
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/tooling/sonarqube/mp-entry-sonarqube-bwce-plugin.yaml

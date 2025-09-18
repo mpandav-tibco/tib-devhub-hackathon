@@ -4,7 +4,7 @@ metadata:
   name: mp-entry-bwce-monitoring-guide
   title: BWCE Monitoring Setup Guide
   description: Documentation template for TIBCO BusinessWorks Container Edition Monitoring (BWCEMon) - Complete guide for creating, building, deploying, and using BWCEMon with BWCE applications
-  backstage.io/techdocs-ref: dir:.
+  backstage.io/techdocs-ref: dir:../documentation/bwce-monitoring
   tibco.developer.hub/marketplace:
     isNew: true
     popularity: 8
@@ -28,16 +28,11 @@ metadata:
     - tibco
     - bwce
     - monitoring
-    - documentation
     - bwcemon
     - kubernetes
-    - docker
-    - observability
-    - deployment
-    - recommended
 spec:
   owner: tibco-templates
-  type: service
+  type: Documentation
   presentation:
     buttonLabels:
       createButtonText: Install
