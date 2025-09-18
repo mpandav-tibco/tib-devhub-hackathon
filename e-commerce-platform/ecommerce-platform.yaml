@@ -250,7 +250,7 @@ spec:
   apiConsumedBy:
     - component:default/order-service
     - component:default/storefront
-  definition:
+  definition: |
     openapi: 3.0.0
     info:
       title: Order API
@@ -290,7 +290,7 @@ spec:
   apiConsumedBy:
     - component:default/user-service
     - component:default/storefront
-  definition:
+  definition: |
     openapi: 3.0.0
     info:
       title: User API
@@ -330,7 +330,7 @@ spec:
   apiConsumedBy:
     - component:default/inventory-service
     - component:default/catalog-api
-  definition:
+  definition: |
     openapi: 3.0.0
     info:
       title: Inventory API
