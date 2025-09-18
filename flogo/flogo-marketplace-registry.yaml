@@ -33,6 +33,5 @@ spec:
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-cicd-terraform.yaml
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-graphql-apis.yaml
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-grpc-api.yaml
-    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-patterns-microservices.yaml
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-rest-apis.yaml
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/marketplace-entries/mp-entry-flogo-saas-integration.yaml
