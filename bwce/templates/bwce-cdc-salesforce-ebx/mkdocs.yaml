@@ -1,0 +1,11 @@
+site_name: BWCE - CDC Salesforce EBX Integration
+site_description: Create a new BWCE project for Change Data Capture integration between Salesforce and EBX using Kafka
+
+nav:
+  - Introduction: index.md
+
+plugins:
+  - techdocs-core
+
+docs_dir: docs
+site_dir: site

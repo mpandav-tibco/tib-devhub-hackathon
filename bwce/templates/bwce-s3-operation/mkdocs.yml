@@ -1,0 +1,12 @@
+site_name: BWCE S3 Operations
+
+site_description: This TIBCO BusinessWorks Container Edition (BWCE) template provides a robust solution for integrating with Amazon S3 for file storage and retrieval. It demonstrates best practices for working with S3 APIs within BWCE processes.
+
+nav:nav:
+
+  - Introduction: index.md 
+
+docs_dir: docs
+site_dir: site
+plugins:
+  - techdocs-core

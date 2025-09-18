@@ -1,0 +1,12 @@
+site_name: BWCE - EBX SAP DataSync Integration
+
+site_description: This TIBCO BusinessWorks Container Edition (BWCE) template provides a robust solution for data synchronization between EBX Master Data Management platform and SAP systems using Business Application Programming Interface (BAPI) integration
+
+nav:nav:
+
+  - Introduction: index.md 
+
+docs_dir: docs
+site_dir: site
+plugins:
+  - techdocs-core

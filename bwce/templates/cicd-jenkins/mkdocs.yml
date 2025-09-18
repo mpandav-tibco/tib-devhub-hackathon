@@ -1,0 +1,12 @@
+site_name: BWCE Jenkins CI/CD Pipeline
+
+site_description: This TIBCO BusinessWorks Container Edition (BWCE) template provides a robust solution for implementing CI/CD pipelines using Jenkins. It demonstrates best practices for automating the build, test, and deployment processes for BWCE applications.
+
+nav:nav:
+
+  - Introduction: index.md 
+
+docs_dir: docs
+site_dir: site
+plugins:
+  - techdocs-core

@@ -1,0 +1,12 @@
+site_name: BWCE Java Operations Template
+
+site_description: The **BWCE Java Operations Template** is a production-ready template for creating TIBCO BusinessWorks Container Edition applications that integrate custom Java functionality. This template demonstrates best practices for Java method invocation within BWCE processes, scheduled execution, and enterprise deployment patterns.
+
+nav:nav:
+
+  - Introduction: index.md 
+
+docs_dir: docs
+site_dir: site
+plugins:
+  - techdocs-core
