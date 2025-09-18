@@ -1,5 +1,5 @@
 site_name: Server-Sent Events Connector
-site_description: Real-time streaming communication with Server-Sent Events protocol
+site_description: Real-time streaming communication using Server-Sent Events protocol
 
 nav:
   - Introduction: index.md
@@ -9,10 +9,3 @@ plugins:
 
 docs_dir: docs
 site_dir: site
-
-markdown_extensions:
-  - admonition
-  - codehilite
-  - pymdownx.superfences
-  - toc:
-      permalink: true

@@ -4,9 +4,6 @@ metadata:
   name: flogo-activity-templateengine
   title: Template Engine Activity
   description: Comprehensive template processing with multi-engine support, 29 built-in functions, and 10 OOTB templates
-  annotations:
-    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/templateengine
-    backstage.io/techdocs-ref: dir:.
   tags:
     - flogo
     - activity
@@ -18,16 +15,11 @@ metadata:
     - ai-workflow
     - email
     - reporting
-  links:
-    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/templateengine/docs/index.md
-      title: Documentation
-      icon: docs
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
 spec:
-  type: flogo-activity
+  type: library
   lifecycle: production
-  owner: flogo-team
-  system: flogo-extensions
-  dependsOn:
-    - resource:flogo-core
-  providesApis:
-    - flogo-activity-api
+  owner: group:default/marketplace-entries-group
+  system: tibco-developer-hub

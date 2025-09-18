@@ -4,29 +4,19 @@ metadata:
   name: flogo-activity-xmlfilter
   title: XML Filter Activity
   description: Filter XML content using multiple XPath expressions with configurable AND/OR logic for content routing and validation
-  annotations:
-    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/xmlfilter
-    backstage.io/techdocs-ref: dir:.
   tags:
     - flogo
     - activity
     - xml
+    - filter
     - xpath
-    - filtering
-    - content-routing
-    - data-validation
-    - integration
-  links:
-    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/xmlfilter/docs/index.md
-      title: Documentation
-      icon: docs
+    - parsing
+    - data-processing
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
 spec:
-  type: flogo-activity
+  type: library
   lifecycle: production
-  owner: flogo-team
-  system: flogo-extensions
-  dependsOn:
-    - resource:flogo-core
-    - resource:xmlquery
-  providesApis:
-    - flogo-activity-api
+  owner: group:default/marketplace-entries-group
+  system: tibco-developer-hub

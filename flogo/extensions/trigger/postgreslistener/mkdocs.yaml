@@ -1,5 +1,5 @@
 site_name: PostgreSQL Listener Trigger
-site_description: Real-time PostgreSQL NOTIFY/LISTEN event monitoring with SSL/TLS support
+site_description: Real-time PostgreSQL NOTIFY/LISTEN event monitoring
 
 nav:
   - Introduction: index.md
@@ -9,10 +9,3 @@ plugins:
 
 docs_dir: docs
 site_dir: site
-
-markdown_extensions:
-  - admonition
-  - codehilite
-  - pymdownx.superfences
-  - toc:
-      permalink: true

@@ -1,5 +1,5 @@
 site_name: JSON Schema Transform Activity
-site_description: Transform and validate JSON schemas with comprehensive processing
+site_description: Transform and validate JSON schemas with intelligent processing
 
 nav:
   - Introduction: index.md
@@ -9,10 +9,3 @@ plugins:
 
 docs_dir: docs
 site_dir: site
-
-markdown_extensions:
-  - admonition
-  - codehilite
-  - pymdownx.superfences
-  - toc:
-      permalink: true

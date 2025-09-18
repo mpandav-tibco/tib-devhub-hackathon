@@ -4,9 +4,6 @@ metadata:
   name: flogo-activity-avroschematransform
   title: Avro Schema Transform Activity
   description: Transform Avro schemas to JSON Schema and/or XSD formats with intelligent processing
-  annotations:
-    backstage.io/source-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/flogo/extensions/activity/schema-transform/avroschematransform
-    backstage.io/techdocs-ref: dir:.
   tags:
     - flogo
     - activity
@@ -16,16 +13,11 @@ metadata:
     - xsd
     - transformation
     - data-format
-  links:
-    - url: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/avroschematransform/docs/index.md
-      title: Documentation
-      icon: docs
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
 spec:
-  type: flogo-activity
+  type: library
   lifecycle: production
-  owner: flogo-team
-  system: flogo-extensions
-  dependsOn:
-    - resource:flogo-core
-  providesApis:
-    - flogo-activity-api
+  owner: group:default/marketplace-entries-group
+  system: tibco-developer-hub

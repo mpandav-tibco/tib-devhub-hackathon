@@ -1,5 +1,5 @@
 site_name: XML Filter Activity
-site_description: Advanced XML parsing, filtering, and manipulation capabilities
+site_description: Advanced XML parsing and filtering with XPath support
 
 nav:
   - Introduction: index.md
@@ -9,10 +9,3 @@ plugins:
 
 docs_dir: docs
 site_dir: site
-
-markdown_extensions:
-  - admonition
-  - codehilite
-  - pymdownx.superfences
-  - toc:
-      permalink: true

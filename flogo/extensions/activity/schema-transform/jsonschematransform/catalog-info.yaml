@@ -13,8 +13,10 @@ metadata:
     - avro-schema
     - data-modeling
   annotations:
-    backstage.io/source-location: url:https://github.com/TIBCOSoftware/tib-devhub-hackathon/blob/main/flogo/extensions/activity/schema-transform/jsonschematransform/
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: library
   lifecycle: production
-  owner: tibco-flogo
+  owner: group:default/marketplace-entries-group
+  system: tibco-developer-hub
