@@ -15,18 +15,17 @@ metadata:
     
     Total: 1 platform marketplace entry (with expansion planned)
   annotations:
-    backstage.io/managed-by-location: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/platform-marketplace-registry.yaml
-    backstage.io/managed-by-origin: url:https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/platform-marketplace-registry.yaml
     marketplace.tibco.com/category: "Platform Solutions Registry"
   tags:
     - platform
-    - marketplace  
+    - devhub-marketplace  
     - tibco
     - registry
-    - enterprise
-    - solutions
 spec:
   targets:    
     # Complete E-Commerce Platform with APIs, Teams, and Documentation
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/mp-entry-ecommerce-platform.yaml
-    
+    # All Flogo Templates, Custom Activities, and Integrations
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/flogo-marketplace-registry.yaml
+    # All BWCE Templates, Know-how documentation, and Integrations
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/bwce-marketplace-registry.yaml
