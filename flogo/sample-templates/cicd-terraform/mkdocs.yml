@@ -1,0 +1,11 @@
+site_name: Flogo CI/CD with Terraform Template
+site_description: Create Flogo project with Terraform infrastructure as code for automated deployment and infrastructure management
+
+nav:
+  - Introduction: index.md
+
+plugins:
+  - techdocs-core
+
+docs_dir: docs
+site_dir: site

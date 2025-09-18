@@ -1,0 +1,11 @@
+site_name: Flogo MCP Customer Service Template
+site_description: Create AI-powered customer service application using Model Context Protocol (MCP) integration with TIBCO Flogo
+
+nav:
+  - Introduction: index.md
+
+plugins:
+  - techdocs-core
+
+docs_dir: docs
+site_dir: site

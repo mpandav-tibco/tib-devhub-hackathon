@@ -9,9 +9,8 @@ metadata:
     - flogo
     - cicd
     - jenkins
-    - devops
-    - automation
-    - recommended
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   owner: ACME
   type: library

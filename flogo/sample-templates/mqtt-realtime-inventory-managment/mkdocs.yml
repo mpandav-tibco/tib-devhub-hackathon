@@ -1,0 +1,11 @@
+site_name: MQTT Real-time Inventory Management Template
+site_description: Create real-time inventory management system using MQTT messaging with TIBCO Flogo for efficient warehouse operations
+
+nav:
+  - Introduction: index.md
+
+plugins:
+  - techdocs-core
+
+docs_dir: docs
+site_dir: site
