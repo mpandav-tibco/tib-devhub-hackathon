@@ -1,4 +1,4 @@
-# TIBCO Developer Hub System
+# TIBCO Dev Hub System
 
 ## Overview
 
