@@ -29,3 +29,5 @@ spec:
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/flogo-marketplace-registry.yaml
     # All BWCE Templates, Know-how documentation, and Integrations
     - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/bwce/bwce-marketplace-registry.yaml
+    # TIBCO Developer Hub System
+    - https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/tibco-developer-hub-system.yaml
