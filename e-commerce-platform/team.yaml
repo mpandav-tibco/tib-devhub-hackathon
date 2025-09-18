@@ -12,7 +12,7 @@ spec:
   children:
     - group:default/tibco-integration-team
     - group:default/tibco-flogo-team
-    - group:default/tibco-templates
+    - group:default/platform-team
     - group:default/marketplace-entries-group
   members: []
 ---

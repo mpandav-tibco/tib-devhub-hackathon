@@ -10,7 +10,7 @@ metadata:
   annotations:
     backstage.io/techdocs-ref: dir:.
 spec:
-  owner: group:default/tibco-templates
+  owner: group:default/platform-team
   type: library
   parameters:
     - title: Fill in some steps
