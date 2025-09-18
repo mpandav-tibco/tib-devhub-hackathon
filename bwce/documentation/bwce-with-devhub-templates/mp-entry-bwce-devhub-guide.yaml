@@ -23,9 +23,6 @@ metadata:
       - text: Jenkins Integration
         url: https://www.jenkins.io/
         icon: build
-      - text: Source Repository
-        url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/documentation/bwce-with-devhub-templates
-        icon: github
   tags:
     - devhub-marketplace
     - bwce-templates
@@ -33,12 +30,7 @@ metadata:
     - devhub
     - jenkins
     - kubernetes
-    - ci-cd
-    - governance
     - tibco
-    - businessworks
-    - know-how
-    - recommended
 spec:
   owner: tibco-templates
   type: service

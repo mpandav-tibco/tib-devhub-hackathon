@@ -13,6 +13,7 @@ metadata:
     - security
   annotations:
     backstage.io/source-location: url:https://github.com/TIBCOSoftware/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: library
   lifecycle: production
