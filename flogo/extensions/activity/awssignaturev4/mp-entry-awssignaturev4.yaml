@@ -62,7 +62,6 @@ spec:
       action: catalog:register
       input:
         catalogInfoUrl: https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/extensions/activity/awssignaturev4/catalog-info.yaml
-
   output:
     links:
       - title: Open in catalog
@@ -75,4 +74,3 @@ spec:
       - title: Back to Marketplace
         icon: dashboard
         url: /marketplace
-    awsServices: ["S3", "SQS", "DynamoDB", "Lambda", "EC2", "CloudWatch", "SNS", "SES"]
