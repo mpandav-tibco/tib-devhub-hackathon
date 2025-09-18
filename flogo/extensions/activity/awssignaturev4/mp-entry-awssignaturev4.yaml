@@ -25,7 +25,7 @@ metadata:
     - security
 spec:
   owner: tibco-flogo-team
-  type: template
+  type: Component
   presentation:
     buttonLabels:
       createButtonText: Install Activity
