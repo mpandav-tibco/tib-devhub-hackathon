@@ -1,0 +1,37 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sonarqube-bwce-plugin
+  title: SonarQube BWCE Plugin
+  description: SonarQube server setup with TIBCO BusinessWorks Container Edition plugin for comprehensive code quality analysis and static code scanning of BW5/6/CE projects
+  tags:
+    - sonarqube
+    - bwce
+    - code-quality
+    - static-analysis
+    - tibco
+    - businessworks
+    - docker
+    - kubernetes
+    - tooling
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - title: SonarQube Documentation
+      url: https://docs.sonarqube.org/
+      icon: docs
+    - title: TIBCO BusinessWorks
+      url: https://www.tibco.com/products/tibco-businessworks
+      icon: star
+    - title: Docker Hub Image
+      url: https://hub.docker.com/repository/docker/mpandav/tib-sonarqube-community-lts/general
+      icon: docker
+    - title: Template Source
+      url: https://github.com/mpandav-tibco/tib-devhub-hackathon/tree/main/bwce/tooling/sonarqube
+      icon: github
+spec:
+  type: tool
+  lifecycle: production
+  owner: group:default/marketplace-entries-group
+  system: tibco-developer-hub
