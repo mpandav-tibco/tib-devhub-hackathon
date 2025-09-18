@@ -13,7 +13,7 @@ metadata:
   annotations:
     backstage.io/techdocs-ref: dir:.
 spec:
-  owner: ACME
+  owner: group:default/platform-team
   type: library
 
   parameters:
