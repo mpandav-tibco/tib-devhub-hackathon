@@ -11,11 +11,6 @@ TIBCO Developer Hub is an enterprise-grade developer portal built on Backstage t
 - **Relationship Mapping**: Visual representation of service dependencies and interactions
 - **Metadata Management**: Rich annotations and documentation for each entity
 
-### API Management
-- **API Documentation**: Integrated OpenAPI and WSDL specification rendering
-- **API Discovery**: Searchable catalog of all available APIs
-- **Testing Integration**: Built-in API testing and validation tools
-
 ### Template System
 - **Code Scaffolding**: Pre-built templates for common application patterns
 - **Custom Templates**: Support for organization-specific templates
@@ -40,25 +35,6 @@ The TIBCO Developer Hub is built on the following components:
 - **Integration Layer**: Connectors to TIBCO products and services
 - **Extension Marketplace**: Community-driven extensions and templates
 
-## Supported Technologies
-
-### TIBCO Products
-- **TIBCO BusinessWorks Container Edition (BWCE)**
-- **TIBCO Flogo Enterprise**
-- **TIBCO Cloud Integration**
-- **TIBCO API Management**
-
-### Development Frameworks
-- **Node.js and React** (Frontend)
-- **Java and Spring Boot** (Backend services)
-- **Docker and Kubernetes** (Containerization)
-- **Jenkins** (CI/CD)
-
-### Extension Categories
-- **Activities**: Custom Flogo activities for specific business logic
-- **Connectors**: Integration connectors for external systems
-- **Triggers**: Event-driven triggers for application workflows
-- **Templates**: Scaffolding templates for rapid application development
 
 ## Getting Started
 
@@ -78,9 +54,8 @@ The TIBCO Developer Hub is built on the following components:
 
 The Developer Hub includes a comprehensive marketplace with:
 
-- **70+ Flogo Extensions**: Activities, connectors, and triggers
+- **Flogo Extensions**: Activities, connectors, and triggers
 - **BWCE Templates**: BusinessWorks application templates
-- **CI/CD Templates**: Jenkins and deployment automation
-- **Platform Solutions**: Complete system architectures like e-commerce platforms
+- **CI/CD Templates**: Jenkins and other deployment automation
 
-This system serves as the foundation for all developer experience initiatives within the TIBCO ecosystem.
+This system serves as the foundation for all developer experience initiatives within the TIBCO Platform and ecosystem.
