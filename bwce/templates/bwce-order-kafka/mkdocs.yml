@@ -2,8 +2,7 @@ site_name: WCE Order Kafka Processing
 
 site_description: This TIBCO BusinessWorks Container Edition (BWCE) template provides a comprehensive solution for order processing with real-time event streaming to Apache Kafka. The template demonstrates enterprise-grade order management workflows with messaging integration capabilities.
 
-nav:nav:
-
+nav:
   - Introduction: index.md 
 
 docs_dir: docs

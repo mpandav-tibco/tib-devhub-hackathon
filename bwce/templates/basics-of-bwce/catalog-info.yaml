@@ -8,20 +8,10 @@ metadata:
     - bwce
     - learning
     - tutorial
-    - basics
-    - beginner
-    - tibco
-    - businessworks
-    - documentation
-    - training
-    - hands-on
   annotations:
     github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
     backstage.io/techdocs-ref: dir:.
   links:
-    - title: TIBCO BusinessWorks CE
-      url: https://www.tibco.com/products/tibco-businessworks
-      icon: star
     - title: TIBCO Documentation
       url: https://docs.tibco.com/products/tibco-businessworks-container-edition
       icon: docs
