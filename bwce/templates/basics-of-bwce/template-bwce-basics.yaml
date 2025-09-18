@@ -8,89 +8,40 @@ metadata:
     - bwce
     - tibco
 spec:
-  owner: tibco-templates
-  type: documentation
-
+  owner: group:default/tibco-templates
+  type: library
   parameters:
-    - title: Learning Guide Configuration
+    - title: Fill in some steps
       required:
         - name
         - description
-        - owner
       properties:
         name:
-          title: Guide Name
+          title: Natme
           type: string
-          description: Name of your BWCE learning guide
+          description: Unique name of the BWCE CDC Project
           ui:field: EntityNamePicker
           ui:autofocus: true
-          default: bwce-basics-tutorial
         description:
           title: Description
           type: string
-          description: Description of your learning guide
-          default: Comprehensive guide for learning TIBCO BusinessWorks Container Edition basics
+          description: A description for the BWCE CDC Project
+        system:
+          title: System
+          type: string
+          description: Target System 
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: system
         owner:
           title: Owner
           type: string
-          description: Owner of the learning guide
+          description: Owner of the component
           ui:field: OwnerPicker
           ui:options:
-            catalogFilter:
-              kind: Group
-        learning_level:
-          title: Learning Level
-          type: string
-          description: Target audience skill level
-          default: beginner
-          enum:
-            - beginner
-            - intermediate
-            - advanced
-        guide_type:
-          title: Guide Type
-          type: string
-          description: Type of learning guide to create
-          default: comprehensive
-          enum:
-            - comprehensive
-            - quick-start
-            - reference
-            - hands-on-labs
-
-    - title: Content Configuration
-      properties:
-        include_sample_app:
-          title: Include Sample Application
-          type: boolean
-          description: Include the scheduler sample application with source code
-          default: true
-        include_exercises:
-          title: Include Hands-on Exercises
-          type: boolean
-          description: Include practical exercises and labs
-          default: true
-        include_docker_setup:
-          title: Include Docker Setup
-          type: boolean
-          description: Include Docker containerization examples
-          default: true
-        include_kubernetes_deploy:
-          title: Include Kubernetes Deployment
-          type: boolean
-          description: Include Kubernetes deployment examples
-          default: true
-        include_monitoring:
-          title: Include Monitoring Guide
-          type: boolean
-          description: Include monitoring and logging setup
-          default: true
-        include_best_practices:
-          title: Include Best Practices
-          type: boolean
-          description: Include development best practices and guidelines
-          default: true
-
+            allowedKinds:
+              - Group
     - title: Choose a location
       required:
         - repoUrl
@@ -104,30 +55,23 @@ spec:
               - github.com
 
   steps:
-    - id: fetch
-      name: Fetch Base
+    - id: template
+      name: Fetch Skeleton + Template
       action: fetch:template
       input:
         url: ./skeleton
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
-          owner: ${{ parameters.owner }}
-          learning_level: ${{ parameters.learning_level }}
-          guide_type: ${{ parameters.guide_type }}
-          include_sample_app: ${{ parameters.include_sample_app }}
-          include_exercises: ${{ parameters.include_exercises }}
-          include_docker_setup: ${{ parameters.include_docker_setup }}
-          include_kubernetes_deploy: ${{ parameters.include_kubernetes_deploy }}
-          include_monitoring: ${{ parameters.include_monitoring }}
-          include_best_practices: ${{ parameters.include_best_practices }}
           destination: ${{ parameters.repoUrl | parseRepoUrl }}
+          owner: ${{ parameters.owner }}
 
     - id: publish
       name: Publish
       action: publish:github
       input:
-        allowedHosts: ['github.com']
+        allowedHosts:
+          - github.com
         description: This is ${{ parameters.name }}
         repoUrl: ${{ parameters.repoUrl }}
 

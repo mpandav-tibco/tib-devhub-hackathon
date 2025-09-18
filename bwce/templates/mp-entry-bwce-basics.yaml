@@ -73,9 +73,9 @@ spec:
       - title: Documents
         url: /docs?filters%5Buser%5D=all&limit=20
         icon: techdocs
-      - icon: docs
-        title: Open BWCE Basics Learning Guide
-        url: /docs/default/System/bwce-basics-learning-guide
+      - title: Templates
+        url: /create?filters%5Bkind%5D=template&filters%5Buser%5D=all&limit=20
+        icon: kind:template
       - title: Back to Marketplace
         icon: dashboard
         url: /marketplace?filters%5Bkind%5D=template&filters%5Btags%5D=devhub-marketplace&limit=20
