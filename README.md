@@ -137,10 +137,15 @@ curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
   -H "Content-Type: application/json" \
   -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/flogo/flogo-marketplace-registry.yaml"}'
 
-# System Components
+# Platform Solutions Marketplace
 curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
   -H "Content-Type: application/json" \
-  -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/system/ecommerce-platform.yaml"}'
+  -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/platform-marketplace-registry.yaml"}'
+
+# E-Commerce Platform Components
+curl -X POST "http://localhost:3000/tibco/hub/api/catalog/locations" \
+  -H "Content-Type: application/json" \
+  -d '{"type": "url", "target": "https://github.com/mpandav-tibco/tib-devhub-hackathon/blob/main/e-commerce-platform/ecommerce-platform.yaml"}'
 ```
 
 ## ✨ Template Features
