@@ -15,160 +15,40 @@ metadata:
     - kubernetes
 spec:
   owner: group:tibco-integration-team
-  type: documentation
-  
+  type: library
   parameters:
-    - title: Project Information
+    - title: Fill in some steps
       required:
         - name
         - description
-        - owner
       properties:
         name:
-          title: Project Name
+          title: Name
           type: string
-          description: Name of the CI/CD project (will be used for repository and deployment names)
-          pattern: '^[a-zA-Z0-9-_]+$'
-          maxLength: 50
+          description: Unique name of the BWCE Project
+          ui:field: EntityNamePicker
           ui:autofocus: true
-          ui:help: 'Use lowercase letters, numbers, hyphens, and underscores only'
         description:
           title: Description
           type: string
-          description: Brief description of the CI/CD pipeline and its purpose
-          maxLength: 200
+          description: A description for the BWCE Project
+        system:
+          title: System
+          type: string
+          description: Target System 
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: system
         owner:
           title: Owner
           type: string
-          description: Team or individual responsible for this CI/CD setup
+          description: Owner of the component
           ui:field: OwnerPicker
           ui:options:
-            catalogFilter:
-              kind:
-                - Group
-                - User
-
-    - title: CI/CD Configuration
-      required:
-        - pipeline_type
-        - deployment_target
-        - enable_testing
-      properties:
-        pipeline_type:
-          title: Pipeline Type
-          type: string
-          description: Choose the type of CI/CD pipeline to configure
-          default: jenkins
-          enum:
-            - jenkins
-            - gitlab-ci
-            - github-actions
-          enumNames:
-            - 'Jenkins Pipeline'
-            - 'GitLab CI/CD'
-            - 'GitHub Actions'
-        deployment_target:
-          title: Deployment Target
-          type: string
-          description: Primary deployment target for BWCE applications
-          default: kubernetes
-          enum:
-            - kubernetes
-            - openshift
-            - docker-compose
-            - cloud-foundry
-          enumNames:
-            - 'Kubernetes'
-            - 'Red Hat OpenShift'
-            - 'Docker Compose'
-            - 'Cloud Foundry'
-        enable_testing:
-          title: Enable Automated Testing
-          type: boolean
-          description: Include automated testing stages in the pipeline
-          default: true
-        enable_security_scanning:
-          title: Enable Security Scanning
-          type: boolean
-          description: Include security vulnerability scanning in the pipeline
-          default: true
-
-    - title: Environment Strategy
-      required:
-        - environments
-      properties:
-        environments:
-          title: Target Environments
-          type: array
-          description: Select the environments for deployment pipeline
-          items:
-            type: string
-            enum:
-              - development
-              - testing
-              - uat
-              - staging
-              - production
-            enumNames:
-              - 'Development'
-              - 'Testing'
-              - 'User Acceptance Testing (UAT)'
-              - 'Staging'
-              - 'Production'
-          uniqueItems: true
-          ui:widget: checkboxes
-          default:
-            - development
-            - uat
-            - production
-        blue_green_deployment:
-          title: Blue-Green Deployment
-          type: boolean
-          description: Enable blue-green deployment strategy for zero-downtime deployments
-          default: false
-        auto_promote_to_prod:
-          title: Auto-Promote to Production
-          type: boolean
-          description: Automatically promote successful UAT builds to production
-          default: false
-
-    - title: Integration Configuration
-      properties:
-        include_database_migration:
-          title: Include Database Migration
-          type: boolean
-          description: Add database migration scripts and Flyway configuration
-          default: true
-        include_monitoring:
-          title: Include Monitoring Setup
-          type: boolean
-          description: Add Prometheus metrics, Grafana dashboards, and alerting rules
-          default: true
-        include_logging:
-          title: Include Centralized Logging
-          type: boolean
-          description: Add ELK stack configuration for centralized logging
-          default: true
-        notification_channels:
-          title: Notification Channels
-          type: array
-          description: Configure notification channels for pipeline events
-          items:
-            type: string
-            enum:
-              - email
-              - slack
-              - teams
-              - pagerduty
-            enumNames:
-              - 'Email'
-              - 'Slack'
-              - 'Microsoft Teams'
-              - 'PagerDuty'
-          uniqueItems: true
-          ui:widget: checkboxes
-
-    - title: Repository Configuration
+            allowedKinds:
+              - Group
+    - title: Choose a location
       required:
         - repoUrl
       properties:
@@ -179,52 +59,104 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
-              - gitlab.com
-              - bitbucket.org
 
+      required:
+        - sonar
+        - trivy
+      properties:
+        sonar:
+          title: Code Scan (SonarQube)?
+          type: boolean
+          description: Choose whether to deploy the application
+          default: false  
+        trivy:
+          title: Security Scan (Trivy)?
+          type: boolean
+          description: Choose whether to Scan the Container the application
+          default: false                          
+
+      required:
+        - deploy
+      properties:
+        deploy:
+          title: Deploy?
+          type: boolean
+          description: Choose whether to deploy the application
+          default: false
+      dependencies:
+        deploy:
+            allOf:
+              - if:
+                  properties:
+                    deploy:
+                      const: true
+                then:
+                  properties:
+                    deployTarget:
+                      title: Deployment Target
+                      type: string
+                      enum:   
+                        - K8S
+                        - TIBCO Platform
+                  dependencies:
+                    deployTarget:
+                      oneOf:
+                        - properties:
+                            deployTarget:
+                              enum:
+                                - TIBCO Platform
+                            namespace:
+                              title: Kubernetes Namespace
+                              type: string
+                              default: default
+                            platformToken:
+                              title: TIBCO Platform Token 
+                              type: string
+                              ui:field: Secret
+                            dpUrl:
+                              title: Data Plane URL
+                              type: string
+                          required: 
+                            - namespace
+                            - platformToken
+                            - dpUrl
+                            
+                        - properties:
+                            deployTarget:
+                              enum:
+                                - K8S
+                            namespace:
+                              title: Kubernetes Namespace
+                              type: string  
+                          required: 
+                            - namespace
+            
   steps:
     - id: fetch
-      name: Fetch Base Template
+      name: BWCE Skeleton
       action: fetch:template
       input:
         url: ./skeleton
-        copyWithoutTemplating:
-          - .github/workflows/*
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
           destination: ${{ parameters.repoUrl | parseRepoUrl }}
           owner: ${{ parameters.owner }}
-          pipeline_type: ${{ parameters.pipeline_type }}
-          deployment_target: ${{ parameters.deployment_target }}
-          enable_testing: ${{ parameters.enable_testing }}
-          enable_security_scanning: ${{ parameters.enable_security_scanning }}
-          environments: ${{ parameters.environments }}
-          blue_green_deployment: ${{ parameters.blue_green_deployment }}
-          auto_promote_to_prod: ${{ parameters.auto_promote_to_prod }}
-          include_database_migration: ${{ parameters.include_database_migration }}
-          include_monitoring: ${{ parameters.include_monitoring }}
-          include_logging: ${{ parameters.include_logging }}
-          notification_channels: ${{ parameters.notification_channels }}
-
+          system: ${{ parameters.system }}
     - id: publish
-      name: Publish to Repository
+      name: Publish
       action: publish:github
       input:
-        allowedHosts: ['github.com']
-        description: 'BWCE CI/CD Pipeline - ${{ parameters.description }}'
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.name }}
         repoUrl: ${{ parameters.repoUrl }}
-        defaultBranch: main
-        gitCommitMessage: 'Initial commit: BWCE CI/CD pipeline setup'
-        gitAuthorName: ${{ user.entity.metadata.name }}
-        gitAuthorEmail: ${{ user.entity.spec.profile.email }}
-
     - id: register
-      name: Register in Catalog
+      name: Register
       action: catalog:register
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: '/catalog-info.yaml'
+        catalogInfoPath: catalog-info.yaml
 
   output:
     links:

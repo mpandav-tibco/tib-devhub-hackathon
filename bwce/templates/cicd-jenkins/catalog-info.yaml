@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: bwce-cicd-jenkins-template
+  title: BWCE CI/CD Jenkins Pipeline Template
+  description: Comprehensive CI/CD pipeline template for TIBCO BusinessWorks Container Edition applications using Jenkins. Includes automated build, test, and deployment workflows with Docker containerization and Kubernetes deployment configurations.
+  tags:
+    - bwce
+    - cicd
+    - jenkins
+  annotations:
+    github.com/project-slug: mpandav-tibco/tib-devhub-hackathon
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - title: TIBCO BusinessWorks CE
+      url: https://www.tibco.com/products/tibco-businessworks
+      icon: star
+    - title: Jenkins Documentation
+      url: https://www.jenkins.io/doc/
+      icon: docs
+spec:
+  type: template
+  lifecycle: production
+  owner: group:default/marketplace-entries-group
+  system: tibco-developer-hub
