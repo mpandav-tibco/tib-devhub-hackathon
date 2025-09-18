@@ -21,14 +21,11 @@ metadata:
   tags:
     - devhub-marketplace
     - flogo
-    - activity
-    - aws
-    - signature-v4
     - authentication
     - security
 spec:
   owner: tibco-flogo-team
-  type: service
+  type: template
   presentation:
     buttonLabels:
       createButtonText: Install Activity
